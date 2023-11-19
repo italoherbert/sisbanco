@@ -4,8 +4,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import italo.sisbanco.shared.exception.SistemaException;
-import italo.sisbanco.shared.model.ErroResponse;
+import italo.sisbanco.shared.ErroResponse;
+import italo.sisbanco.shared.SistemaException;
 
 @ControllerAdvice
 public class SistemaExceptionHandler {

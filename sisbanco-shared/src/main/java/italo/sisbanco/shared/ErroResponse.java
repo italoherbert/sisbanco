@@ -1,6 +1,4 @@
-package italo.sisbanco.shared.model;
-
-import italo.sisbanco.shared.exception.SistemaException;
+package italo.sisbanco.shared;
 
 public class ErroResponse {
 

@@ -1,2 +1,5 @@
-italo\sisbanco\shared\exception\SistemaException.class
-italo\sisbanco\shared\model\ErroResponse.class
+italo\sisbanco\shared\ErroResponse.class
+italo\sisbanco\shared\keycloak\TokenRequest.class
+italo\sisbanco\shared\SistemaException.class
+italo\sisbanco\shared\keycloak\TokenResponse.class
+italo\sisbanco\shared\AutorizacaoException.class

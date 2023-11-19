@@ -13,8 +13,8 @@ import italo.sisbanco.keycloak.exception.ServiceException;
 import italo.sisbanco.keycloak.integration.KeycloakClientIntegration;
 import italo.sisbanco.keycloak.integration.model.Token;
 import italo.sisbanco.keycloak.message.Erros;
-import italo.sisbanco.keycloak.model.request.LoginRequest;
-import italo.sisbanco.keycloak.model.response.LoginResponse;
+import italo.sisbanco.shared.keycloak.TokenRequest;
+import italo.sisbanco.shared.keycloak.TokenResponse;
 
 @Service
 public class KeycloakService {
@@ -28,7 +28,7 @@ public class KeycloakService {
 	@Autowired
 	private KeycloakClientIntegration keycloakIntegration;
 	
-	public LoginResponse login( LoginRequest request ) throws ServiceException {
+	public TokenResponse login( TokenRequest request ) throws ServiceException {
 		Map<String, String> dados = new HashMap<>();
 		dados.put( "client_id", clientId );
 		dados.put( "grant_type", grantType );
@@ -40,7 +40,7 @@ public class KeycloakService {
 			if ( tokenClientResp.getStatusCode().is2xxSuccessful() ) {
 				Token token = tokenClientResp.getBody();
 				
-				LoginResponse resp = new LoginResponse();
+				TokenResponse resp = new TokenResponse();
 				resp.setAccessToken( token.getAccess_token() );		
 				return resp;
 			} else {

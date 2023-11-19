@@ -1,4 +1,4 @@
-package italo.sisbanco.shared.exception;
+package italo.sisbanco.shared;
 
 public class SistemaException extends Exception {
 

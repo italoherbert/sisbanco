@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import italo.sisbanco.model.request.CreditoRequest;
+import italo.sisbanco.model.request.ValorRequest;
 import italo.sisbanco.model.response.CreditoResponse;
 
 @RestController
@@ -17,7 +17,7 @@ public class BancoController {
 	@PostMapping("/credita/{contaId}")
 	public ResponseEntity<Object> credita( 
 			@PathVariable Long contaId, 
-			@RequestBody CreditoRequest request ) {
+			@RequestBody ValorRequest request ) {
 		
 		CreditoResponse resp = new CreditoResponse();
 		resp.setSaldo( request.getValor() );

@@ -1,6 +1,6 @@
 package italo.sisbanco.keycloak.exception;
 
-import italo.sisbanco.shared.exception.SistemaException;
+import italo.sisbanco.shared.SistemaException;
 
 public class ServiceException extends SistemaException {
 

@@ -13,7 +13,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import italo.sisbanco.model.request.CreditoRequest;
+import italo.sisbanco.model.request.ValorRequest;
 
 @AutoConfigureMockMvc(addFilters = false)
 @WebMvcTest(BancoController.class)
@@ -26,7 +26,7 @@ public class BancoControllerTest {
 	
 	@Test
 	public void testCredito() {
-		CreditoRequest req = new CreditoRequest();
+		ValorRequest req = new ValorRequest();
 		req.setValor( 100 );
 		
 		try {
