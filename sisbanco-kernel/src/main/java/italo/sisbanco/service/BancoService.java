@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import italo.sisbanco.Erros;
 import italo.sisbanco.exception.ServiceException;
 import italo.sisbanco.model.Conta;
-import italo.sisbanco.model.request.ValorRequest;
+import italo.sisbanco.model.request.conta.ValorRequest;
 import italo.sisbanco.repository.ContaRepository;
 import jakarta.transaction.Transactional;
 

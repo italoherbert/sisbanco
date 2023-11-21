@@ -5,9 +5,9 @@ public class ErroResponse {
 	private String mensagem;
 
 	public ErroResponse() {}
-	
-	public ErroResponse( SistemaException e ) {
-		this.mensagem = e.getErroMensagem();
+		
+	public ErroResponse( String mensagem ) {
+		this.mensagem = mensagem;
 	}
 	
 	public String getMensagem() {

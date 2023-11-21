@@ -1,5 +1,5 @@
+italo\sisbanco\shared\keycloak\TokenInfo.class
 italo\sisbanco\shared\ErroResponse.class
-italo\sisbanco\shared\keycloak\TokenRequest.class
 italo\sisbanco\shared\SistemaException.class
-italo\sisbanco\shared\keycloak\TokenResponse.class
-italo\sisbanco\shared\AutorizacaoException.class
+italo\sisbanco\shared\keycloak\LoginRequest.class
+italo\sisbanco\shared\keycloak\Token.class
