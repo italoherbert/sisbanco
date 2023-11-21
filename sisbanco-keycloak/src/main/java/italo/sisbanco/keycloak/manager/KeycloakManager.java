@@ -43,10 +43,10 @@ public class KeycloakManager {
 	
 	
 	@Value("${config.keycloak.group.path.cliente}")
-	private String grupoCliente;
+	private String clienteGroupPath;
 	
 	@Value("${config.keycloak.group.path.funcionario}")
-	private String grupoFuncionario;		
+	private String funcionarioGroupPath;		
 	
 	
 	public Keycloak getKeycloakAdmin() {
@@ -97,11 +97,11 @@ public class KeycloakManager {
 	}
 	
 	public String getClienteGroupPath() {
-		return grupoCliente;
+		return clienteGroupPath;
 	}
 	
 	public String getFuncionarioGroupPath() {
-		return grupoFuncionario;
+		return funcionarioGroupPath;
 	}
 	
 	public String getAdminRealm() {

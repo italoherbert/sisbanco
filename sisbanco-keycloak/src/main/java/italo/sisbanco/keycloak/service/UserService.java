@@ -26,7 +26,7 @@ public class UserService {
 	public UserCreated novoUsuario( UserSaveRequest request ) throws ServiceException {
 		try {
 			Keycloak keycloak = keycloakManager.getKeycloakAdmin();
-			String realm = keycloakManager.getAdminRealm();
+			String appRealm = keycloakManager.getAppRealm();
 			
 			UserRepresentation user = new UserRepresentation();
 			user.setUsername( request.getUsername() );
@@ -35,7 +35,7 @@ public class UserService {
 			user.setEmail( request.getEmail() );
 			user.setEnabled( true ); 
 			
-			Response resp = keycloakManager.criaUser( keycloak, realm, user );
+			Response resp = keycloakManager.criaUser( keycloak, appRealm, user );
 			
 			String userId = CreatedResponseUtil.getCreatedId( resp );
 			
@@ -50,12 +50,10 @@ public class UserService {
 			} else {
 				groupPath = keycloakManager.getClienteGroupPath();
 			}
+						
+			GroupRepresentation group = keycloakManager.getGroupRepresentation( keycloak, appRealm, groupPath );
 			
-			System.out.println( groupPath );
-			
-			GroupRepresentation group = keycloakManager.getGroupRepresentation( keycloak, realm, groupPath );
-			
-			UserResource resource = keycloakManager.getUserResource( keycloak, realm, userId );
+			UserResource resource = keycloakManager.getUserResource( keycloak, appRealm, userId );
 			resource.resetPassword( credential );			
 			resource.joinGroup( group.getId() );			
 			

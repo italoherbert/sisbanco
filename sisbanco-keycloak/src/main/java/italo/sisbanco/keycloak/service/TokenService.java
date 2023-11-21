@@ -53,30 +53,7 @@ public class TokenService {
 		} catch ( WebApplicationException e ) {
 			e.printStackTrace();
 			throw new ServiceException( Erros.TOKEN_SOLICITACAO_FALHA );
-		}
-		
-		/*
-		Map<String, String> dados = new HashMap<>();
-		dados.put( "client_id", clientId );
-		dados.put( "grant_type", grantType );
-		dados.put( "username", request.getUsername() );
-		dados.put( "password", request.getPassword() );
-		
-		try {
-			ResponseEntity<KeycloakToken> tokenClientResp = keycloakIntegration.token( dados );
-			if ( tokenClientResp.getStatusCode().is2xxSuccessful() ) {
-				KeycloakToken token = tokenClientResp.getBody();
-				
-				Token resp = new Token();
-				resp.setAccessToken( token.getAccess_token() );		
-				return resp;
-			} else {
-				throw new ServiceException( Erros.ACESSO_NAO_AUTORIZADO );
-			}
-		} catch ( FeignException e ) {
-			throw new ServiceException( Erros.ACESSO_NAO_AUTORIZADO );
-		}
-		*/
+		}				
 	}
 	
 	public TokenInfo tokenInfo( Token token ) throws ServiceException {		
