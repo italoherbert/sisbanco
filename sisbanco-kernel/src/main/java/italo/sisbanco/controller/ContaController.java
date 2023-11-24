@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,12 +19,17 @@ import italo.sisbanco.model.request.conta.ContaFiltroRequest;
 import italo.sisbanco.model.request.conta.ContaSaveRequest;
 import italo.sisbanco.model.response.conta.ContaResponse;
 import italo.sisbanco.service.ContaService;
+import italo.sisbanco.shared.util.HttpUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/conta")
 public class ContaController {
-
+	
+	@Autowired
+	private HttpUtil httpUtil;
+	
 	@Autowired
 	private ContaService contaService;
 	
@@ -33,8 +37,10 @@ public class ContaController {
 	@PostMapping("/registra")
 	public ResponseEntity<Object> registra( 
 			@Valid @RequestBody ContaSaveRequest request, 
-			@RequestHeader( "Authorization" ) String authorizationHeader ) throws SistemaException {		
-		contaService.registra( request, authorizationHeader );
+			HttpServletRequest httpRequest ) throws SistemaException {
+			
+		String accessToken = httpUtil.extractBearerToken( httpRequest );
+		contaService.registra( request, accessToken ); 
 		return ResponseEntity.ok().build();
 	}
 	

@@ -53,9 +53,6 @@ public class BancoControllerTest {
 	
 	@Test
 	@Sql("/data/data.sql")
-	@Sql(statements = {
-		"insert into conta ( id, titular, username, saldo, credito ) values ( 1, 'joao', 'joao', 0, 0 )"	
-	} )
 	@Sql(scripts= {"/data/drops.sql"}, executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
 	@WithMockUser(username="cliente", authorities = { "contaDonoWRITE" } ) 
 	public void testCreditar() {		
@@ -79,9 +76,6 @@ public class BancoControllerTest {
 	
 	@Test
 	@Sql("/data/data.sql")
-	@Sql(statements = {
-		"insert into conta ( id, titular, username, saldo, credito ) values ( 1, 'joao', 'joao', 0, 0 )"	
-	} )
 	@Sql(scripts= {"/data/drops.sql"}, executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
 	@WithMockUser(username="cliente", authorities = { "contaDonoWRITE" } ) 
 	public void testDebitar() {		
@@ -105,10 +99,6 @@ public class BancoControllerTest {
 	
 	@Test		
 	@Sql("/data/data.sql")
-	@Sql(statements = {
-		"insert into conta ( id, titular, username, saldo, credito ) values ( 1, 'joao', 'joao', 0, 0 )",	
-		"insert into conta ( id, titular, username, saldo, credito ) values ( 2, 'maria', 'maria', 0, 0 )"	
-	} )
 	@Sql(scripts= {"/data/drops.sql"}, executionPhase = ExecutionPhase.AFTER_TEST_METHOD)	
 	@WithMockUser(username="cliente", authorities = { "contaDonoWRITE" } ) 
 	public void testTransferir() {		

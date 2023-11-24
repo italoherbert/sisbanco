@@ -17,7 +17,8 @@ import italo.sisbanco.shared.util.HttpUtil;
 @Component
 public class Authorizator {
 		
-	private final HttpUtil httpUtil = new HttpUtil();
+	@Autowired
+	private HttpUtil httpUtil;
 
 	@Autowired
 	private ContaRepository contaRepository;

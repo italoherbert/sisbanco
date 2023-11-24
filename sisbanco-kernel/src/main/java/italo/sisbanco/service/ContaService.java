@@ -17,6 +17,7 @@ import italo.sisbanco.mapper.ContaMapper;
 import italo.sisbanco.model.Conta;
 import italo.sisbanco.model.request.conta.ContaFiltroRequest;
 import italo.sisbanco.model.request.conta.ContaSaveRequest;
+import italo.sisbanco.model.request.conta.ValorRequest;
 import italo.sisbanco.model.response.conta.ContaResponse;
 import italo.sisbanco.repository.ContaRepository;
 
@@ -38,7 +39,7 @@ public class ContaService {
 			throw new ServiceException( Erros.TITULAR_JA_EXISTE );
 		
 		Conta conta = contaMapper.novoBean();
-		contaMapper.carrega( conta, request );
+		contaMapper.carregaParaRegistro( conta, request );
 		try {
 			ResponseEntity<UserCreated> resp = 
 					keycloak.registraUser( request.getUser(), authorizationHeader );
@@ -69,8 +70,28 @@ public class ContaService {
 				throw new ServiceException( Erros.TITULAR_JA_EXISTE );
 		}
 		
-		contaMapper.carrega( conta, request ); 
+		contaMapper.carregaParaAlteracao( conta, request ); 
 		contaRepository.save( conta );	
+	}
+	
+	public void alteraSaldo( Long contaId, ValorRequest valor ) throws ServiceException {
+		Optional<Conta> contaOp = contaRepository.findById( contaId );
+		if ( !contaOp.isPresent() )
+			throw new ServiceException( Erros.CONTA_NAO_ENCONTRADA );
+		
+		Conta conta = contaOp.get();
+		conta.setSaldo( valor.getValor() );
+		contaRepository.save( conta );		
+	}
+	
+	public void alteraCredito( Long contaId, ValorRequest valor ) throws ServiceException {
+		Optional<Conta> contaOp = contaRepository.findById( contaId );
+		if ( !contaOp.isPresent() )
+			throw new ServiceException( Erros.CONTA_NAO_ENCONTRADA );
+		
+		Conta conta = contaOp.get();
+		conta.setCredito( valor.getValor() );
+		contaRepository.save( conta );		
 	}
 	
 	public ContaResponse get( Long contaId ) throws ServiceException {

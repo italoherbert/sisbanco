@@ -9,15 +9,20 @@ import italo.sisbanco.model.response.conta.ContaResponse;
 @Component
 public class ContaMapper {
 	
-	public void carrega( Conta c, ContaSaveRequest req ) {
+	public void carregaParaRegistro( Conta c, ContaSaveRequest req ) {
 		c.setTitular( req.getTitular() );
 		c.setUsername( req.getUser().getUsername() ); 
 		c.setSaldo( 0 );
 		c.setCredito( 0 ); 
 	}
 	
+	public void carregaParaAlteracao( Conta c, ContaSaveRequest req ) {
+		c.setTitular( req.getTitular() );		
+	}
+	
 	public void carregaResponse( ContaResponse resp, Conta c ) {
 		resp.setId( c.getId() );
+		resp.setUsername( c.getUsername() ); 
 		resp.setTitular( c.getTitular() );
 		resp.setSaldo( c.getSaldo() );
 		resp.setCredito( c.getCredito() );

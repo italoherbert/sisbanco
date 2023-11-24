@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 public class HttpUtil {
-
+		
 	public String extractBearerToken( HttpServletRequest request ) {
 		String authorizationHeader = request.getHeader( "Authorization" );
 		return this.extractBearerToken( authorizationHeader );

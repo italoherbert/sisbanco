@@ -9,6 +9,8 @@ public class ContaResponse {
 	
 	private String titular;
 	
+	private String username;
+	
 	private double saldo;
 	
 	private double credito;
