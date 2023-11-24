@@ -12,7 +12,6 @@ import java.util.Map;
 
 import org.keycloak.representations.AccessTokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -30,14 +29,13 @@ import italo.sisbanco.keycloak.manager.KeycloakManager;
 import italo.sisbanco.keycloak.model.Login;
 import italo.sisbanco.keycloak.model.Token;
 import italo.sisbanco.keycloak.model.TokenInfo;
+import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.NotAuthorizedException;
 import jakarta.ws.rs.WebApplicationException;
 
 @Service
 public class TokenService {
-	
-	@Value("${config.keycloak.app.realm.public_key}")
-	private String realmPublicKey;
-	
+		
 	@Autowired
 	private KeycloakManager keycloakManager;
 	
@@ -50,13 +48,18 @@ public class TokenService {
 			Token token = new Token();
 			token.setAccessToken( resp.getToken() ); 
 			return token;
-		} catch ( WebApplicationException e ) {
+		} catch ( NotAuthorizedException e ) {
+			throw new ServiceException( Erros.ACESSO_NAO_AUTORIZADO );
+		} catch ( BadRequestException e ) {
 			e.printStackTrace();
+			throw new ServiceException( Erros.TOKEN_SOLICITACAO_FALHA );
+		} catch ( WebApplicationException e ) {
 			throw new ServiceException( Erros.TOKEN_SOLICITACAO_FALHA );
 		}				
 	}
 	
-	public TokenInfo tokenInfo( Token token ) throws ServiceException {		
+	public TokenInfo tokenInfo( Token token ) throws ServiceException {
+		String realmPublicKey = keycloakManager.getAppRealmPublicKey();
 		try {
 			byte[] publicKeyBytes = Base64.getDecoder().decode( realmPublicKey );
 			X509EncodedKeySpec keySpec = new X509EncodedKeySpec( publicKeyBytes );

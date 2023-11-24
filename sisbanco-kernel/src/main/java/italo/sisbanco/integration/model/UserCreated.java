@@ -3,10 +3,8 @@ package italo.sisbanco.integration.model;
 import lombok.Data;
 
 @Data
-public class Login {
+public class UserCreated {
 
-	private String username;
-	
-	private String password;
+	private String userId;
 	
 }

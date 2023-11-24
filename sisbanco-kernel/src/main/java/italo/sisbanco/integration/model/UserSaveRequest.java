@@ -1,4 +1,4 @@
-package italo.sisbanco.keycloak.model;
+package italo.sisbanco.integration.model;
 
 import lombok.Data;
 

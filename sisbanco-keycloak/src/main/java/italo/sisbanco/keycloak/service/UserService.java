@@ -44,12 +44,7 @@ public class UserService {
 			credential.setType( "password" );
 			credential.setValue( request.getPassword() );
 			
-			String groupPath;
-			if ( request.getGroup().equalsIgnoreCase( "funcionario" ) ) {
-				groupPath = keycloakManager.getFuncionarioGroupPath();
-			} else {
-				groupPath = keycloakManager.getClienteGroupPath();
-			}
+			String groupPath = request.getGroupPath();
 						
 			GroupRepresentation group = keycloakManager.getGroupRepresentation( keycloak, appRealm, groupPath );
 			

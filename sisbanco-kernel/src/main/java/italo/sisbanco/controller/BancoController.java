@@ -21,7 +21,7 @@ public class BancoController {
 	private BancoService bancoService;
 	
 	@PreAuthorize("hasAuthority('contaDonoWRITE')")
-	@PostMapping("/dono/creditar/{contaId}")
+	@PostMapping("/depositar/{contaId}")
 	public ResponseEntity<Object> depositar( 
 			@PathVariable Long contaId, 
 			@RequestBody ValorRequest request ) throws SistemaException {
@@ -30,6 +30,7 @@ public class BancoController {
 		return ResponseEntity.ok().build();		
 	}
 	
+	@PreAuthorize("hasAuthority('contaDonoWRITE')")
 	@PostMapping("/sacar/{contaId}")
 	public ResponseEntity<Object> sacar( 
 			@PathVariable Long contaId, 
@@ -39,6 +40,7 @@ public class BancoController {
 		return ResponseEntity.ok().build();		
 	}
 	
+	@PreAuthorize("hasAuthority('contaDonoWRITE')")
 	@PostMapping("/transferir/orig/{origContaId}/dest/{destContaId}")
 	public ResponseEntity<Object> transferir( 
 			@PathVariable Long origContaId,

@@ -39,15 +39,7 @@ public class KeycloakManager {
 	private String appClientId;
 	
 	@Value("${config.keycloak.app.realm.public_key}")
-	private String appRealmPublicKey;
-	
-	
-	@Value("${config.keycloak.group.path.cliente}")
-	private String clienteGroupPath;
-	
-	@Value("${config.keycloak.group.path.funcionario}")
-	private String funcionarioGroupPath;		
-	
+	private String appRealmPublicKey;	
 	
 	public Keycloak getKeycloakAdmin() {
 		return KeycloakBuilder.builder()
@@ -96,20 +88,16 @@ public class KeycloakManager {
 		return keycloak.realm( realm ).getGroupByPath( groupPath );
 	}
 	
-	public String getClienteGroupPath() {
-		return clienteGroupPath;
-	}
-	
-	public String getFuncionarioGroupPath() {
-		return funcionarioGroupPath;
-	}
-	
 	public String getAdminRealm() {
 		return adminRealm;
 	}
 	
 	public String getAppRealm() {
 		return appRealm;
+	}
+	
+	public String getAppRealmPublicKey() {
+		return appRealmPublicKey;
 	}
 	
 }

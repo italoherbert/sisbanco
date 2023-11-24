@@ -2,6 +2,7 @@ package italo.sisbanco.keycloak.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,6 +39,7 @@ public class KeycloakController {
 		return ResponseEntity.ok( info );
 	}
 	
+	@PreAuthorize("hasAuthority('userWRITE')")
 	@PostMapping(value="/users/registra")
 	public ResponseEntity<Object> registraUser( @RequestBody UserSaveRequest request ) throws SistemaException {
 		UserCreated created = userService.novoUsuario( request );

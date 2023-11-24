@@ -1,7 +1,6 @@
 package italo.sisbanco.security;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,37 +15,28 @@ import feign.FeignException.FeignClientException;
 import italo.sisbanco.integration.KeycloakMicroserviceIntegration;
 import italo.sisbanco.integration.model.Token;
 import italo.sisbanco.integration.model.TokenInfo;
-import italo.sisbanco.util.TokenUtil;
+import italo.sisbanco.shared.util.HttpUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Component
-public class AuthenticationFilter extends OncePerRequestFilter {
+public class AuthorizationFilter extends OncePerRequestFilter {
 	
 	@Autowired
 	private KeycloakMicroserviceIntegration keycloak;
 		
-	@Autowired
-	private TokenUtil tokenUtil;
+	private final HttpUtil httpUtil = new HttpUtil(); 
 	
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-		String accessToken = tokenUtil.extractToken( request );
-				
+		String accessToken = httpUtil.extractBearerToken( request );
 		if ( accessToken == null ) {
-			String resp = "{ \"mensagem\" : \"Token inválido.\" }";
-			response.setContentType( "application/json" );
-			response.setStatus( HttpServletResponse.SC_BAD_REQUEST );
-			
-			PrintWriter writer = new PrintWriter( response.getOutputStream() );
-			writer.print( resp ); 
-			writer.flush();		
-			
+			super.doFilter( request, response, filterChain ); 
 			return;
 		}
-			
+		
 		Token token = new Token();
 		token.setAccessToken( accessToken );
 		
@@ -68,17 +58,12 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 			} else {
 				System.out.println( "ERRO:  "+resp.getStatusCode().value() );
 			}
-		} catch ( FeignClientException e ) {			
-			response.setContentType( "application/json" );
-			response.setStatus( HttpServletResponse.SC_BAD_REQUEST );
-			
-			PrintWriter writer = new PrintWriter( response.getOutputStream() );
-			writer.print( e.contentUTF8() ); 
-			writer.flush();
+		} catch ( FeignClientException e ) {
+			httpUtil.sendErrorResponse( response, e.contentUTF8() );
 			return;
-		}							
+		}
 
-		super.doFilter( request, response, filterChain );
+		super.doFilter( request, response, filterChain ); 
 	}
 	
 }

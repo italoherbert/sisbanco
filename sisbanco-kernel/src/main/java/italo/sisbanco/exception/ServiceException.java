@@ -8,4 +8,8 @@ public class ServiceException extends SistemaException {
 		super( erroChave, erroParams );
 	}
 
+	public ServiceException(int status, String messageBody) {
+		super( status, messageBody );
+	}
+
 }

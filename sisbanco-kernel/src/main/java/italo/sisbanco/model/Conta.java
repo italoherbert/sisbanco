@@ -18,6 +18,8 @@ public class Conta {
 	
 	private String titular;
 	
+	private String username;
+	
 	private double saldo;
 	
 	private double credito;

@@ -18,7 +18,20 @@
 		<spring-cloud.version>2022.0.4</spring-cloud.version>
 	</properties>
 		
+	<repositories>
+		<repository>
+			<id>repositorio-local</id>
+			<name>Repositório local</name>
+			<url>${user.home}/.m2/repository</url>
+		</repository>
+	</repositories>	
+		
 	<dependencies>		
+		<dependency>
+			<groupId>italo</groupId> 
+			<artifactId>sisbanco-shared</artifactId>
+			<version>1.0</version> 
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>

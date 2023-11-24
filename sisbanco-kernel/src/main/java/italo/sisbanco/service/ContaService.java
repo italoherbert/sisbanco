@@ -5,10 +5,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import feign.FeignException.FeignClientException;
 import italo.sisbanco.Erros;
 import italo.sisbanco.exception.ServiceException;
+import italo.sisbanco.integration.KeycloakMicroserviceIntegration;
+import italo.sisbanco.integration.model.UserCreated;
 import italo.sisbanco.mapper.ContaMapper;
 import italo.sisbanco.model.Conta;
 import italo.sisbanco.model.request.conta.ContaFiltroRequest;
@@ -23,16 +27,30 @@ public class ContaService {
 	private ContaRepository contaRepository;
 	
 	@Autowired
+	private KeycloakMicroserviceIntegration keycloak;
+	
+	@Autowired
 	private ContaMapper contaMapper;
 	
-	public void registra( ContaSaveRequest request ) throws ServiceException {
+	public void registra( ContaSaveRequest request, String authorizationHeader ) throws ServiceException {
 		boolean existe = contaRepository.existeTitular( request.getTitular() );
 		if ( existe )
 			throw new ServiceException( Erros.TITULAR_JA_EXISTE );
 		
 		Conta conta = contaMapper.novoBean();
 		contaMapper.carrega( conta, request );
-		contaRepository.save( conta );
+		try {
+			ResponseEntity<UserCreated> resp = 
+					keycloak.registraUser( request.getUser(), authorizationHeader );
+			
+			if ( resp.getStatusCode().is2xxSuccessful() ) {
+				contaRepository.save( conta );
+			} else {
+				throw new ServiceException( Erros.KEYCLOAK_USER_NAO_CRIADO );
+			}
+		} catch ( FeignClientException e ) {
+			throw new ServiceException( e.status(), e.contentUTF8() );
+		}
 	}
 	
 	public void altera( Long contaId, ContaSaveRequest request ) throws ServiceException {
@@ -62,6 +80,18 @@ public class ContaService {
 		
 		Conta conta = contaOp.get();
 		
+		ContaResponse resp = contaMapper.novoContaResponse();
+		contaMapper.carregaResponse( resp, conta );
+		return resp;
+	}
+	
+	public ContaResponse getByUsername( String username ) throws ServiceException {
+		Optional<Conta> contaOp = contaRepository.buscaPorUsername( username );
+		if ( !contaOp.isPresent() )
+			throw new ServiceException( Erros.CONTA_NAO_ENCONTRADA );
+		
+		Conta conta = contaOp.get();
+				
 		ContaResponse resp = contaMapper.novoContaResponse();
 		contaMapper.carregaResponse( resp, conta );
 		return resp;
