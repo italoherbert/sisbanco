@@ -5,8 +5,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import italo.sisbanco.keycloak.SisbancoKeycloakApplication;
 
-@SpringBootTest(classes = SisbancoKeycloakApplication.class)
-class SisbancoAuthApplicationTests {
+@SpringBootTest(classes=SisbancoKeycloakApplication.class)
+class SisbancoKeycloakApplicationTests {
 
 	@Test
 	void contextLoads() {

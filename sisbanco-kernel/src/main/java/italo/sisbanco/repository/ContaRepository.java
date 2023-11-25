@@ -10,7 +10,9 @@ import italo.sisbanco.model.Conta;
 
 public interface ContaRepository extends JpaRepository<Conta, Long> {
 	
-	@Query("select c from Conta c where lower(c.titular) like lower(?1)")
+	@Query("select c "
+			+ "from Conta c "
+			+ "where (?1 = '*%') or ( lower(c.titular) like lower(?1) )")
 	public List<Conta> filtra( String titular );
 	
 	@Query("select c.username from Conta c where c.id=?1")

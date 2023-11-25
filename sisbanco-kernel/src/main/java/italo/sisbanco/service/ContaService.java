@@ -119,7 +119,9 @@ public class ContaService {
 	}
 	
 	public List<ContaResponse> filtra( ContaFiltroRequest request ) {
-		List<Conta> contas = contaRepository.filtra( request.getTitular() );
+		String titularFiltro = request.getTitular()+"%";
+		
+		List<Conta> contas = contaRepository.filtra( titularFiltro );
 		
 		List<ContaResponse> responses = new ArrayList<>();
 		for( Conta c : contas ) {
@@ -135,7 +137,7 @@ public class ContaService {
 		boolean existe = contaRepository.existsById( contaId );
 		if ( !existe )
 			throw new ServiceException( Erros.CONTA_NAO_ENCONTRADA );
-		
+				
 		contaRepository.deleteById( contaId ); 
 	}
 	

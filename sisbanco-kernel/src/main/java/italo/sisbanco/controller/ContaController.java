@@ -60,17 +60,9 @@ public class ContaController {
 		ContaResponse resp = contaService.get( contaId );
 		return ResponseEntity.ok( resp );
 	}
-	
+		
 	@PreAuthorize("hasAuthority('contaREAD')")
-	@GetMapping("/get/por-username/{username}")
-	public ResponseEntity<Object> get(
-			@PathVariable String username ) throws SistemaException {
-		ContaResponse resp = contaService.getByUsername( username );
-		return ResponseEntity.ok( resp );
-	}
-	
-	@PreAuthorize("hasAuthority('contaREAD')")
-	@GetMapping("/filtra")
+	@PostMapping("/filtra")
 	public ResponseEntity<Object> filtra(
 			@Valid @RequestBody ContaFiltroRequest request ) throws SistemaException {
 		List<ContaResponse> resp = contaService.filtra( request );
@@ -81,7 +73,7 @@ public class ContaController {
 	@DeleteMapping("/deleta/{contaId}")
 	public ResponseEntity<Object> deleta(
 			@PathVariable Long contaId ) throws SistemaException {
-		contaService.deleta( contaId );
+		contaService.deleta( contaId );		
 		return ResponseEntity.ok().build();
 	}
 	

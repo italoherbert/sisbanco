@@ -14,14 +14,13 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import italo.sisbanco.annotation.ContaBD;
 import italo.sisbanco.integration.KeycloakMicroserviceIntegration;
 import italo.sisbanco.model.request.conta.ValorRequest;
 import italo.sisbanco.service.BancoService;
@@ -52,8 +51,7 @@ public class BancoControllerTest {
 	}				
 	
 	@Test
-	@Sql("/data/data.sql")
-	@Sql(scripts= {"/data/drops.sql"}, executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
+	@ContaBD
 	@WithMockUser(username="cliente", authorities = { "contaDonoWRITE" } ) 
 	public void testCreditar() {		
 		int contaId = 1;
@@ -75,8 +73,7 @@ public class BancoControllerTest {
 	}
 	
 	@Test
-	@Sql("/data/data.sql")
-	@Sql(scripts= {"/data/drops.sql"}, executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
+	@ContaBD
 	@WithMockUser(username="cliente", authorities = { "contaDonoWRITE" } ) 
 	public void testDebitar() {		
 		int contaId = 1;
@@ -98,8 +95,7 @@ public class BancoControllerTest {
 	}
 	
 	@Test		
-	@Sql("/data/data.sql")
-	@Sql(scripts= {"/data/drops.sql"}, executionPhase = ExecutionPhase.AFTER_TEST_METHOD)	
+	@ContaBD
 	@WithMockUser(username="cliente", authorities = { "contaDonoWRITE" } ) 
 	public void testTransferir() {		
 		int origContaId = 1;

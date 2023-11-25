@@ -8,9 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 
+import italo.sisbanco.annotation.ContaBD;
 import italo.sisbanco.exception.ServiceException;
 import italo.sisbanco.model.request.conta.ValorRequest;
 import italo.sisbanco.model.response.conta.ContaResponse;
@@ -25,8 +24,7 @@ public class BancoServiceTest {
 	private BancoService bancoService;
 				
 	@Test	
-	@Sql("/data/data.sql")
-	@Sql(scripts = {"/data/drops.sql"}, executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
+	@ContaBD
 	public void creditoTest() {				
 		try {					
 			this.executaCredito( "joao", 300 );
@@ -36,8 +34,7 @@ public class BancoServiceTest {
 	}
 	
 	@Test	
-	@Sql("/data/data.sql")
-	@Sql(scripts = {"/data/drops.sql"}, executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
+	@ContaBD
 	public void debitoTest() {			
 		try {					
 			this.alteraSaldoCredito( "joao", 300, 500 );
@@ -66,8 +63,7 @@ public class BancoServiceTest {
 	}
 	
 	@Test	
-	@Sql("/data/data.sql")
-	@Sql(scripts = {"/data/drops.sql"}, executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
+	@ContaBD
 	public void transferenciaTest() {				
 		try {					
 			this.alteraSaldoCredito( "joao", 300, 500 );
