@@ -1,4 +1,4 @@
-package italo.sisbanco.security;
+package italo.sisbanco.trans.reg.security;
 
 import java.io.IOException;
 import java.util.List;
@@ -12,10 +12,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import feign.FeignException.FeignClientException;
-import italo.sisbanco.integration.KeycloakMicroserviceIntegration;
-import italo.sisbanco.integration.model.Token;
-import italo.sisbanco.integration.model.TokenInfo;
 import italo.sisbanco.shared.util.HttpUtil;
+import italo.sisbanco.trans.reg.integration.KeycloakMicroserviceIntegration;
+import italo.sisbanco.trans.reg.integration.model.Token;
+import italo.sisbanco.trans.reg.integration.model.TokenInfo;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

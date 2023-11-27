@@ -12,7 +12,7 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - pgdata_keycloak:/var/lib/postgresql/data
+      - keycloak_data:/var/lib/postgresql/data
     
   sisbanco-kernel-db:
     image: postgres:15
@@ -25,7 +25,45 @@ services:
     ports:
       - 5433:5432
     volumes:
-      - pgdata_sisbanco_kernel:/var/lib/postgresql/data
+      - sisbanco_kernel_data:/var/lib/postgresql/data  
+
+  sisbanco-transacoes-db:
+    image: mongo
+    container_name: sisbanco-transacoes-db
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+      - MONGO_INITDB_DATABASE=sisbanco-transacoes
+    command: mongod --auth
+    ports:
+      - 27017:27017
+    volumes:
+      - sisbanco_transacoes_data:/data/db  
+
+  sisbanco-transacoes-cache-db:
+    image: redis
+    container_name: sisbanco-transacoes-cache-db
+    restart: always    
+    command: redis-server --save 20 1 --loglevel warning --requirePass 123
+    ports:
+      - 6379:6379
+    volumes:
+      - sisbanco_transacoes_cache_data:/data
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq/
+      - rabbitmq_log:/var/log/rabbitmq
 
   keycloak:
     image: quay.io/keycloak/keycloak:latest
@@ -45,7 +83,16 @@ services:
       - keycloak-db
 
 volumes:
-  pgdata_sisbanco_kernel:
+  keycloak_data:
     driver: local
-  pgdata_keycloak:
+  rabbitmq_data:
+    driver: local
+  rabbitmq_log:
+    driver: local
+
+  sisbanco_kernel_data:
+    driver: local
+  sisbanco_transacoes_data:
+    driver: local
+  sisbanco_transacoes_cache_data:
     driver: local

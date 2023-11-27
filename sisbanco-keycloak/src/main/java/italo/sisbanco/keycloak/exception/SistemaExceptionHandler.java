@@ -22,7 +22,7 @@ public class SistemaExceptionHandler {
 	private MessageSource messageSource;
 		
 	@ExceptionHandler(SistemaException.class)
-	public ResponseEntity<Object> trataKernelException( SistemaException e ) {
+	public ResponseEntity<Object> trataSistemaException( SistemaException e ) {
 		try {
 			String message = messageSource.getMessage( e.getErroChave(), e.getErroParams(), Locale.getDefault() );
 			return ResponseEntity.status( 400 ).body( new ErroResponse( message ) );

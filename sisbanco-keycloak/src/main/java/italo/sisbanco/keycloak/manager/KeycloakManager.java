@@ -40,7 +40,7 @@ public class KeycloakManager {
 	
 	@Value("${config.keycloak.app.realm.public_key}")
 	private String appRealmPublicKey;	
-	
+		
 	public Keycloak getKeycloakAdmin() {
 		return KeycloakBuilder.builder()
 				.serverUrl( serverUrl )
@@ -72,7 +72,7 @@ public class KeycloakManager {
 				.password( password )				
 				.grantType( OAuth2Constants.PASSWORD )
 				.build();
-		
+						
 		return keycloak.tokenManager().getAccessToken();
 	}
 	

@@ -44,7 +44,7 @@ public class TokenService {
 	public Token login( Login request ) throws ServiceException {
 		try {
 			AccessTokenResponse resp = keycloakManager.token( request.getUsername(), request.getPassword() );
-			
+
 			Token token = new Token();
 			token.setAccessToken( resp.getToken() ); 
 			return token;
