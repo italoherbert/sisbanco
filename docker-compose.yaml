@@ -41,9 +41,9 @@ services:
     volumes:
       - sisbanco_transacoes_data:/data/db  
 
-  sisbanco-transacoes-cache-db:
+  sisbanco-historico-cache-db:
     image: redis
-    container_name: sisbanco-transacoes-cache-db
+    container_name: sisbanco-historico-cache-db
     restart: always    
     command: redis-server --save 20 1 --loglevel warning --requirePass 123
     ports:
