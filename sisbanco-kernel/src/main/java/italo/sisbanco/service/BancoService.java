@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import italo.sisbanco.Erros;
+import italo.sisbanco.enums.TransacaoTipo;
 import italo.sisbanco.exception.ServiceException;
 import italo.sisbanco.model.Conta;
 import italo.sisbanco.model.request.conta.ValorRequest;
+import italo.sisbanco.queue.TransacaoQueue;
 import italo.sisbanco.repository.ContaRepository;
 import jakarta.transaction.Transactional;
 
@@ -17,6 +19,9 @@ public class BancoService {
 
 	@Autowired
 	private ContaRepository contaRepository;
+	
+	@Autowired
+	private TransacaoQueue transacaoQueue;
 	
 	public void debita( Long contaId, ValorRequest request ) throws ServiceException {
 		Optional<Conta> contaOp = contaRepository.findById( contaId );
@@ -29,7 +34,9 @@ public class BancoService {
 			throw new ServiceException( Erros.CREDITO_INSUFICIENTE );
 			
 		conta.setSaldo( conta.getSaldo() - request.getValor() ); 
-		contaRepository.save( conta );			
+		contaRepository.save( conta );
+		
+		transacaoQueue.envia( conta, request.getValor(), TransacaoTipo.DEBITO );
 	}
 	
 	public void credita( Long contaId, ValorRequest request ) throws ServiceException {
@@ -40,6 +47,8 @@ public class BancoService {
 		Conta conta = contaOp.get();		
 		conta.setSaldo( conta.getSaldo() + request.getValor() );
 		contaRepository.save( conta );
+
+		transacaoQueue.envia( conta, request.getValor(), TransacaoTipo.CREDITO );
 	}
 	
 	@Transactional
@@ -63,6 +72,8 @@ public class BancoService {
 		
 		contaRepository.save( origem );
 		contaRepository.save( dest );		
+		
+		transacaoQueue.envia( origem, request.getValor(), TransacaoTipo.TRANSFERENCIA );
 	}
 	
 }

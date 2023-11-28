@@ -62,7 +62,7 @@ public class BancoControllerTest {
 			credito.setValor( valor );
 								
 			mockMvc.perform( 
-					post("/api/banco/depositar/"+contaId )
+					post("/api/kernel/banco/depositar/"+contaId )
 						.contentType(MediaType.APPLICATION_JSON )
 						.content( objectMapper.writeValueAsBytes( credito ) ) )
 				.andDo( print() )
@@ -84,7 +84,7 @@ public class BancoControllerTest {
 			debito.setValor( valor );
 												
 			mockMvc.perform( 
-					post("/api/banco/sacar/"+contaId )
+					post("/api/kernel/banco/sacar/"+contaId )
 						.contentType(MediaType.APPLICATION_JSON )
 						.content( objectMapper.writeValueAsBytes( debito ) ) )
 				.andDo( print() )
@@ -108,7 +108,7 @@ public class BancoControllerTest {
 			transferencia.setValor( valor );
 							
 			mockMvc.perform( 
-					post("/api/banco/transferir/orig/"+origContaId+"/dest/"+destContaId )
+					post("/api/kernel/banco/transferir/orig/"+origContaId+"/dest/"+destContaId )
 						.contentType(MediaType.APPLICATION_JSON )
 						.content( objectMapper.writeValueAsBytes( transferencia ) ) )
 				.andDo( print() )

@@ -14,7 +14,7 @@ import italo.sisbanco.model.request.conta.ValorRequest;
 import italo.sisbanco.service.BancoService;
 
 @RestController
-@RequestMapping("/api/banco")
+@RequestMapping("/api/kernel/banco")
 public class BancoController {
 	
 	@Autowired

@@ -114,7 +114,7 @@ public class KeycloakControllerTest {
 	}
 	
 	@Test
-	@WithMockUser(username="user", authorities = {"userWRITE"})
+	@WithMockUser(username="user", authorities = {"userCreateWRITE"})
 	public void registraUser() {
 		UserSaveRequest user = new UserSaveRequest();
 		user.setUsername( "user" );

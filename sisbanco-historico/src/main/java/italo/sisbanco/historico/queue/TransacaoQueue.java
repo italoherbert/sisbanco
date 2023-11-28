@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
-import italo.sisbanco.historico.model.TransacaoQueueMessage;
+import italo.sisbanco.historico.model.message.TransacaoMessage;
 import italo.sisbanco.historico.service.TransacaoService;
 import jakarta.validation.Valid;
 
@@ -18,7 +18,7 @@ public class TransacaoQueue {
 	@RabbitListener(
 			queues = {"${config.rabbitmq.queue}"}, 
 			errorHandler = "transacaoRabbitListenerErrorHandler")
-	public void recebeTransacao( @Valid @Payload TransacaoQueueMessage message ) {
+	public void recebeTransacao( @Valid @Payload TransacaoMessage message ) {
 		transacaoService.registraTransacao( message );		
 	}
 	

@@ -19,17 +19,13 @@ import italo.sisbanco.model.request.conta.ContaFiltroRequest;
 import italo.sisbanco.model.request.conta.ContaSaveRequest;
 import italo.sisbanco.model.response.conta.ContaResponse;
 import italo.sisbanco.service.ContaService;
-import italo.sisbanco.shared.util.HttpUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/conta")
+@RequestMapping("/api/kernel/conta")
 public class ContaController {
-	
-	@Autowired
-	private HttpUtil httpUtil;
-	
+		
 	@Autowired
 	private ContaService contaService;
 	
@@ -39,9 +35,9 @@ public class ContaController {
 			@Valid @RequestBody ContaSaveRequest request, 
 			HttpServletRequest httpRequest ) throws SistemaException {
 			
-		String accessToken = httpUtil.extractBearerToken( httpRequest );
-		contaService.registra( request, accessToken ); 
-		return ResponseEntity.ok().build();
+		String authorizationHeader = httpRequest.getHeader( "Authorization" );
+		ContaResponse resp = contaService.registra( request, authorizationHeader ); 
+		return ResponseEntity.ok( resp );
 	}
 	
 	@PreAuthorize("hasAnyAuthority('contaWRITE', 'contaDonoWRITE')")

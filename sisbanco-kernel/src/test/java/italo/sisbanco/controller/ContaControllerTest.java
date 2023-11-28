@@ -75,7 +75,7 @@ public class ContaControllerTest {
 			when( keycloak.registraUser( any( UserSaveRequest.class ), anyString() ) ).thenReturn( userCreatedEntity );					
 												
 			mockMvc.perform( 
-				post("/api/conta/registra")
+				post("/api/kernel/conta/registra")
 					.contentType( MediaType.APPLICATION_JSON )
 					.content( objectMapper.writeValueAsBytes( conta ) ) )
 				.andDo( print() )
@@ -94,7 +94,7 @@ public class ContaControllerTest {
 			conta.setTitular( "italo" );
 												
 			mockMvc.perform( 
-				put("/api/conta/altera/1")
+				put("/api/kernel/conta/altera/1")
 					.contentType( MediaType.APPLICATION_JSON )
 					.content( objectMapper.writeValueAsBytes( conta ) ) )
 				.andDo( print() )
@@ -110,7 +110,7 @@ public class ContaControllerTest {
 	public void getContaTest() {
 		try {																														
 			mockMvc.perform( 
-				get("/api/conta/get/1") )
+				get("/api/kernel/conta/get/1") )
 					.andDo( print() )
 					.andExpect( status().isOk() );
 		} catch ( Exception e ) {
@@ -127,7 +127,7 @@ public class ContaControllerTest {
 			filtro.setTitular( "*" ); 
 			
 			mockMvc.perform( 
-				post("/api/conta/filtra")
+				post("/api/kernel/conta/filtra")
 					.contentType(MediaType.APPLICATION_JSON )
 					.content( objectMapper.writeValueAsBytes( filtro ) ) )				
 				.andDo( print() )
@@ -143,7 +143,7 @@ public class ContaControllerTest {
 	public void deletaContaTest() {
 		try {								
 			mockMvc.perform( 
-				delete("/api/conta/deleta/1") )								
+				delete("/api/kernel/conta/deleta/1") )								
 					.andDo( print() )
 					.andExpect( status().isOk() );			 
 		} catch ( Exception e ) {

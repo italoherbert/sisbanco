@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import italo.sisbanco.historico.model.Transacao;
-import italo.sisbanco.historico.model.TransacaoQueueMessage;
+import italo.sisbanco.historico.model.message.TransacaoMessage;
 import italo.sisbanco.historico.model.request.TransacaoFiltroRequest;
 import italo.sisbanco.historico.repository.TransacaoRepository;
 
@@ -19,7 +19,7 @@ public class TransacaoService {
 	@Autowired
 	private TransacaoRepository transacaoRepository;
 		
-	public void registraTransacao( TransacaoQueueMessage request ) {
+	public void registraTransacao( TransacaoMessage request ) {
 		Transacao transacao = new Transacao();
 		transacao.setUsername( request.getUsername() );
 		transacao.setValor( request.getValor() );

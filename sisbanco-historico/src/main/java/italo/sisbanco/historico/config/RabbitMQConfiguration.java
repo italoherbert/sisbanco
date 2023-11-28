@@ -15,7 +15,7 @@ import italo.sisbanco.historico.exception.TransacaoRabbitListenerErrorHandler;
 @Configuration
 public class RabbitMQConfiguration {	
 	
-	@Value("${config.message.queue.logging.error.file}")
+	@Value("${config.message.logging.error.file}")
 	private String transacoesErrorLogFile;
 	
 	@Autowired

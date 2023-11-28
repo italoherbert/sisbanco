@@ -1,11 +1,11 @@
-package italo.sisbanco.historico.model;
+package italo.sisbanco.model.message;
 
 import java.util.Date;
 
 import lombok.Data;
 
 @Data
-public class TransacaoQueueMessage {
+public class TransacaoMessage {
 
 	private String username;
 	

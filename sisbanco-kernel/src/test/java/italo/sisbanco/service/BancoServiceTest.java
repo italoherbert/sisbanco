@@ -8,11 +8,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import italo.sisbanco.annotation.ContaBD;
 import italo.sisbanco.exception.ServiceException;
 import italo.sisbanco.model.request.conta.ValorRequest;
 import italo.sisbanco.model.response.conta.ContaResponse;
+import italo.sisbanco.queue.TransacaoQueue;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class BancoServiceTest {
@@ -23,6 +25,9 @@ public class BancoServiceTest {
 	@Autowired
 	private BancoService bancoService;
 				
+	@MockBean
+	private TransacaoQueue transacaoQueue;
+	
 	@Test	
 	@ContaBD
 	public void creditoTest() {				

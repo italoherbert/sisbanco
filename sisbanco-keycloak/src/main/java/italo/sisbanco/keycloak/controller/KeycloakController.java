@@ -39,7 +39,7 @@ public class KeycloakController {
 		return ResponseEntity.ok( info );
 	}
 	
-	@PreAuthorize("hasAuthority('userWRITE')")
+	@PreAuthorize("hasAuthority('userCreateWRITE')")
 	@PostMapping(value="/users/registra")
 	public ResponseEntity<Object> registraUser( @RequestBody UserSaveRequest request ) throws SistemaException {
 		UserCreated created = userService.novoUsuario( request );

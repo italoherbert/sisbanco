@@ -18,7 +18,7 @@ import italo.sisbanco.historico.service.TransacaoService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/transacoes")
+@RequestMapping("/api/historico/transacoes")
 public class TransacaoController {
 
 	@Autowired

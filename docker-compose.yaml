@@ -27,19 +27,19 @@ services:
     volumes:
       - sisbanco_kernel_data:/var/lib/postgresql/data  
 
-  sisbanco-transacoes-db:
+  sisbanco-historico-db:
     image: mongo
-    container_name: sisbanco-transacoes-db
+    container_name: sisbanco-historico-db
     restart: always
     environment:
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=admin
-      - MONGO_INITDB_DATABASE=sisbanco-transacoes
+      - MONGO_INITDB_DATABASE=sisbanco-historico
     command: mongod --auth
     ports:
       - 27017:27017
     volumes:
-      - sisbanco_transacoes_data:/data/db  
+      - sisbanco_historico_data:/data/db  
 
   sisbanco-historico-cache-db:
     image: redis
@@ -49,7 +49,7 @@ services:
     ports:
       - 6379:6379
     volumes:
-      - sisbanco_transacoes_cache_data:/data
+      - sisbanco_historico_cache_data:/data
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -92,7 +92,7 @@ volumes:
 
   sisbanco_kernel_data:
     driver: local
-  sisbanco_transacoes_data:
+  sisbanco_historico_data:
     driver: local
-  sisbanco_transacoes_cache_data:
+  sisbanco_historico_cache_data:
     driver: local

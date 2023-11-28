@@ -33,7 +33,7 @@ public class ContaService {
 	@Autowired
 	private ContaMapper contaMapper;
 	
-	public void registra( ContaSaveRequest request, String authorizationHeader ) throws ServiceException {
+	public ContaResponse registra( ContaSaveRequest request, String authorizationHeader ) throws ServiceException {
 		boolean existe = contaRepository.existeTitular( request.getTitular() );
 		if ( existe )
 			throw new ServiceException( Erros.TITULAR_JA_EXISTE );
@@ -46,6 +46,10 @@ public class ContaService {
 			
 			if ( resp.getStatusCode().is2xxSuccessful() ) {
 				contaRepository.save( conta );
+				
+				ContaResponse contaResp = contaMapper.novoContaResponse();
+				contaMapper.carregaResponse( contaResp, conta ); 
+				return contaResp;
 			} else {
 				throw new ServiceException( Erros.KEYCLOAK_USER_NAO_CRIADO );
 			}
