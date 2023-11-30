@@ -28,12 +28,12 @@ import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import italo.sisbanco.annotation.ContaBD;
-import italo.sisbanco.integration.KeycloakMicroserviceIntegration;
-import italo.sisbanco.integration.model.UserCreated;
-import italo.sisbanco.integration.model.UserSaveRequest;
-import italo.sisbanco.model.request.conta.ContaFiltroRequest;
-import italo.sisbanco.model.request.conta.ContaSaveRequest;
-import italo.sisbanco.service.ContaService;
+import italo.sisbanco.kernel.integration.KeycloakMicroserviceIntegration;
+import italo.sisbanco.kernel.integration.model.UserCreated;
+import italo.sisbanco.kernel.integration.model.UserSaveRequest;
+import italo.sisbanco.kernel.model.request.conta.ContaFiltroRequest;
+import italo.sisbanco.kernel.model.request.conta.ContaSaveRequest;
+import italo.sisbanco.kernel.service.ContaService;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class ContaControllerTest {

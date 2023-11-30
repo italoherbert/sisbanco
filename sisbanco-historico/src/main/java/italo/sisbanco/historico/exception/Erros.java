@@ -4,6 +4,6 @@ public interface Erros {
 
 	public final static String ACESSO_NAO_AUTORIZADO = "acesso.nao.autorizado";
 	
-	public final static String LOGGING_ERRO_MSG_FORMATO_INVALIDO = "logging.erro.msg.formato.invalido";
+	public final static String TRANSACAO_NAO_ENCONTRADA = "transacao.nao.encontrada";
 	
 }

@@ -2,12 +2,15 @@ package italo.sisbanco.historico.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import italo.sisbanco.historico.exception.ErrorException;
+import italo.sisbanco.historico.exception.Erros;
 import italo.sisbanco.historico.model.Transacao;
 import italo.sisbanco.historico.model.message.TransacaoMessage;
 import italo.sisbanco.historico.model.request.TransacaoFiltroRequest;
@@ -19,14 +22,14 @@ public class TransacaoService {
 	@Autowired
 	private TransacaoRepository transacaoRepository;
 		
-	public void registraTransacao( TransacaoMessage request ) {
+	public Transacao registraTransacao( TransacaoMessage request ) {
 		Transacao transacao = new Transacao();
 		transacao.setUsername( request.getUsername() );
 		transacao.setValor( request.getValor() );
 		transacao.setDataOperacao( request.getDataOperacao() );
 		transacao.setTipo( request.getTipo() );
 		
-		transacaoRepository.save( transacao );
+		return transacaoRepository.save( transacao );
 	}
 		
 	public List<Transacao> listaOrderDesc( int quant ) {
@@ -42,6 +45,22 @@ public class TransacaoService {
 		
 		List<Transacao> transacoes = transacaoRepository.filtra( username, dataIni, dataFim );
 		return transacoes;
+	}
+	
+	public Transacao get( String id ) {
+		Optional<Transacao> transacaoOp = transacaoRepository.findById( id );
+		if ( !transacaoOp.isPresent() )
+			throw new ErrorException( Erros.TRANSACAO_NAO_ENCONTRADA );
+		
+		return transacaoOp.get();
+	}
+	
+	public void deleta( String id ) {
+		boolean existe = transacaoRepository.existsById( id );
+		if ( !existe )
+			throw new ErrorException( Erros.TRANSACAO_NAO_ENCONTRADA );
+		
+		transacaoRepository.deleteById( id );
 	}
 	
 }

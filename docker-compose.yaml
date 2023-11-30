@@ -41,15 +41,15 @@ services:
     volumes:
       - sisbanco_historico_data:/data/db  
 
-  sisbanco-historico-cache-db:
+  sisbanco-cache-db:
     image: redis
-    container_name: sisbanco-historico-cache-db
+    container_name: sisbanco-cache-db
     restart: always    
     command: redis-server --save 20 1 --loglevel warning --requirePass 123
     ports:
       - 6379:6379
     volumes:
-      - sisbanco_historico_cache_data:/data
+      - sisbanco_cache_data:/data
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -94,5 +94,5 @@ volumes:
     driver: local
   sisbanco_historico_data:
     driver: local
-  sisbanco_historico_cache_data:
+  sisbanco_cache_data:
     driver: local

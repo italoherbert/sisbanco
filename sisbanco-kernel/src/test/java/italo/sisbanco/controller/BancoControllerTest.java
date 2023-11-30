@@ -21,9 +21,11 @@ import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import italo.sisbanco.annotation.ContaBD;
-import italo.sisbanco.integration.KeycloakMicroserviceIntegration;
-import italo.sisbanco.model.request.conta.ValorRequest;
-import italo.sisbanco.service.BancoService;
+import italo.sisbanco.kernel.integration.KeycloakMicroserviceIntegration;
+import italo.sisbanco.kernel.message.TransacaoMessageSender;
+import italo.sisbanco.kernel.model.request.conta.ValorRequest;
+import italo.sisbanco.kernel.repository.TransacaoCacheRepository;
+import italo.sisbanco.kernel.service.BancoService;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class BancoControllerTest {
@@ -39,8 +41,14 @@ public class BancoControllerTest {
 	private BancoService bancoService;
 	
 	@MockBean
-	private KeycloakMicroserviceIntegration keycloak;
-						
+	private KeycloakMicroserviceIntegration keycloak;	
+
+	@MockBean
+	private TransacaoMessageSender transacaoMessageManager;
+	
+	@MockBean
+	private TransacaoCacheRepository transacaoCacheManager;
+							
 	@BeforeEach
 	public void setUp() {
 		mockMvc = MockMvcBuilders
