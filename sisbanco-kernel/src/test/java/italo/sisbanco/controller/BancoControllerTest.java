@@ -21,13 +21,14 @@ import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import italo.sisbanco.annotation.ContaBD;
+import italo.sisbanco.kernel.SisbancoKernelApplication;
 import italo.sisbanco.kernel.integration.KeycloakMicroserviceIntegration;
 import italo.sisbanco.kernel.message.TransacaoMessageSender;
 import italo.sisbanco.kernel.model.request.conta.ValorRequest;
 import italo.sisbanco.kernel.repository.TransacaoCacheRepository;
 import italo.sisbanco.kernel.service.BancoService;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes=SisbancoKernelApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 public class BancoControllerTest {
 	
 	private final ObjectMapper objectMapper = new ObjectMapper();

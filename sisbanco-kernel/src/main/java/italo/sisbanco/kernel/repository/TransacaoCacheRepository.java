@@ -34,9 +34,8 @@ public class TransacaoCacheRepository {
 		hashOperations.put( KEY, id, transacao ); 
 	}
 	
-	@Cacheable(value="transacao_cache", key="#contaId")
 	public List<TransacaoCache> findByContaId( Long contaId ) {
-		return hashOperations.entries( KEY ).values().stream()
+		return hashOperations.entries( KEY ).values().stream() 
 				.filter( t -> t.getOrigContaId() == contaId )
 				.toList();
 	}
@@ -44,15 +43,11 @@ public class TransacaoCacheRepository {
 	@Cacheable(value="transacao_cache", key="#id")
 	public Optional<TransacaoCache> findById( String id ) {
 		TransacaoCache tcache = hashOperations.get( KEY, id );
-		return Optional.of( tcache );
+		return Optional.ofNullable( tcache );
 	}
 	
-	@Cacheable(value="transacao_cache", key="#id")
 	public boolean existsById( String id ) {
-		Boolean exists = hashOperations.hasKey( KEY, id );
-		if ( exists == null )
-			return false;
-		return exists.booleanValue();
+		return hashOperations.hasKey( KEY, id );			
 	}
 	
 	@CacheEvict(value="transacao_cache", key="#id") 

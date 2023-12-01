@@ -4,7 +4,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+import italo.sisbanco.kernel.SisbancoKernelApplication;
+
+@SpringBootTest(classes=SisbancoKernelApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 class SisbancoKernelApplicationTests {
 		
 	//private JdbcTemplate jdbcTemplate;

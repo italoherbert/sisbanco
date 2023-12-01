@@ -28,6 +28,7 @@ import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import italo.sisbanco.annotation.ContaBD;
+import italo.sisbanco.kernel.SisbancoKernelApplication;
 import italo.sisbanco.kernel.integration.KeycloakMicroserviceIntegration;
 import italo.sisbanco.kernel.integration.model.UserCreated;
 import italo.sisbanco.kernel.integration.model.UserSaveRequest;
@@ -35,7 +36,7 @@ import italo.sisbanco.kernel.model.request.conta.ContaFiltroRequest;
 import italo.sisbanco.kernel.model.request.conta.ContaSaveRequest;
 import italo.sisbanco.kernel.service.ContaService;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes=SisbancoKernelApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 public class ContaControllerTest {
 
 	private final ObjectMapper objectMapper = new ObjectMapper();

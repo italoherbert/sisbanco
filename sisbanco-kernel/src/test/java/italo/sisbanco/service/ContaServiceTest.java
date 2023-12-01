@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
 import italo.sisbanco.annotation.ContaBD;
+import italo.sisbanco.kernel.SisbancoKernelApplication;
 import italo.sisbanco.kernel.exception.ServiceException;
 import italo.sisbanco.kernel.model.request.conta.ContaFiltroRequest;
 import italo.sisbanco.kernel.model.request.conta.ContaSaveRequest;
@@ -20,7 +21,7 @@ import italo.sisbanco.kernel.model.request.conta.ValorRequest;
 import italo.sisbanco.kernel.model.response.conta.ContaResponse;
 import italo.sisbanco.kernel.service.ContaService;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes=SisbancoKernelApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 public class ContaServiceTest {
 
 	@Autowired

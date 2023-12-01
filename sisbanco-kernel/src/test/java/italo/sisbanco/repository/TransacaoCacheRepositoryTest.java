@@ -13,17 +13,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 
-import italo.sisbanco.config.redis.RedisConfiguration2;
-import italo.sisbanco.config.redis.RedisProperties;
 import italo.sisbanco.config.redis.TestRedisConfiguration;
 import italo.sisbanco.kernel.SisbancoKernelApplication;
 import italo.sisbanco.kernel.model.cache.TransacaoCache;
 import italo.sisbanco.kernel.model.enums.TransacaoTipo;
 import italo.sisbanco.kernel.repository.TransacaoCacheRepository;
 
-@SpringBootTest(classes=SisbancoKernelApplication.class)
-@Import({RedisProperties.class, RedisConfiguration2.class, TestRedisConfiguration.class})
+@SpringBootTest(classes= { SisbancoKernelApplication.class } )
+@ActiveProfiles("test")
+@Import({TestRedisConfiguration.class})
 public class TransacaoCacheRepositoryTest {
 
 	@Autowired
@@ -75,8 +75,12 @@ public class TransacaoCacheRepositoryTest {
 		existe = transacaoCacheRepository.existsById( "-1" );
 		assertFalse( existe, "Não deveria ter sido encontrada transação com esse ID." );
 		
-		transacoes.forEach( t -> transacaoCacheRepository.deleteById( t.getId() ) ); 				
+		transacaoCacheRepository.deleteById( tcache3.getId() );
 		
+		Optional<TransacaoCache> tcache4Op = transacaoCacheRepository.findById( tcache3.getId() );		
+		assertFalse( tcache4Op.isPresent(), "Transacao não removida." );
+
+		transacoes = transacaoCacheRepository.findByContaId( tcache3.getOrigContaId() );
 		assertTrue( transacoes.isEmpty(), "Número de transações diferente do esperado." );		
 	}
 	

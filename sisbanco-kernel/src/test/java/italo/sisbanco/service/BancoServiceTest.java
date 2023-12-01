@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import italo.sisbanco.annotation.ContaBD;
+import italo.sisbanco.kernel.SisbancoKernelApplication;
 import italo.sisbanco.kernel.exception.ServiceException;
 import italo.sisbanco.kernel.message.TransacaoMessageSender;
 import italo.sisbanco.kernel.model.Conta;
@@ -28,7 +29,7 @@ import italo.sisbanco.kernel.repository.TransacaoCacheRepository;
 import italo.sisbanco.kernel.service.BancoService;
 import italo.sisbanco.kernel.service.ContaService;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes=SisbancoKernelApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 public class BancoServiceTest {
 		
 	@Autowired
