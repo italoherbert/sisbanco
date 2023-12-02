@@ -17,23 +17,26 @@ public class TransacaoRabbitListenerErrorHandler implements RabbitListenerErrorH
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat( "dd/MM/yyyy HH:mm:ss" );
 	
 	private final Logger logger;
-	private final FileHandler fileHandler;
+	private FileHandler fileHandler;
 	
 	public TransacaoRabbitListenerErrorHandler( String errorLogFile ) {
-		File file = new File( errorLogFile );
-		if (!file.exists() )
-			if ( file.getParentFile() != null )
-				file.getParentFile().mkdirs();
-		
-		try {			
-			fileHandler = new FileHandler( errorLogFile, true );
-			fileHandler.setFormatter( new LoggerFormatter() );
-		} catch ( IOException e ) {
-			throw new RuntimeException( "Não foi possível tratar o arquivo de log: "+errorLogFile );
-		}		
-		
 		logger = Logger.getLogger( "queue-transacoes" );
-		logger.addHandler( fileHandler );
+
+		if ( errorLogFile != null ) {
+			File file = new File( errorLogFile );
+			if (!file.exists() )
+				if ( file.getParentFile() != null )
+					file.getParentFile().mkdirs();
+			
+			try {			
+				fileHandler = new FileHandler( errorLogFile, true );
+				fileHandler.setFormatter( new LoggerFormatter() );
+			} catch ( IOException e ) {
+				throw new RuntimeException( "Não foi possível tratar o arquivo de log: "+errorLogFile );
+			}		
+			
+			logger.addHandler( fileHandler );
+		}
 	}
 	
 	@Override

@@ -69,16 +69,14 @@ services:
       - rabbitmq_conf:/etc/rabbitmq
 
   keycloak:
-    image: quay.io/keycloak/keycloak:latest
+    image: quay.io/keycloak/keycloak:23.0.1
     container_name: keycloak
     restart: always
     environment:
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
-      KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://keycloak-db:5432/keycloak
-      KC_DB_USERNAME: postgres
-      KC_DB_PASSWORD: postgres
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_DB=postgres
+      - KC_DB_URL=jdbc:postgresql://keycloak-db:5432/keycloak?user=postgres&password=postgres&ssl=false
     ports:
       - 8081:8080
     command: [start-dev]
@@ -107,7 +105,7 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: admin
       KEYCLOAK_APP_REALM: sisbanco
       KEYCLOAK_APP_CLIENT_ID: sisbanco-app
-      KEYCLOAK_APP_REALM_PUBLIC_KEY: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0kGxJeZH/JoSusG16b2B12ReP2boNEMtuIzSAK3Ugi4SEbUqxY5ga8vIfHNqqkkRImmgxo9HiwKlZfO4P6uokosOvjGYSrzIHUJ5HeXjv7CB9sX4Gtfqv5nmjojbnybmO44ymJDUBJljYGZfCQfIxFeQg+qwe1vS0KFJcUda8h0BsuZqV3o9wg6aALb/Y2aO9VZ3PgS2IvIEShtdMIvrbwKrYUz78DCZ6JSj/9Ze3UZGtFCO/ISkFk6WFm9QiZi2b8D10rTKTZphBB4kOs4onF3+iZ8eixD6lhH0T2H+ZTSutfdfc2EW/NuQl/5upT0CoHE9EREVtqM1iC4dh4i+lQIDAQAB
+      KEYCLOAK_APP_REALM_PUBLIC_KEY: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAm9Zcq/6Pq7BLuLsn6b7X0HYl/paFeC6qHr65y3FOoc7bYucPa2RcWVKazjVuRWOLZ9N6ppw9CNcLCgIyZ1ctDOzIRLGj2WbypxJ2lsEImVj6dQMSCRLhbuHrRVHSCguc7NqXThME/U+VwIL10duLoqmvUFhESZwDlXZr+CyGzOPGsSGzlmvjdV4GQlQfLrQKUiQy+gKascdpbTOVsojb+7iE6bLFc66KSo2jCmkYt9zSpSFIxGd62mAOE5Q0CPU1wmS//mI5v4Ep8biPNtfFnK5L9nV2bkicl9r0XMWgp6cQ4uErTU5j/atCEtRNR9qicNSxz/xn0bMYbuhl76RF8QIDAQAB
     depends_on:
       - keycloak
       - sisbanco-eureka    
