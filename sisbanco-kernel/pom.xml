@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.1.5</version>
+		<version>3.2.0</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>italo</groupId>
@@ -16,16 +16,8 @@
 	<description>Simples sistema com funções de banco</description>
 	<properties>
 		<java.version>17</java.version>
-		<spring-cloud.version>2022.0.4</spring-cloud.version>
+		<spring-cloud.version>2023.0.0-RC1</spring-cloud.version>
 	</properties>
-
-	<repositories>
-		<repository>
-			<id>repositorio-local</id>
-			<name>Repositório local</name>
-			<url>${user.home}/.m2/repository</url>
-		</repository>
-	</repositories>
 
 	<dependencies>
 		<dependency>
@@ -43,19 +35,31 @@
 			<artifactId>jedis</artifactId>
 		</dependency>
 
+		<dependency> 
+		    <groupId>org.testcontainers</groupId> 
+		    <artifactId>testcontainers</artifactId> 
+		    <scope>test</scope> 
+		</dependency>
+		
 		<dependency>
+		    <groupId>org.testcontainers</groupId>
+		    <artifactId>junit-jupiter</artifactId>
+		    <scope>test</scope>
+		</dependency>
+		
+		<dependency>
+		    <groupId>com.redis.testcontainers</groupId>
+		    <artifactId>testcontainers-redis-junit-jupiter</artifactId>
+		    <version>1.4.6</version>
+		    <scope>test</scope>
+		</dependency>
+
+		<!--dependency>
 			<groupId>com.github.codemonstur</groupId>
 			<artifactId>embedded-redis</artifactId>
 			<version>1.1.0</version>
-			<scope>test</scope>
-		</dependency>
-
-
-		<dependency>
-			<groupId>com.jupiter-tools</groupId>
-			<artifactId>spring-test-redis</artifactId>
-			<version>0.1</version>
-		</dependency>
+			<scope>test</scope> 
+		</dependency-->
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -131,9 +135,6 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<image>
-						<builder>paketobuildpacks/builder-jammy-base:latest</builder>
-					</image>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>
@@ -154,6 +155,30 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+			<dependency>
+				<groupId>org.testcontainers</groupId>
+				<artifactId>testcontainers-bom</artifactId>
+				<version>1.19.3</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
+	<repositories>
+		<repository>
+			<id>spring-milestones</id>
+			<name>Spring Milestones</name>
+			<url>https://repo.spring.io/milestone</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>repositorio-local</id>
+			<name>Repositório Local</name>
+			<url>${user.home}/.m2/repository</url>
+		</repository>
+	</repositories>
+	
 </project>

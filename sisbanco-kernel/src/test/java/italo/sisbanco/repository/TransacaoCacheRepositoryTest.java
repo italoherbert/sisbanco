@@ -14,6 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
+
+import com.redis.testcontainers.RedisContainer;
 
 import italo.sisbanco.config.redis.TestRedisConfiguration;
 import italo.sisbanco.kernel.SisbancoKernelApplication;
@@ -21,13 +27,27 @@ import italo.sisbanco.kernel.model.cache.TransacaoCache;
 import italo.sisbanco.kernel.model.enums.TransacaoTipo;
 import italo.sisbanco.kernel.repository.TransacaoCacheRepository;
 
-@SpringBootTest(classes= { SisbancoKernelApplication.class } )
 @ActiveProfiles("test")
+@Testcontainers
+@SpringBootTest(classes=SisbancoKernelApplication.class)
 @Import({TestRedisConfiguration.class})
 public class TransacaoCacheRepositoryTest {
 
 	@Autowired
 	private TransacaoCacheRepository transacaoCacheRepository;
+	
+	private static RedisContainer redis;
+	
+	static {
+		redis = new RedisContainer(DockerImageName.parse("redis") );		
+		redis.start();		
+	}
+	
+	@DynamicPropertySource
+	private static void registerRedisProperties(DynamicPropertyRegistry registry) {
+	    registry.add("spring.data.redis.host", redis::getHost);
+	    registry.add("spring.data.redis.port", () -> redis.getFirstMappedPort() );
+	}
 	
 	@Test
 	public void test() {
