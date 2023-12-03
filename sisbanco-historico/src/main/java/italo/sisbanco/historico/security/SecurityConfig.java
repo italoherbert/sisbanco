@@ -16,7 +16,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
 	private final String[] PUBLIC = {
-		
+		"/api/historico/v3/api-docs/**",
+		"/api/historico/api-docs/**",
+		"/api/historico/swagger-ui/**",
+
+		"/api/historico/swagger-ui.html",
+		"/api/historico/api-docs",		
 	};
 	
 	@Autowired

@@ -17,7 +17,14 @@ public class SecurityConfig {
 
 	private final String[] PUBLIC = {
 		"/api/keycloak/token",
-		"/api/keycloak/token-info"
+		"/api/keycloak/token-info",
+		
+		"/api/keycloak/swagger-ui/**",
+		"/api/keycloak/api-docs/**",
+
+		"/api/keycloak/v3/api-docs/**",
+		"/api/keycloak/api-docs",
+		"/api/keycloak/swagger-ui.html"
 	};
 	
 	@Autowired
