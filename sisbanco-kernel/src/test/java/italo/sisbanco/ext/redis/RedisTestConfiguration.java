@@ -1,5 +1,4 @@
-
-package italo.sisbanco.config.redis;
+package italo.sisbanco.ext.redis;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -10,8 +9,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import italo.sisbanco.kernel.model.cache.TransacaoCache;
 
 @TestConfiguration
-public class TestRedisConfiguration {
-			
+public class RedisTestConfiguration {
+					
 	@Bean
     LettuceConnectionFactory redisConnectionFactory(
     		@Value("${spring.data.redis.host}") String redisHost,
@@ -27,3 +26,4 @@ public class TestRedisConfiguration {
     }
 	
 }
+

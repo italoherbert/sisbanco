@@ -11,22 +11,28 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
-import italo.sisbanco.annotation.ContaBD;
+import italo.sisbanco.ext.postgresql.ContaBD;
+import italo.sisbanco.ext.postgresql.PostgreSQLTest;
 import italo.sisbanco.kernel.SisbancoKernelApplication;
 import italo.sisbanco.kernel.exception.ServiceException;
 import italo.sisbanco.kernel.model.request.conta.ContaFiltroRequest;
 import italo.sisbanco.kernel.model.request.conta.ContaSaveRequest;
 import italo.sisbanco.kernel.model.request.conta.ValorRequest;
 import italo.sisbanco.kernel.model.response.conta.ContaResponse;
+import italo.sisbanco.kernel.repository.TransacaoCacheRepository;
 import italo.sisbanco.kernel.service.ContaService;
 
 @SpringBootTest(classes=SisbancoKernelApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
-public class ContaServiceTest {
+public class ContaServiceTest extends PostgreSQLTest {
 
 	@Autowired
 	private ContaService contaService;
-		
+			
+	@MockBean
+	private TransacaoCacheRepository transacaoCacheRepository;
+	
 	@Test
 	@ContaBD
 	public void alteraTest() {

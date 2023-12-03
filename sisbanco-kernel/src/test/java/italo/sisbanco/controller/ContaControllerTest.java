@@ -21,21 +21,24 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import italo.sisbanco.annotation.ContaBD;
+import italo.sisbanco.ext.postgresql.ContaBD;
 import italo.sisbanco.kernel.SisbancoKernelApplication;
 import italo.sisbanco.kernel.integration.KeycloakMicroserviceIntegration;
 import italo.sisbanco.kernel.integration.model.UserCreated;
 import italo.sisbanco.kernel.integration.model.UserSaveRequest;
 import italo.sisbanco.kernel.model.request.conta.ContaFiltroRequest;
 import italo.sisbanco.kernel.model.request.conta.ContaSaveRequest;
+import italo.sisbanco.kernel.repository.TransacaoCacheRepository;
 import italo.sisbanco.kernel.service.ContaService;
 
+@ActiveProfiles("test") 
 @SpringBootTest(classes=SisbancoKernelApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 public class ContaControllerTest {
 
@@ -51,6 +54,9 @@ public class ContaControllerTest {
 	
 	@MockBean
 	private KeycloakMicroserviceIntegration keycloak;
+	
+	@MockBean
+	private TransacaoCacheRepository transacaoCacheRepository;
 						
 	@BeforeEach
 	public void setUp() {

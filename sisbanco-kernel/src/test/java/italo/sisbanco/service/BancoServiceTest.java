@@ -15,7 +15,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import italo.sisbanco.annotation.ContaBD;
+import italo.sisbanco.ext.postgresql.ContaBD;
+import italo.sisbanco.ext.postgresql.PostgreSQLTest;
 import italo.sisbanco.kernel.SisbancoKernelApplication;
 import italo.sisbanco.kernel.exception.ServiceException;
 import italo.sisbanco.kernel.message.TransacaoMessageSender;
@@ -30,7 +31,7 @@ import italo.sisbanco.kernel.service.BancoService;
 import italo.sisbanco.kernel.service.ContaService;
 
 @SpringBootTest(classes=SisbancoKernelApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
-public class BancoServiceTest {
+public class BancoServiceTest extends PostgreSQLTest {
 		
 	@Autowired
 	private ContaService contaService;
@@ -43,7 +44,7 @@ public class BancoServiceTest {
 	
 	@MockBean
 	private TransacaoCacheRepository transacaoCacheRepository;
-		
+				
 	@Test	
 	@ContaBD
 	public void creditoTest() {				

@@ -1,4 +1,4 @@
-package italo.sisbanco.historico.config;
+package italo.sisbanco.historico.ext.mongodb;
 
 import org.springframework.context.annotation.Configuration;
 

@@ -1,5 +1,5 @@
 
-package italo.sisbanco.historico.config;
+package italo.sisbanco.historico.ext.rabbitmq;
 
 import org.mockito.Mockito;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;

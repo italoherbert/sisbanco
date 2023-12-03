@@ -7,44 +7,31 @@ import java.util.Date;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.MongoDBContainer;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
 
 import italo.sisbanco.historico.SisbancoHistoricoApplication;
-import italo.sisbanco.historico.config.RabbitTestConfiguration;
 import italo.sisbanco.historico.exception.ErrorException;
+import italo.sisbanco.historico.exception.TransacaoRabbitListenerErrorHandler;
+import italo.sisbanco.historico.ext.mongodb.MongoDBTest;
+import italo.sisbanco.historico.ext.rabbitmq.RabbitTestConfiguration;
 import italo.sisbanco.historico.model.Transacao;
 import italo.sisbanco.historico.model.message.TransacaoMessage;
+import italo.sisbanco.historico.service.message.TransacaoMessageService;
 
-@Testcontainers
-@SpringBootTest(
-		classes=SisbancoHistoricoApplication.class, 
-		webEnvironment = WebEnvironment.RANDOM_PORT)
-@AutoConfigureDataMongo
+@SpringBootTest(classes=SisbancoHistoricoApplication.class)
 @Import(RabbitTestConfiguration.class)
-public class TransacaoServiceTest {
+public class TransacaoServiceTest extends MongoDBTest {
 		
 	@Autowired
 	private TransacaoService transacaoService;
-			
-	private static MongoDBContainer mongoContainer;
 	
-	static {
-		mongoContainer = new MongoDBContainer( DockerImageName.parse( "mongo" ) );
-		mongoContainer.start();
-	}
+	@MockBean
+	private TransacaoMessageService transacaoMessageService;
 	
-	@DynamicPropertySource
-	static void mongoDbProperties(DynamicPropertyRegistry registry) {
-		registry.add("spring.data.mongodb.uri", mongoContainer::getReplicaSetUrl);
-	}
+	@MockBean
+	private TransacaoRabbitListenerErrorHandler transacaoRabbitListenerErrorHandler;
 	
 	@Test
 	public void test2() {

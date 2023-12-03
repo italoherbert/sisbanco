@@ -12,20 +12,24 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.client.MongoClient;
 
+import italo.sisbanco.historico.SisbancoHistoricoApplication;
 import italo.sisbanco.historico.model.request.TransacaoFiltroRequest;
 import italo.sisbanco.historico.service.TransacaoService;
+import italo.sisbanco.historico.service.message.TransacaoMessageService;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
+@SpringBootTest(classes=SisbancoHistoricoApplication.class)
 public class TransacaoControllerTest {
 		
 	private final ObjectMapper objectMapper = new ObjectMapper();
@@ -37,7 +41,13 @@ public class TransacaoControllerTest {
 	
 	@MockBean
 	private TransacaoService transacaoService;
-									
+		
+	@MockBean
+	private TransacaoMessageService transacaoMessageService;
+		
+	@MockBean
+	private MongoClient mongoClient;
+			
 	@BeforeEach
 	public void setUp() {
 		mockMvc = MockMvcBuilders
