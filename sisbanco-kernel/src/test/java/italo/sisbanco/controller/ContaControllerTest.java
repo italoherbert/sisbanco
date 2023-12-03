@@ -33,6 +33,7 @@ import italo.sisbanco.kernel.SisbancoKernelApplication;
 import italo.sisbanco.kernel.integration.KeycloakMicroserviceIntegration;
 import italo.sisbanco.kernel.integration.model.UserCreated;
 import italo.sisbanco.kernel.integration.model.UserSaveRequest;
+import italo.sisbanco.kernel.message.TransacaoMessageSender;
 import italo.sisbanco.kernel.model.request.conta.ContaFiltroRequest;
 import italo.sisbanco.kernel.model.request.conta.ContaSaveRequest;
 import italo.sisbanco.kernel.repository.TransacaoCacheRepository;
@@ -58,6 +59,9 @@ public class ContaControllerTest {
 	@MockBean
 	private TransacaoCacheRepository transacaoCacheRepository;
 						
+	@MockBean
+	private TransacaoMessageSender transacaoMessageSender;
+	
 	@BeforeEach
 	public void setUp() {
 		mockMvc = MockMvcBuilders

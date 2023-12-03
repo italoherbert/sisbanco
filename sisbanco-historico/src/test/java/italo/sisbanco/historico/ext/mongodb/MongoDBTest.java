@@ -4,7 +4,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MongoDBContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
@@ -13,7 +12,6 @@ import org.testcontainers.utility.DockerImageName;
 //@AutoConfigureDataMongo
 public class MongoDBTest {
 
-	@Container
 	private static MongoDBContainer mongoContainer;
 	
 	static {
@@ -25,5 +23,5 @@ public class MongoDBTest {
 	static void mongoDbProperties(DynamicPropertyRegistry registry) {
 		registry.add("spring.data.mongodb.uri", mongoContainer::getReplicaSetUrl);		
 	}
-	
+			
 }

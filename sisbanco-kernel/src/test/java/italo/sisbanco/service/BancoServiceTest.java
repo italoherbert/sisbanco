@@ -14,6 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
+
+import com.github.dockerjava.api.model.Ports.Binding;
+import com.rabbitmq.client.AMQP.Exchange;
+import com.rabbitmq.client.AMQP.Queue;
 
 import italo.sisbanco.ext.postgresql.ContaBD;
 import italo.sisbanco.ext.postgresql.PostgreSQLTest;
@@ -30,6 +35,7 @@ import italo.sisbanco.kernel.repository.TransacaoCacheRepository;
 import italo.sisbanco.kernel.service.BancoService;
 import italo.sisbanco.kernel.service.ContaService;
 
+@ActiveProfiles("test") 
 @SpringBootTest(classes=SisbancoKernelApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 public class BancoServiceTest extends PostgreSQLTest {
 		
@@ -45,6 +51,15 @@ public class BancoServiceTest extends PostgreSQLTest {
 	@MockBean
 	private TransacaoCacheRepository transacaoCacheRepository;
 				
+	@MockBean
+	private Queue transacoesQueue;
+	
+	@MockBean
+	private Exchange transacoesExchange;
+	
+	@MockBean
+	private Binding transacoesBinding;
+	
 	@Test	
 	@ContaBD
 	public void creditoTest() {				

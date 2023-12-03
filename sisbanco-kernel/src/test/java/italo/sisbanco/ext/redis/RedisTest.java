@@ -4,7 +4,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
@@ -14,8 +13,7 @@ import com.redis.testcontainers.RedisContainer;
 @Testcontainers
 @Import(RedisTestConfiguration.class)
 public class RedisTest {
-				
-	@Container
+			
 	private static RedisContainer redis;
 	
 	static {

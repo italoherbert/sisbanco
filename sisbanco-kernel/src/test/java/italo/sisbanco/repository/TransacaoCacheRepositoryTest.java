@@ -12,10 +12,16 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+
+import com.github.dockerjava.api.model.Ports.Binding;
+import com.rabbitmq.client.AMQP.Exchange;
+import com.rabbitmq.client.AMQP.Queue;
 
 import italo.sisbanco.ext.redis.RedisTest;
 import italo.sisbanco.kernel.SisbancoKernelApplication;
+import italo.sisbanco.kernel.message.TransacaoMessageSender;
 import italo.sisbanco.kernel.model.cache.TransacaoCache;
 import italo.sisbanco.kernel.model.enums.TransacaoTipo;
 import italo.sisbanco.kernel.repository.TransacaoCacheRepository;
@@ -26,6 +32,18 @@ public class TransacaoCacheRepositoryTest extends RedisTest {
 
 	@Autowired
 	private TransacaoCacheRepository transacaoCacheRepository;
+		
+	@MockBean
+	private TransacaoMessageSender transacaoMessageSender;
+	
+	@MockBean
+	private Queue transacoesQueue;
+	
+	@MockBean
+	private Exchange transacoesExchange;
+	
+	@MockBean
+	private Binding transacoesBinding;
 			
 	@Test
 	public void test() {

@@ -47,7 +47,7 @@ public class BancoControllerTest {
 	private KeycloakMicroserviceIntegration keycloak;	
 
 	@MockBean
-	private TransacaoMessageSender transacaoMessageManager;
+	private TransacaoMessageSender transacaoMessageSender;
 	
 	@MockBean
 	private TransacaoCacheRepository transacaoCacheManager;
