@@ -19,6 +19,7 @@ import italo.sisbanco.keycloak.model.UserCreated;
 import italo.sisbanco.keycloak.model.UserSaveRequest;
 import italo.sisbanco.keycloak.service.TokenService;
 import italo.sisbanco.keycloak.service.UserService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/keycloak")
@@ -32,14 +33,14 @@ public class KeycloakController {
 	
 	@TokenEndpoint
 	@PostMapping(value="/token")	
-	public ResponseEntity<Object> login( @RequestBody Login request ) throws SistemaException {
+	public ResponseEntity<Object> login( @Valid @RequestBody Login request ) throws SistemaException {
 		Token resp = keycloakService.login( request );
 		return ResponseEntity.ok( resp );
 	}
 	
 	@TokenInfoEndpoint
 	@PostMapping(value="/token-info")
-	public ResponseEntity<Object> tokenInfo( @RequestBody Token token ) throws SistemaException {
+	public ResponseEntity<Object> tokenInfo( @Valid @RequestBody Token token ) throws SistemaException {
 		TokenInfo info = keycloakService.tokenInfo( token );
 		return ResponseEntity.ok( info );
 	}
@@ -47,7 +48,7 @@ public class KeycloakController {
 	@RegistraUserEndpoint
 	@PreAuthorize("hasAuthority('userCreateWRITE')")
 	@PostMapping(value="/users/registra")
-	public ResponseEntity<Object> registraUser( @RequestBody UserSaveRequest request ) throws SistemaException {
+	public ResponseEntity<Object> registraUser( @Valid @RequestBody UserSaveRequest request ) throws SistemaException {
 		UserCreated created = userService.novoUsuario( request );
 		return ResponseEntity.ok( created );
 	}

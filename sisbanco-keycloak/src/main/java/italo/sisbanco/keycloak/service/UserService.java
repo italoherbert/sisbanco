@@ -14,6 +14,7 @@ import italo.sisbanco.keycloak.exception.ServiceException;
 import italo.sisbanco.keycloak.manager.KeycloakManager;
 import italo.sisbanco.keycloak.model.UserCreated;
 import italo.sisbanco.keycloak.model.UserSaveRequest;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 
@@ -30,8 +31,11 @@ public class UserService {
 			
 			String groupPath = request.getGroupPath();
 			
-			GroupRepresentation group = keycloakManager.getGroupRepresentation( keycloak, appRealm, groupPath );			
-			if ( group == null ) {
+			GroupRepresentation group = null;
+
+			try {
+				group = keycloakManager.getGroupRepresentation( keycloak, appRealm, groupPath );			
+			} catch ( NotFoundException e ) {
 				throw new ServiceException( Erros.USER_PATH_GROUP_NAO_ENCONTRADO );
 			}
 			
@@ -44,9 +48,8 @@ public class UserService {
 			
 			Response resp = keycloakManager.criaUser( keycloak, appRealm, user );
 			
-			if ( resp.getStatus() != 200 ) {
-				throw new ServiceException( Erros.USER_REGISTRO_FALHA );
-			}
+			if ( resp.getStatus() != 201 )
+				throw new ServiceException( Erros.USER_REGISTRO_FALHA );			
 			
 			String userId = CreatedResponseUtil.getCreatedId( resp );
 			
