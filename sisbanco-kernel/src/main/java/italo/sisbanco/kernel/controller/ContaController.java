@@ -14,6 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import italo.sisbanco.kernel.apidoc.conta.AlteraContaEndpoint;
+import italo.sisbanco.kernel.apidoc.conta.DeletaContaEndpoint;
+import italo.sisbanco.kernel.apidoc.conta.FiltraContaEndpoint;
+import italo.sisbanco.kernel.apidoc.conta.GetContaPorIDEndpoint;
+import italo.sisbanco.kernel.apidoc.conta.RegistraContaEndpoint;
 import italo.sisbanco.kernel.exception.SistemaException;
 import italo.sisbanco.kernel.model.request.conta.ContaFiltroRequest;
 import italo.sisbanco.kernel.model.request.conta.ContaSaveRequest;
@@ -29,6 +34,7 @@ public class ContaController {
 	@Autowired
 	private ContaService contaService;
 	
+	@RegistraContaEndpoint
 	@PreAuthorize("hasAuthority('contaWRITE')")
 	@PostMapping("/registra")
 	public ResponseEntity<Object> registra( 
@@ -40,6 +46,7 @@ public class ContaController {
 		return ResponseEntity.ok( resp );
 	}
 	
+	@AlteraContaEndpoint
 	@PreAuthorize("hasAnyAuthority('contaWRITE', 'contaDonoWRITE')")
 	@PutMapping("/altera/{contaId}")	
 	public ResponseEntity<Object> altera(
@@ -49,6 +56,7 @@ public class ContaController {
 		return ResponseEntity.ok().build();
 	}
 	
+	@GetContaPorIDEndpoint
 	@PreAuthorize("hasAuthority('contaREAD')")
 	@GetMapping("/get/{contaId}")
 	public ResponseEntity<Object> get(
@@ -56,7 +64,8 @@ public class ContaController {
 		ContaResponse resp = contaService.get( contaId );
 		return ResponseEntity.ok( resp );
 	}
-		
+	
+	@FiltraContaEndpoint	
 	@PreAuthorize("hasAuthority('contaREAD')")
 	@PostMapping("/filtra")
 	public ResponseEntity<Object> filtra(
@@ -65,6 +74,7 @@ public class ContaController {
 		return ResponseEntity.ok( resp );
 	}
 	
+	@DeletaContaEndpoint
 	@PreAuthorize("hasAnyAuthority('contaDELETE', 'contaDonoDELETE')")
 	@DeleteMapping("/deleta/{contaId}")
 	public ResponseEntity<Object> deleta(

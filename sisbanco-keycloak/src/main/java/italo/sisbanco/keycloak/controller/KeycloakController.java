@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import italo.sisbanco.keycloak.apidoc.RegistraUserEndpoint;
+import italo.sisbanco.keycloak.apidoc.TokenEndpoint;
+import italo.sisbanco.keycloak.apidoc.TokenInfoEndpoint;
 import italo.sisbanco.keycloak.exception.SistemaException;
 import italo.sisbanco.keycloak.model.Login;
 import italo.sisbanco.keycloak.model.Token;
@@ -27,18 +30,21 @@ public class KeycloakController {
 	@Autowired
 	private UserService userService;
 	
-	@PostMapping(value="/token")
+	@TokenEndpoint
+	@PostMapping(value="/token")	
 	public ResponseEntity<Object> login( @RequestBody Login request ) throws SistemaException {
 		Token resp = keycloakService.login( request );
 		return ResponseEntity.ok( resp );
 	}
 	
+	@TokenInfoEndpoint
 	@PostMapping(value="/token-info")
 	public ResponseEntity<Object> tokenInfo( @RequestBody Token token ) throws SistemaException {
 		TokenInfo info = keycloakService.tokenInfo( token );
 		return ResponseEntity.ok( info );
 	}
 	
+	@RegistraUserEndpoint
 	@PreAuthorize("hasAuthority('userCreateWRITE')")
 	@PostMapping(value="/users/registra")
 	public ResponseEntity<Object> registraUser( @RequestBody UserSaveRequest request ) throws SistemaException {

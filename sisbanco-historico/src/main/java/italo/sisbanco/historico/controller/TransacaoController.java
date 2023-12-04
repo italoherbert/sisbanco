@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import italo.sisbanco.historico.apidoc.transacao.FiltraTransacoesEndpoint;
+import italo.sisbanco.historico.apidoc.transacao.ListaUltimasTransacoesEndpoint;
 import italo.sisbanco.historico.model.Transacao;
 import italo.sisbanco.historico.model.request.TransacaoFiltroRequest;
 import italo.sisbanco.historico.service.TransacaoService;
@@ -24,6 +26,7 @@ public class TransacaoController {
 	@Autowired
 	private TransacaoService transacaoService;
 			
+	@ListaUltimasTransacoesEndpoint
 	@PreAuthorize("hasAuthority('historicoTransacoesREAD')")
 	@GetMapping("/lista/ultimas/{quant}")
 	public ResponseEntity<Object> lista( @PathVariable int quant ) {		
@@ -31,6 +34,7 @@ public class TransacaoController {
 		return ResponseEntity.ok( transacoes );
 	}
 	
+	@FiltraTransacoesEndpoint
 	@PreAuthorize("hasAuthority('historicoTransacoesREAD')")
 	@PostMapping("/filtra")
 	public ResponseEntity<Object> filtra( @Valid @RequestBody TransacaoFiltroRequest request ) {

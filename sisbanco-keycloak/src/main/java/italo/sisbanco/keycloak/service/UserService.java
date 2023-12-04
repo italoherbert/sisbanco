@@ -22,11 +22,18 @@ public class UserService {
 	
 	@Autowired
 	private KeycloakManager keycloakManager;
-	
-	public UserCreated novoUsuario( UserSaveRequest request ) throws ServiceException {
+		
+	public UserCreated novoUsuario( UserSaveRequest request ) throws ServiceException {				
 		try {
 			Keycloak keycloak = keycloakManager.getKeycloakAdmin();
 			String appRealm = keycloakManager.getAppRealm();
+			
+			String groupPath = request.getGroupPath();
+			
+			GroupRepresentation group = keycloakManager.getGroupRepresentation( keycloak, appRealm, groupPath );			
+			if ( group == null ) {
+				throw new ServiceException( Erros.USER_PATH_GROUP_NAO_ENCONTRADO );
+			}
 			
 			UserRepresentation user = new UserRepresentation();
 			user.setUsername( request.getUsername() );
@@ -37,25 +44,26 @@ public class UserService {
 			
 			Response resp = keycloakManager.criaUser( keycloak, appRealm, user );
 			
+			if ( resp.getStatus() != 200 ) {
+				throw new ServiceException( Erros.USER_REGISTRO_FALHA );
+			}
+			
 			String userId = CreatedResponseUtil.getCreatedId( resp );
 			
 			CredentialRepresentation credential = new CredentialRepresentation();
 			credential.setTemporary( false );
 			credential.setType( "password" );
-			credential.setValue( request.getPassword() );
-			
-			String groupPath = request.getGroupPath();
+			credential.setValue( request.getPassword() );								
 						
-			GroupRepresentation group = keycloakManager.getGroupRepresentation( keycloak, appRealm, groupPath );
-			
 			UserResource resource = keycloakManager.getUserResource( keycloak, appRealm, userId );
 			resource.resetPassword( credential );			
 			resource.joinGroup( group.getId() );			
 			
 			UserCreated created = new UserCreated();
 			created.setUserId( userId );
+			
 			return created;
-		} catch ( WebApplicationException e ) {
+		} catch ( WebApplicationException e ) {			
 			if ( e.getResponse().getStatus() == 409 )
 				throw new ServiceException( Erros.USER_REGISTRO_JA_EXISTE );
 			

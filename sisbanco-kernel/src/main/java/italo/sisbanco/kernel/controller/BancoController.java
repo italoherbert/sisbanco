@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import italo.sisbanco.kernel.apidoc.banco.DepositarEndpoint;
+import italo.sisbanco.kernel.apidoc.banco.ExecutaTransacaoCacheEndpoint;
+import italo.sisbanco.kernel.apidoc.banco.SacarEndpoint;
+import italo.sisbanco.kernel.apidoc.banco.TransferirEndpoint;
 import italo.sisbanco.kernel.exception.SistemaException;
 import italo.sisbanco.kernel.model.request.conta.ValorRequest;
 import italo.sisbanco.kernel.model.response.conta.TransacaoResponse;
@@ -22,6 +26,7 @@ public class BancoController {
 	@Autowired
 	private BancoService bancoService;
 	
+	@ExecutaTransacaoCacheEndpoint
 	@PreAuthorize("hasAuthority('cacheTransacoesALL')")
 	@GetMapping("/exec/transacao/{transacaoId}")
 	public ResponseEntity<Object> executaTransacaoCache( 
@@ -31,6 +36,7 @@ public class BancoController {
 		return ResponseEntity.ok( resp );
 	}
 	
+	@DepositarEndpoint
 	@PreAuthorize("hasAuthority('contaDonoWRITE')")
 	@PostMapping("/depositar/{contaId}")
 	public ResponseEntity<Object> depositar( 
@@ -41,6 +47,7 @@ public class BancoController {
 		return ResponseEntity.ok( resp );		
 	}
 	
+	@SacarEndpoint
 	@PreAuthorize("hasAuthority('contaDonoWRITE')")
 	@PostMapping("/sacar/{contaId}")
 	public ResponseEntity<Object> sacar( 
@@ -51,6 +58,7 @@ public class BancoController {
 		return ResponseEntity.ok( resp );		
 	}
 	
+	@TransferirEndpoint
 	@PreAuthorize("hasAuthority('contaDonoWRITE')")
 	@PostMapping("/transferir/orig/{origContaId}/dest/{destContaId}")
 	public ResponseEntity<Object> transferir( 

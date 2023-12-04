@@ -49,7 +49,7 @@ public class TokenService {
 			token.setAccessToken( resp.getToken() ); 
 			return token;
 		} catch ( NotAuthorizedException e ) {
-			throw new ServiceException( Erros.ACESSO_NAO_AUTORIZADO );
+			throw new ServiceException( Erros.USER_NAO_ENCONTRADO );
 		} catch ( BadRequestException e ) {
 			e.printStackTrace();
 			throw new ServiceException( Erros.TOKEN_SOLICITACAO_FALHA );
@@ -57,6 +57,8 @@ public class TokenService {
 			throw new ServiceException( Erros.TOKEN_SOLICITACAO_FALHA );
 		}				
 	}
+		
+		
 	
 	public TokenInfo tokenInfo( Token token ) throws ServiceException {
 		String realmPublicKey = keycloakManager.getAppRealmPublicKey();
