@@ -20,6 +20,8 @@ public class Conta {
 	
 	private String username;
 	
+	private String userId;
+	
 	private double saldo;
 	
 	private double credito;

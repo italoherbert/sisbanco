@@ -37,14 +37,16 @@ public class ContaService {
 		boolean existe = contaRepository.existeTitular( request.getTitular() );
 		if ( existe )
 			throw new ServiceException( Erros.TITULAR_JA_EXISTE );
-		
-		Conta conta = contaMapper.novoBean();
-		contaMapper.carregaParaRegistro( conta, request );
+				
 		try {
 			ResponseEntity<UserCreated> resp = 
 					keycloak.registraUser( request.getUser(), authorizationHeader );
 			
 			if ( resp.getStatusCode().is2xxSuccessful() ) {
+				String userId = resp.getBody().getUserId();
+				
+				Conta conta = contaMapper.novoBean();
+				contaMapper.carregaParaRegistro( conta, request, userId );
 				contaRepository.save( conta );
 				
 				ContaResponse contaResp = contaMapper.novoContaResponse();
@@ -147,11 +149,15 @@ public class ContaService {
 		return responses;
 	}
 	
-	public void deleta( Long contaId ) throws ServiceException {
-		boolean existe = contaRepository.existsById( contaId );
-		if ( !existe )
+	public void deleta( Long contaId, String authorizationHeader ) throws ServiceException {
+		Optional<Conta> contaOp = contaRepository.findById( contaId );
+		if ( !contaOp.isPresent() )
 			throw new ServiceException( Erros.CONTA_NAO_ENCONTRADA );
+		
+		Conta conta = contaOp.get();
+		String userId = conta.getUserId();
 				
+		keycloak.deletaUser( userId, authorizationHeader );
 		contaRepository.deleteById( contaId ); 
 	}
 	

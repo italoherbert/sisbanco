@@ -80,6 +80,10 @@ public class KeycloakManager {
 		return keycloak.realm( realm ).users().create( user );
 	}
 	
+	public Response deletaUser( Keycloak keycloak, String realm, String userId ) {
+		return keycloak.realm( realm ).users().delete( userId );
+	}
+	
 	public UserResource getUserResource( Keycloak keycloak, String realm, String userId ) {
 		return keycloak.realm( realm ).users().get( userId );
 	}
@@ -87,7 +91,7 @@ public class KeycloakManager {
 	public GroupRepresentation getGroupRepresentation( Keycloak keycloak, String realm, String groupPath ) {
 		return keycloak.realm( realm ).getGroupByPath( groupPath );
 	}
-		
+	
 	public String getAdminRealm() {
 		return adminRealm;
 	}

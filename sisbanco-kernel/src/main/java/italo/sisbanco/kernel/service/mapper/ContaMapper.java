@@ -9,9 +9,10 @@ import italo.sisbanco.kernel.model.response.conta.ContaResponse;
 @Component
 public class ContaMapper {
 	
-	public void carregaParaRegistro( Conta c, ContaSaveRequest req ) {
+	public void carregaParaRegistro( Conta c, ContaSaveRequest req, String userId ) {
 		c.setTitular( req.getTitular() );
 		c.setUsername( req.getUser().getUsername() ); 
+		c.setUserId( userId ); 
 		c.setSaldo( 0 );
 		c.setCredito( 0 ); 
 		c.setSemAutorizacaoDebitoLimite( 0 );

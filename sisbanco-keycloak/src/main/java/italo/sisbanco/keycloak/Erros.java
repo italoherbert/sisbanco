@@ -15,5 +15,6 @@ public interface Erros {
 	public final static String USER_REGISTRO_JA_EXISTE = "user.registro.ja.existe";
 	public final static String USER_PATH_GROUP_NAO_ENCONTRADO = "user.registro.path.group.nao.encontrado";
 	public final static String USER_REGISTRO_FALHA = "user.registro.falha";
+	public final static String USER_DELETE_FALHA = "user.delete.falha";
 	
 }

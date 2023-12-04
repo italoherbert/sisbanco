@@ -4,24 +4,37 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.github.dockerjava.api.model.Ports.Binding;
 import com.rabbitmq.client.AMQP.Exchange;
 import com.rabbitmq.client.AMQP.Queue;
 
+import italo.sisbanco.ext.openfeign.OpenFeignClientsConfiguration;
 import italo.sisbanco.ext.postgresql.ContaBD;
 import italo.sisbanco.ext.postgresql.PostgreSQLTest;
 import italo.sisbanco.kernel.SisbancoKernelApplication;
 import italo.sisbanco.kernel.exception.ServiceException;
+import italo.sisbanco.kernel.integration.KeycloakMicroserviceIntegration;
+import italo.sisbanco.kernel.integration.model.Token;
+import italo.sisbanco.kernel.integration.model.TokenInfo;
+import italo.sisbanco.kernel.integration.model.UserCreated;
+import italo.sisbanco.kernel.integration.model.UserSaveRequest;
 import italo.sisbanco.kernel.message.TransacaoMessageSender;
 import italo.sisbanco.kernel.model.request.conta.ContaFiltroRequest;
 import italo.sisbanco.kernel.model.request.conta.ContaSaveRequest;
@@ -32,17 +45,21 @@ import italo.sisbanco.kernel.service.ContaService;
 
 @ActiveProfiles("test")
 @SpringBootTest(classes=SisbancoKernelApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
+@Import(OpenFeignClientsConfiguration.class)
 public class ContaServiceTest extends PostgreSQLTest {
 
 	@Autowired
 	private ContaService contaService;
-			
+					
 	@MockBean
 	private TransacaoCacheRepository transacaoCacheRepository;
 	
 	@MockBean
 	private TransacaoMessageSender transacaoMessageSender;
 	
+	@MockBean
+	private KeycloakMicroserviceIntegration keycloakMicroserviceIntegration;
+		
 	@MockBean
 	private Queue transacoesQueue;
 	
@@ -52,6 +69,50 @@ public class ContaServiceTest extends PostgreSQLTest {
 	@MockBean
 	private Binding transacoesBinding;
 	
+	@Before
+	public void setUp() {
+		TokenInfo tokenInfo = mock( TokenInfo.class );
+		ResponseEntity<TokenInfo> tokenInfoResp = ResponseEntity.ok( tokenInfo );
+		
+		UserCreated created = mock( UserCreated.class );
+		ResponseEntity<UserCreated> createdResp = ResponseEntity.ok( created );
+		
+		ResponseEntity<Object> delResp = ResponseEntity.ok().build();
+				
+		when( keycloakMicroserviceIntegration.registraUser( any( UserSaveRequest.class), anyString() ) ).thenReturn( createdResp );
+		when( keycloakMicroserviceIntegration.deletaUser( anyString(), anyString() ) ).thenReturn( delResp );
+		when( keycloakMicroserviceIntegration.tokenInfo( any( Token.class ) ) ).thenReturn( tokenInfoResp );	
+	}
+	
+	public void registraTest() {
+		try {
+			UserSaveRequest userSave = new UserSaveRequest();
+			userSave.setUsername( "mariano" );
+			userSave.setPassword( "mariano" ); 
+			
+			ContaSaveRequest contaSave = new ContaSaveRequest();
+			contaSave.setTitular( "mariano" );
+			contaSave.setUser( userSave );
+			
+			ContaResponse resp = contaService.registra( contaSave, "" );
+			assertNotNull( resp, "O registro de conta está retornando um valor nulo como conta." );
+			
+			ContaResponse resp2 = contaService.getByUsername( resp.getUsername() );
+			assertEquals( resp, resp2 );
+			
+			contaService.deleta( resp2.getId(), "" );
+			
+			try {
+				contaService.getByUsername( resp.getUsername() );
+				fail( "Registro de conta deveria ter lançado exceção, pois a conta foi removida." );
+			} catch ( ServiceException e ) {
+				
+			}
+		} catch ( Exception e ) {
+			e.printStackTrace();
+		}
+	}
+			
 	@Test
 	@ContaBD
 	public void alteraTest() {
@@ -182,18 +243,18 @@ public class ContaServiceTest extends PostgreSQLTest {
 			ContaResponse mariaConta = contaService.getByUsername( "maria" );
 			ContaResponse carlosConta = contaService.getByUsername( "carlos" );
 						
-			contaService.deleta( joaoConta.getId() );
-			contaService.deleta( carlosConta.getId() );
-			contaService.deleta( joseConta.getId() );
+			contaService.deleta( joaoConta.getId(), "" );
+			contaService.deleta( carlosConta.getId(), "" );
+			contaService.deleta( joseConta.getId(), "" );
 			
 			try {			
-				contaService.deleta( -1L );
+				contaService.deleta( -1L, "" );
 				fail( "Não deveria ser possível deletar por um ID negativo." );
 			} catch ( ServiceException e ) {
 				
 			}
 			
-			contaService.deleta( mariaConta.getId() );
+			contaService.deleta( mariaConta.getId(), "" );
 			
 			ContaFiltroRequest filtro = new ContaFiltroRequest();
 			filtro.setTitular( "*" );

@@ -78,8 +78,11 @@ public class ContaController {
 	@PreAuthorize("hasAnyAuthority('contaDELETE', 'contaDonoDELETE')")
 	@DeleteMapping("/deleta/{contaId}")
 	public ResponseEntity<Object> deleta(
-			@PathVariable Long contaId ) throws SistemaException {
-		contaService.deleta( contaId );		
+			@PathVariable Long contaId,
+			HttpServletRequest httpRequest ) throws SistemaException {
+		
+		String authorizationHeader = httpRequest.getHeader( "Authorization" );
+		contaService.deleta( contaId, authorizationHeader );		
 		return ResponseEntity.ok().build();
 	}
 	

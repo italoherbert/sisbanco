@@ -3,11 +3,13 @@ package italo.sisbanco.keycloak.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import italo.sisbanco.keycloak.apidoc.DeletaUserEndpoint;
 import italo.sisbanco.keycloak.apidoc.RegistraUserEndpoint;
 import italo.sisbanco.keycloak.apidoc.TokenEndpoint;
 import italo.sisbanco.keycloak.apidoc.TokenInfoEndpoint;
@@ -51,6 +53,14 @@ public class KeycloakController {
 	public ResponseEntity<Object> registraUser( @Valid @RequestBody UserSaveRequest request ) throws SistemaException {
 		UserCreated created = userService.novoUsuario( request );
 		return ResponseEntity.ok( created );
+	}
+	
+	@DeletaUserEndpoint
+	@PreAuthorize("hasAuthority('userDELETE')")
+	@DeleteMapping(value="/users/deleta/{userId}")
+	public ResponseEntity<Object> deletaUser( String userId ) throws SistemaException {
+		userService.removeUser( userId );
+		return ResponseEntity.ok().build();
 	}
 	
 }

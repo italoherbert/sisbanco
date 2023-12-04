@@ -23,7 +23,7 @@ public class UserService {
 	
 	@Autowired
 	private KeycloakManager keycloakManager;
-		
+
 	public UserCreated novoUsuario( UserSaveRequest request ) throws ServiceException {				
 		try {
 			Keycloak keycloak = keycloakManager.getKeycloakAdmin();
@@ -74,5 +74,21 @@ public class UserService {
 			throw new ServiceException( Erros.USER_REGISTRO_FALHA );
 		}
 	} 
+	
+	public void removeUser( String userId ) throws ServiceException {
+		try {
+			Keycloak keycloak = keycloakManager.getKeycloakAdmin();
+			String appRealm = keycloakManager.getAppRealm();
+			
+			Response resp = keycloakManager.deletaUser( keycloak, appRealm, userId );
+			if ( resp.getStatus() != 200 )
+				throw new ServiceException( Erros.USER_DELETE_FALHA );
+		} catch ( NotFoundException e ) {
+			throw new ServiceException( Erros.USER_NAO_ENCONTRADO );			
+		} catch ( WebApplicationException e ) {
+			e.printStackTrace();
+			throw new ServiceException( Erros.USER_DELETE_FALHA );
+		}
+	}
 	
 }
