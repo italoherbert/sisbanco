@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import italo.sisbanco.kernel.apidoc.banco.DepositarEndpoint;
-import italo.sisbanco.kernel.apidoc.banco.ExecutaTransacaoCacheEndpoint;
+import italo.sisbanco.kernel.apidoc.banco.ExecutaOperacaoPendenteCacheEndpoint;
 import italo.sisbanco.kernel.apidoc.banco.SacarEndpoint;
 import italo.sisbanco.kernel.apidoc.banco.TransferirEndpoint;
 import italo.sisbanco.kernel.exception.SistemaException;
@@ -26,13 +26,13 @@ public class BancoController {
 	@Autowired
 	private BancoService bancoService;
 	
-	@ExecutaTransacaoCacheEndpoint
-	@PreAuthorize("hasAuthority('cacheTransacoesALL')")
-	@GetMapping("/exec/transacao/{transacaoId}")
+	@ExecutaOperacaoPendenteCacheEndpoint
+	@PreAuthorize("hasAuthority('cacheOperacoesPendentesALL')")
+	@GetMapping("/exec/operacao/pendente/{operacaoPendenteid}")
 	public ResponseEntity<Object> executaTransacaoCache( 
-			@PathVariable String transacaoId ) throws SistemaException {
+			@PathVariable String operacaoPendenteId ) throws SistemaException {
 		
-		OperacaoPendenteResponse resp = bancoService.executaTransacaoCache( transacaoId );
+		OperacaoPendenteResponse resp = bancoService.executaOperacaoPendente( operacaoPendenteId );
 		return ResponseEntity.ok( resp );
 	}
 	

@@ -10,17 +10,17 @@ import org.springframework.stereotype.Service;
 
 import feign.FeignException.FeignClientException;
 import italo.sisbanco.kernel.Erros;
+import italo.sisbanco.kernel.components.manager.ContaAlterManager;
 import italo.sisbanco.kernel.exception.ServiceException;
 import italo.sisbanco.kernel.integration.KeycloakMicroserviceIntegration;
 import italo.sisbanco.kernel.integration.model.UserCreated;
 import italo.sisbanco.kernel.model.Conta;
+import italo.sisbanco.kernel.model.mapper.ContaMapper;
 import italo.sisbanco.kernel.model.request.conta.ContaFiltroRequest;
 import italo.sisbanco.kernel.model.request.conta.ContaSaveRequest;
 import italo.sisbanco.kernel.model.request.conta.ValorRequest;
 import italo.sisbanco.kernel.model.response.conta.ContaResponse;
 import italo.sisbanco.kernel.repository.ContaRepository;
-import italo.sisbanco.kernel.service.manager.ContaAlterManager;
-import italo.sisbanco.kernel.service.mapper.ContaMapper;
 
 @Service
 public class ContaService {

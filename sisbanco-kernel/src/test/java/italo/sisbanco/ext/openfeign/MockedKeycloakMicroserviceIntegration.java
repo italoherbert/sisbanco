@@ -9,12 +9,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import italo.sisbanco.kernel.integration.KeycloakMicroserviceIntegration;
 import italo.sisbanco.kernel.integration.model.Token;
 import italo.sisbanco.kernel.integration.model.TokenInfo;
 import italo.sisbanco.kernel.integration.model.UserCreated;
 import italo.sisbanco.kernel.integration.model.UserSaveRequest;
 
-public class MockedKeycloakMicroserviceIntegration {
+public class MockedKeycloakMicroserviceIntegration implements KeycloakMicroserviceIntegration {
 	
 	public MockedKeycloakMicroserviceIntegration() {
 		TokenInfo tokenInfo = mock( TokenInfo.class );

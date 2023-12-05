@@ -13,29 +13,29 @@ import org.springframework.web.bind.annotation.RestController;
 import italo.sisbanco.kernel.apidoc.transacao.cache.GetTransacaoEmCachePorIDEndpoint;
 import italo.sisbanco.kernel.apidoc.transacao.cache.ListaTransacoesEmCacheEndpoint;
 import italo.sisbanco.kernel.exception.SistemaException;
-import italo.sisbanco.kernel.model.cache.TransacaoCache;
-import italo.sisbanco.kernel.service.TransacaoCacheService;
+import italo.sisbanco.kernel.model.response.conta.OperacaoPendenteResponse;
+import italo.sisbanco.kernel.service.OperacaoPendenteCacheService;
 
 @RestController
 @RequestMapping("/api/kernel/cache/transacoes")
 public class TransacaoCacheController {
 
 	@Autowired
-	private TransacaoCacheService transacaoCacheService;
+	private OperacaoPendenteCacheService transacaoCacheService;
 		
 	@GetTransacaoEmCachePorIDEndpoint
-	@PreAuthorize("hasAuthority('cacheTransacoesALL')")
-	@GetMapping("/get/{transacaoId}")
-	public ResponseEntity<Object> get( @PathVariable String transacaoId ) throws SistemaException {
-		TransacaoCache resp = transacaoCacheService.get( transacaoId );
+	@PreAuthorize("hasAuthority('cacheOperacoesPendentesALL')")
+	@GetMapping("/get/{operacaoPendenteId}")
+	public ResponseEntity<Object> get( @PathVariable String operacaoPendenteId ) throws SistemaException {
+		OperacaoPendenteResponse resp = transacaoCacheService.get( operacaoPendenteId );
 		return ResponseEntity.ok( resp );
 	}
 	
 	@ListaTransacoesEmCacheEndpoint
-	@PreAuthorize("hasAuthority('cacheTransacoesALL')")
+	@PreAuthorize("hasAuthority('cacheOperacoesPendentesALL')")
 	@GetMapping("/lista/{contaId}")
 	public ResponseEntity<Object> listaPorConta( @PathVariable Long contaId ) throws SistemaException {
-		List<TransacaoCache> lista = transacaoCacheService.listaPorConta( contaId );
+		List<OperacaoPendenteResponse> lista = transacaoCacheService.listaPorConta( contaId );
 		return ResponseEntity.ok( lista );
 	}			
 		

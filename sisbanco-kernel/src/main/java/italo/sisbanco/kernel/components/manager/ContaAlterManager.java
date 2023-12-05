@@ -1,4 +1,4 @@
-package italo.sisbanco.kernel.service.manager;
+package italo.sisbanco.kernel.components.manager;
 
 import java.util.Optional;
 
@@ -15,7 +15,7 @@ public class ContaAlterManager {
 	
 	@Autowired
 	private ContaRepository contaRepository;
-
+	
 	public Conta alteraSaldo( Long contaId, double valor ) throws ServiceException {
 		Optional<Conta> contaOp = contaRepository.findById( contaId );
 		if ( !contaOp.isPresent() )

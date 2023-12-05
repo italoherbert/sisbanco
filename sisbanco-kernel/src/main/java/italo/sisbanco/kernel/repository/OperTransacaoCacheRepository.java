@@ -13,7 +13,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
 import italo.sisbanco.kernel.model.cache.TransacaoCache;
-import italo.sisbanco.kernel.model.enums.TransacaoTipo;
 
 @Repository
 public class OperTransacaoCacheRepository {
@@ -36,24 +35,29 @@ public class OperTransacaoCacheRepository {
 		hashOperations.put( KEY, id, transacao ); 
 	}
 	
+	@Cacheable(value="transacao_cache", key="#id")
+	public Optional<TransacaoCache> findById( String id ) {
+		TransacaoCache tc = hashOperations.get( KEY, id );		
+		return Optional.ofNullable( tc );
+	}
+	
 	public List<TransacaoCache> findByContaId( Long contaId ) {
 		return hashOperations.entries( KEY ).values().stream() 
 				.filter( t -> t.getOrigContaId() == contaId )
 				.toList();
 	}
 	
-	@Cacheable(value="transacao_cache", key="#id")
-	public Optional<TransacaoCache> findByOperacaoPendente( String operacaoPendenteId, TransacaoTipo tipo ) {
+	public Optional<TransacaoCache> findByOperacaoPendenteId( String operacaoPendenteId ) {
 		Iterator<TransacaoCache> transacoesCacheIT = hashOperations.entries( KEY ).values().iterator();
 		
 		TransacaoCache tcache = null;		
 		while( transacoesCacheIT.hasNext() && tcache == null ) {
 			TransacaoCache tcache2 = transacoesCacheIT.next();
-			if ( tcache2.getOperacaoPendente().getId() == operacaoPendenteId && tcache2.getTipo() == tipo )
+			if ( tcache2.getOperacaoPendente().getId() == operacaoPendenteId )
 				tcache = tcache2;
 		}
 				
-		return Optional.ofNullable( tcache );
+		return Optional.ofNullable( tcache );		
 	}
 	
 	public boolean existsById( String id ) {

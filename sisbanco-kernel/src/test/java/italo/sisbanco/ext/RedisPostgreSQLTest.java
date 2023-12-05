@@ -1,5 +1,6 @@
-package italo.sisbanco.ext.postgresql;
+package italo.sisbanco.ext;
 
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -7,47 +8,37 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
+import com.redis.testcontainers.RedisContainer;
+
+import italo.sisbanco.ext.redis.RedisTestConfiguration;
+
 @ActiveProfiles("test") 
 @Testcontainers
-public class PostgreSQLTest {
-
+@Import(RedisTestConfiguration.class)
+public class RedisPostgreSQLTest {
+	
 	private static PostgreSQLContainer<?> postgreSQLContainer;		
+	private static RedisContainer redis;
 	
 	static {
 		postgreSQLContainer = new PostgreSQLContainer<>( DockerImageName.parse( "postgres" ) )
 				.withUsername( "postgres" )
 				.withPassword( "postgres" )
 				.withDatabaseName( "test" );
-		postgreSQLContainer.start();		
+		postgreSQLContainer.start();
+		
+		redis = new RedisContainer( DockerImageName.parse("redis") );		
+		redis.start();		
 	}
 	
 	@DynamicPropertySource
-	public static void registerRedisProperties(DynamicPropertyRegistry registry) {
+	public static void registerProperties(DynamicPropertyRegistry registry) {
 	    registry.add( "spring.datasource.url", postgreSQLContainer::getJdbcUrl );
 	    registry.add( "spring.datasource.username", postgreSQLContainer::getUsername );
 	    registry.add( "spring.datasource.password", postgreSQLContainer::getPassword );
-	}	
+	
+	    registry.add("spring.data.redis.host", redis::getHost);
+	    registry.add("spring.data.redis.port", () -> redis.getFirstMappedPort() );
+	}		
 	
 }
-
-/*
-@BeforeEach
-public void setUp() {
-	DataSource datasource = new EmbeddedDatabaseBuilder()
-			.setType( EmbeddedDatabaseType.H2 )
-			.addScript( "/data/data.sql")
-			.build();
-	jdbcTemplate = new JdbcTemplate( datasource );
-	jdbcTemplate.update( "insert into conta ( titular, username, saldo, credito ) values ( 'joao', 'joao', 0, 0 )" );
-	jdbcTemplate.update( "insert into conta ( titular, username, saldo, credito ) values ( 'maria', 'maria', 0, 0 )" );
-}
-
-@AfterEach
-public void tearDown() {
-	jdbcTemplate.execute( "drop table conta" );
-}
-		
-public int buscaContaId( String username ) throws Exception {
-	return jdbcTemplate.queryForObject( "select id from conta where username='"+username+"'", Integer.class );
-}	
-*/

@@ -10,56 +10,33 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.github.dockerjava.api.model.Ports.Binding;
-import com.rabbitmq.client.AMQP.Exchange;
-import com.rabbitmq.client.AMQP.Queue;
-
-import italo.sisbanco.ext.openfeign.OpenFeignClientsConfiguration;
+import italo.sisbanco.ext.RedisPostgreSQLTest;
+import italo.sisbanco.ext.openfeign.FeignClientsTestConfiguration;
 import italo.sisbanco.ext.postgresql.ContaBD;
-import italo.sisbanco.ext.postgresql.PostgreSQLTest;
+import italo.sisbanco.ext.rabbitmq.RabbitMQTestConfiguration;
 import italo.sisbanco.kernel.SisbancoKernelApplication;
 import italo.sisbanco.kernel.exception.ServiceException;
-import italo.sisbanco.kernel.integration.KeycloakMicroserviceIntegration;
 import italo.sisbanco.kernel.integration.model.UserSaveRequest;
-import italo.sisbanco.kernel.message.TransacaoMessageSender;
 import italo.sisbanco.kernel.model.request.conta.ContaFiltroRequest;
 import italo.sisbanco.kernel.model.request.conta.ContaSaveRequest;
 import italo.sisbanco.kernel.model.request.conta.ValorRequest;
 import italo.sisbanco.kernel.model.response.conta.ContaResponse;
-import italo.sisbanco.kernel.repository.OperTransacaoCacheRepository;
 import italo.sisbanco.kernel.service.ContaService;
 
 @ActiveProfiles("test")
-@SpringBootTest(classes=SisbancoKernelApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
-@Import(OpenFeignClientsConfiguration.class)
-public class ContaServiceTest extends PostgreSQLTest {
+@SpringBootTest(classes=SisbancoKernelApplication.class)
+@Import({
+	RabbitMQTestConfiguration.class, 
+	FeignClientsTestConfiguration.class
+})
+public class ContaServiceTest extends RedisPostgreSQLTest {
 
 	@Autowired
 	private ContaService contaService;
-					
-	@MockBean
-	private OperTransacaoCacheRepository transacaoCacheRepository;
-	
-	@MockBean
-	private TransacaoMessageSender transacaoMessageSender;
-	
-	@MockBean
-	private KeycloakMicroserviceIntegration keycloakMicroserviceIntegration;
-		
-	@MockBean
-	private Queue transacoesQueue;
-	
-	@MockBean
-	private Exchange transacoesExchange;
-	
-	@MockBean
-	private Binding transacoesBinding;
-		
+						
 	public void registraTest() {
 		try {
 			UserSaveRequest userSave = new UserSaveRequest();

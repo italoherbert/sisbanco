@@ -1,13 +1,13 @@
-package italo.sisbanco.kernel.service.manager;
+package italo.sisbanco.kernel.components.manager;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import italo.sisbanco.kernel.Erros;
+import italo.sisbanco.kernel.enums.TransacaoTipo;
 import italo.sisbanco.kernel.exception.ServiceException;
 import italo.sisbanco.kernel.message.TransacaoMessageSender;
 import italo.sisbanco.kernel.model.Conta;
-import italo.sisbanco.kernel.model.enums.TransacaoTipo;
 import italo.sisbanco.kernel.repository.ContaRepository;
 import jakarta.transaction.Transactional;
 

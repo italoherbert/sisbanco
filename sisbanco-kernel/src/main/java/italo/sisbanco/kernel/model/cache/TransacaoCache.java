@@ -5,7 +5,7 @@ import java.util.Date;
 
 import org.springframework.data.redis.core.RedisHash;
 
-import italo.sisbanco.kernel.model.enums.TransacaoTipo;
+import italo.sisbanco.kernel.enums.TransacaoTipo;
 import lombok.Data;
 
 @Data
@@ -26,6 +26,6 @@ public class TransacaoCache implements Serializable {
 	
 	private TransacaoTipo tipo;
 	
-	private OperacaoPendenteCache operacaoPendente;
+	private OperacaoPendenteCache operacaoPendente;		
 	
 }

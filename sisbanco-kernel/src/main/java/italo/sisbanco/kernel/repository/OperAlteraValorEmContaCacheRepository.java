@@ -13,7 +13,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
 import italo.sisbanco.kernel.model.cache.AlteraValorEmContaCache;
-import italo.sisbanco.kernel.model.enums.ValorEmContaTipo;
 
 @Repository
 public class OperAlteraValorEmContaCacheRepository {
@@ -36,21 +35,26 @@ public class OperAlteraValorEmContaCacheRepository {
 		hashOperations.put( KEY, id, valor ); 
 	}
 	
+	@Cacheable(value="transacao_cache", key="#id")
+	public Optional<AlteraValorEmContaCache> findById( String id ) {
+		AlteraValorEmContaCache alterVC = hashOperations.get( KEY, id );		
+		return Optional.ofNullable( alterVC );
+	}
+	
 	public List<AlteraValorEmContaCache> findByContaId( Long contaId ) {
 		return hashOperations.entries( KEY ).values().stream() 
 				.filter( t -> t.getContaId() == contaId )
 				.toList();
 	}
-	
-	@Cacheable(value="valor_em_conta_cache", key="#id")
-	public Optional<AlteraValorEmContaCache> findByOperacaoPendente( String operacaoPendenteId, ValorEmContaTipo tipo ) {
+			
+	public Optional<AlteraValorEmContaCache> findByOperacaoPendenteId( String operacaoPendenteId ) {
 		Iterator<AlteraValorEmContaCache> alterValorCacheIT = hashOperations.entries( KEY )
 				.values().iterator();
 				
 		AlteraValorEmContaCache alterValorCache = null;
 		while( alterValorCacheIT.hasNext() && alterValorCache == null ) {
 			AlteraValorEmContaCache alterValorCache2 = alterValorCacheIT.next();
-			if ( alterValorCache2.getOperacaoPendente().getId() == operacaoPendenteId && alterValorCache2.getTipo() == tipo ) 
+			if ( alterValorCache2.getOperacaoPendente().getId() == operacaoPendenteId ) 
 				alterValorCache = alterValorCache2;			
 		}
 					

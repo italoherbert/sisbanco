@@ -12,60 +12,41 @@ import static org.mockito.Mockito.verify;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.github.dockerjava.api.model.Ports.Binding;
-import com.rabbitmq.client.AMQP.Exchange;
-import com.rabbitmq.client.AMQP.Queue;
-
-import italo.sisbanco.ext.openfeign.OpenFeignClientsConfiguration;
+import italo.sisbanco.ext.RedisPostgreSQLTest;
+import italo.sisbanco.ext.openfeign.FeignClientsTestConfiguration;
 import italo.sisbanco.ext.postgresql.ContaBD;
-import italo.sisbanco.ext.postgresql.PostgreSQLTest;
+import italo.sisbanco.ext.rabbitmq.RabbitMQTestConfiguration;
 import italo.sisbanco.kernel.SisbancoKernelApplication;
+import italo.sisbanco.kernel.enums.TransacaoTipo;
 import italo.sisbanco.kernel.exception.ServiceException;
-import italo.sisbanco.kernel.integration.KeycloakMicroserviceIntegration;
 import italo.sisbanco.kernel.message.TransacaoMessageSender;
 import italo.sisbanco.kernel.model.Conta;
-import italo.sisbanco.kernel.model.cache.TransacaoCache;
-import italo.sisbanco.kernel.model.enums.TransacaoTipo;
 import italo.sisbanco.kernel.model.request.conta.ValorRequest;
 import italo.sisbanco.kernel.model.response.conta.ContaResponse;
 import italo.sisbanco.kernel.model.response.conta.OperacaoPendenteResponse;
-import italo.sisbanco.kernel.repository.OperTransacaoCacheRepository;
 import italo.sisbanco.kernel.service.BancoService;
 import italo.sisbanco.kernel.service.ContaService;
 
 @ActiveProfiles("test") 
-@SpringBootTest(classes=SisbancoKernelApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
-@Import(OpenFeignClientsConfiguration.class)
-public class BancoServiceTest extends PostgreSQLTest {
+@SpringBootTest(classes=SisbancoKernelApplication.class)
+@Import({
+	RabbitMQTestConfiguration.class, 
+	FeignClientsTestConfiguration.class
+})
+public class BancoServiceTest extends RedisPostgreSQLTest {
 		
 	@Autowired
 	private ContaService contaService;
 	
 	@Autowired
 	private BancoService bancoService;		
-				
+		
 	@MockBean
 	private TransacaoMessageSender transacaoMessageSender;
-	
-	@MockBean
-	private OperTransacaoCacheRepository transacaoCacheRepository;
-	
-	@MockBean
-	private KeycloakMicroserviceIntegration keycloakMicroserviceIntegration;
-				
-	@MockBean
-	private Queue transacoesQueue;
-	
-	@MockBean
-	private Exchange transacoesExchange;
-	
-	@MockBean
-	private Binding transacoesBinding;
 	
 	@Test	
 	@ContaBD
@@ -76,7 +57,7 @@ public class BancoServiceTest extends PostgreSQLTest {
 			this.alteraDebitoSimplesLimite( "joao", 1000 ); 
 									
 			OperacaoPendenteResponse resp = this.executaCredito( "joao", 300 );
-			assertTrue( resp.isRealizada(), "CREDITO: Transação deveria ter sido realizada com sucessso." );			
+			assertTrue( resp.isRealizada(), "CREDITO: Transação deveria ter sido realizada com sucessso." );						
 		} catch ( Exception e ) {
 			e.printStackTrace();
 		}
@@ -86,8 +67,8 @@ public class BancoServiceTest extends PostgreSQLTest {
 	@ContaBD
 	public void debitoTest() {			
 		try {					
-			this.alteraSaldo( "joao", 300);
-			this.alteraCredito( "joao", 500);
+			this.alteraSaldo( "joao", 300 );
+			this.alteraCredito( "joao", 500 );
 			this.alteraDebitoSimplesLimite( "joao", 1000 ); 
 									
 			this.executaDebito( "joao", 200 );
@@ -95,7 +76,7 @@ public class BancoServiceTest extends PostgreSQLTest {
 			this.executaDebito( "joao", 1001 );				
 
 			try {
-				this.executaDebito( "joao", 1000 );
+				this.executaDebito( "joao", 601 );
 				fail( "Deveria ter lançado exceção. ");
 			} catch ( ServiceException e ) {
 				
@@ -134,7 +115,7 @@ public class BancoServiceTest extends PostgreSQLTest {
 			this.executaTransferencia( "joao", "maria", 1001 );
 							
 			try {
-				this.executaTransferencia( "joao", "maria", 700 );
+				this.executaTransferencia( "joao", "maria", 700 );				
 				fail( "Transferencia realizada sem saldo suficiente." );
 			} catch ( ServiceException e ) {
 				
@@ -233,12 +214,14 @@ public class BancoServiceTest extends PostgreSQLTest {
 
 		ContaResponse conta2 = contaService.get( conta.getId() );
 		if ( resp.isRealizada() ) {
+			assertNotNull( resp.getConta(), "CREDITO: Conta não deveria ser nula." );
 			assertEquals( resp.getSaldoAnterior(), saldo, "CREDITO: Saldo anterior incorreto." );
-			assertEquals( resp.getSaldoAtual(), saldo + valor, "CREDITO: Saldo atual incorreto." );
+			assertEquals( resp.getConta().getSaldo(), saldo + valor, "CREDITO: Saldo atual incorreto." );
 			assertEquals( conta2.getSaldo(), saldo + valor, "CREDITO: Saldo inconsistente." );
 		} else {
+			assertNotNull( resp.getConta(), "CREDITO: Conta não deveria ser nula." );
 			assertEquals( resp.getSaldoAnterior(), saldo, "CREDITO: Saldo anterior incorreto." );
-			assertEquals( resp.getSaldoAtual(), saldo, "CREDITO: Saldo atual incorreto." );
+			assertEquals( resp.getConta().getSaldo(), saldo, "CREDITO: Saldo atual incorreto." );
 			assertEquals( conta2.getSaldo(), saldo, "CREDITO: Saldo inconsistente." );			
 		}
 		
@@ -259,14 +242,15 @@ public class BancoServiceTest extends PostgreSQLTest {
 		ContaResponse conta2 = contaService.get( conta.getId() );
 		
 		if ( resp.isRealizada() ) {
+			assertNotNull( resp.getConta(), "DEBITO: Conta não deveria ser nula." );
 			assertEquals( resp.getSaldoAnterior(), saldo, "DEBITO: Saldo anterior incorreto." );
-			assertEquals( resp.getSaldoAtual(), saldo - valor, "DEBITO: Saldo atual incorreto." );
+			assertEquals( resp.getConta().getSaldo(), saldo - valor, "DEBITO: Saldo atual incorreto." );
 			assertEquals( conta2.getSaldo(), saldo - valor, "DEBITO: Saldo inconsistente." );
 		} else {
+			assertNotNull( resp.getConta(), "DEBITO: Conta não deveria ser nula." );
 			assertEquals( resp.getSaldoAnterior(), saldo, "DEBITO: Saldo anterior incorreto." );
-			assertEquals( resp.getSaldoAtual(), saldo, "DEBITO: Saldo atual incorreto." );
+			assertEquals( resp.getConta().getSaldo(), saldo, "DEBITO: Saldo atual incorreto." );
 			assertEquals( conta2.getSaldo(), saldo, "DEBITO: Saldo inconsistente." );			
-			verify( transacaoCacheRepository ).save( any( TransacaoCache.class ) ); 
 		}
 		return resp;
 	}
@@ -285,8 +269,7 @@ public class BancoServiceTest extends PostgreSQLTest {
 		transferencia.setValor( valor );
 		
 		OperacaoPendenteResponse resp = bancoService.transfere( contaOrig.getId(), contaDest.getId(), transferencia ); 
-			
-		
+					
 		ContaResponse contaOrig2 = contaService.getByUsername( origUsername );		
 		ContaResponse contaDest2 = contaService.getByUsername( destUsername );
 
@@ -294,16 +277,17 @@ public class BancoServiceTest extends PostgreSQLTest {
 		double saldoDest2 = contaDest2.getSaldo();
 				
 		if ( resp.isRealizada() ) {
+			assertNotNull( resp.getConta(), "TRANSFERENCIA: Conta não deveria ser nula." );
 			assertEquals( resp.getSaldoAnterior(), saldoOrig, "TRANSFERENCIA: Saldo anterior incorreto." );
-			assertEquals( resp.getSaldoAtual(), saldoOrig - valor, "TRANSFERENCIA: Saldo atual incorreto." );
+			assertEquals( resp.getConta().getSaldo(), saldoOrig - valor, "TRANSFERENCIA: Saldo atual incorreto." );
 			assertEquals( saldoOrig2, saldoOrig-valor, "TRANSFERENCIA: Saldo da conta de origem inconsistente." );
 			assertEquals( saldoDest2, saldoDest+valor, "TRANSFERENCIA: Saldo da conta de destino inconsistente." );		
 		} else {
+			assertNotNull( resp.getConta(), "TRANSFERENCIA: Conta não deveria ser nula." );
 			assertEquals( resp.getSaldoAnterior(), saldoOrig, "TRANSFERENCIA: Saldo anterior incorreto." );
-			assertEquals( resp.getSaldoAtual(), saldoOrig, "TRANSFERENCIA: Saldo atual incorreto." );
+			assertEquals( resp.getConta().getSaldo(), saldoOrig, "TRANSFERENCIA: Saldo atual incorreto." );
 			assertEquals( saldoOrig2, saldoOrig, "TRANSFERENCIA: Saldo da conta de origem inconsistente." );
 			assertEquals( saldoDest2, saldoDest, "TRANSFERENCIA: Saldo da conta de destino inconsistente." );		
-			verify( transacaoCacheRepository ).save( any( TransacaoCache.class ) ); 
 		}
 				
 		return resp;

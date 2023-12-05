@@ -16,12 +16,12 @@ import italo.sisbanco.kernel.model.response.ErroResponse;
 import italo.sisbanco.kernel.model.response.conta.OperacaoPendenteResponse;
 
 @Operation(
-	summary = "Responsável pela execução de uma transação armazenada em cache.",
+	summary = "Responsável pela execução de uma operação pendente armazenada em cache.",
 	security = @SecurityRequirement(name = OpenAPIConfiguration.SECURITY_APP_NAME))	
 @ApiResponses(value= {
 	@ApiResponse( 		
 		responseCode = "200",
-		description = "Transação executada com sucesso.",
+		description = "Operação executada com sucesso.",
 		content = {@Content(					
 			mediaType = "application/json", 
 			schema = @Schema(implementation = OperacaoPendenteResponse.class))}),
@@ -40,6 +40,6 @@ import italo.sisbanco.kernel.model.response.conta.OperacaoPendenteResponse;
 })
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface ExecutaTransacaoCacheEndpoint {
+public @interface ExecutaOperacaoPendenteCacheEndpoint {
 		
 }

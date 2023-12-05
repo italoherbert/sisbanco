@@ -2,6 +2,7 @@
 package italo.sisbanco.controller;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
@@ -21,16 +23,22 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import italo.sisbanco.ext.openfeign.FeignClientsTestConfiguration;
 import italo.sisbanco.ext.postgresql.ContaBD;
+import italo.sisbanco.ext.rabbitmq.RabbitMQTestConfiguration;
 import italo.sisbanco.kernel.SisbancoKernelApplication;
-import italo.sisbanco.kernel.integration.KeycloakMicroserviceIntegration;
-import italo.sisbanco.kernel.message.TransacaoMessageSender;
+import italo.sisbanco.kernel.components.operacoes.pendentes.OperacaoPendenteExecutor;
 import italo.sisbanco.kernel.model.request.conta.ValorRequest;
+import italo.sisbanco.kernel.repository.OperAlteraValorEmContaCacheRepository;
 import italo.sisbanco.kernel.repository.OperTransacaoCacheRepository;
 import italo.sisbanco.kernel.service.BancoService;
 
 @ActiveProfiles("test") 
 @SpringBootTest(classes=SisbancoKernelApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
+@Import({
+	RabbitMQTestConfiguration.class, 
+	FeignClientsTestConfiguration.class
+})
 public class BancoControllerTest {
 	
 	private final ObjectMapper objectMapper = new ObjectMapper();
@@ -42,16 +50,16 @@ public class BancoControllerTest {
 	
 	@MockBean
 	private BancoService bancoService;
+			
+	@MockBean
+	private OperTransacaoCacheRepository transacaoCacheRepository;
 	
 	@MockBean
-	private KeycloakMicroserviceIntegration keycloak;	
-
+	private OperAlteraValorEmContaCacheRepository alteraValorEmContaCacheRepository;
+			
 	@MockBean
-	private TransacaoMessageSender transacaoMessageSender;
+	private OperacaoPendenteExecutor operacaoPendenteExecutor;
 	
-	@MockBean
-	private OperTransacaoCacheRepository transacaoCacheManager;
-							
 	@BeforeEach
 	public void setUp() {
 		mockMvc = MockMvcBuilders
@@ -60,6 +68,19 @@ public class BancoControllerTest {
 				.build();
 				
 	}				
+	
+	@Test
+	@ContaBD
+	public void testExecutaOperacaoPendente() {		
+		try {
+			mockMvc.perform( 
+					get( "/api/kernel/exec/operacao/pendente/-1" ) )
+				.andDo( print() )
+				.andExpect( status().is4xxClientError() );
+		} catch ( Exception e ) {
+			e.printStackTrace();
+		}
+	}
 	
 	@Test
 	@ContaBD

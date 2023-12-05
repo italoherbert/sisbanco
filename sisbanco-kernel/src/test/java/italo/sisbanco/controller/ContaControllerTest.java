@@ -1,9 +1,5 @@
 package italo.sisbanco.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -18,8 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -28,19 +24,24 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import italo.sisbanco.ext.openfeign.FeignClientsTestConfiguration;
 import italo.sisbanco.ext.postgresql.ContaBD;
+import italo.sisbanco.ext.rabbitmq.RabbitMQTestConfiguration;
 import italo.sisbanco.kernel.SisbancoKernelApplication;
-import italo.sisbanco.kernel.integration.KeycloakMicroserviceIntegration;
-import italo.sisbanco.kernel.integration.model.UserCreated;
+import italo.sisbanco.kernel.components.operacoes.pendentes.OperacaoPendenteExecutor;
 import italo.sisbanco.kernel.integration.model.UserSaveRequest;
-import italo.sisbanco.kernel.message.TransacaoMessageSender;
 import italo.sisbanco.kernel.model.request.conta.ContaFiltroRequest;
 import italo.sisbanco.kernel.model.request.conta.ContaSaveRequest;
+import italo.sisbanco.kernel.repository.OperAlteraValorEmContaCacheRepository;
 import italo.sisbanco.kernel.repository.OperTransacaoCacheRepository;
 import italo.sisbanco.kernel.service.ContaService;
 
 @ActiveProfiles("test") 
 @SpringBootTest(classes=SisbancoKernelApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
+@Import({
+	RabbitMQTestConfiguration.class, 
+	FeignClientsTestConfiguration.class
+})
 public class ContaControllerTest {
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
@@ -54,13 +55,13 @@ public class ContaControllerTest {
 	private ContaService contaService;
 	
 	@MockBean
-	private KeycloakMicroserviceIntegration keycloak;
+	private OperacaoPendenteExecutor operacaoPendenteExecutor;
 	
 	@MockBean
 	private OperTransacaoCacheRepository transacaoCacheRepository;
-						
+			
 	@MockBean
-	private TransacaoMessageSender transacaoMessageSender;
+	private OperAlteraValorEmContaCacheRepository alteraValorEmContaCacheRepository;
 	
 	@BeforeEach
 	public void setUp() {
@@ -79,12 +80,7 @@ public class ContaControllerTest {
 			ContaSaveRequest conta = new ContaSaveRequest();
 			conta.setTitular( "italo" );
 			conta.setUser( user );
-			
-			UserCreated created = mock( UserCreated.class );		
-			ResponseEntity<UserCreated> userCreatedEntity = ResponseEntity.ok( created );
-											
-			when( keycloak.registraUser( any( UserSaveRequest.class ), anyString() ) ).thenReturn( userCreatedEntity );					
-												
+																			
 			mockMvc.perform( 
 				post("/api/kernel/conta/registra")
 					.contentType( MediaType.APPLICATION_JSON )
