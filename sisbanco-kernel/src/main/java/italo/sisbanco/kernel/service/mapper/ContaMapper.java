@@ -2,6 +2,7 @@ package italo.sisbanco.kernel.service.mapper;
 
 import org.springframework.stereotype.Component;
 
+import italo.sisbanco.kernel.Constantes;
 import italo.sisbanco.kernel.model.Conta;
 import italo.sisbanco.kernel.model.request.conta.ContaSaveRequest;
 import italo.sisbanco.kernel.model.response.conta.ContaResponse;
@@ -15,7 +16,7 @@ public class ContaMapper {
 		c.setUserId( userId ); 
 		c.setSaldo( 0 );
 		c.setCredito( 0 ); 
-		c.setSemAutorizacaoDebitoLimite( 0 );
+		c.setDebitoSimplesLimite( Constantes.DEBITO_SIMPLES_LIMITE_INICIAL );
 	}
 	
 	public void carregaParaAlteracao( Conta c, ContaSaveRequest req ) {
@@ -28,7 +29,7 @@ public class ContaMapper {
 		resp.setTitular( c.getTitular() );
 		resp.setSaldo( c.getSaldo() );
 		resp.setCredito( c.getCredito() );
-		resp.setSemAutorizacaoDebitoLimite( c.getSemAutorizacaoDebitoLimite() ); 
+		resp.setDebitoSimplesLimite( c.getDebitoSimplesLimite() ); 
 	}
 	
 	public Conta novoBean() {

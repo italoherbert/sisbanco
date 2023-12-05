@@ -13,7 +13,7 @@ import lombok.Data;
 public class TransacaoCache implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-
+	
 	private String id;
 		
 	private long origContaId;
@@ -25,5 +25,7 @@ public class TransacaoCache implements Serializable {
 	private Date dataOperacao;
 	
 	private TransacaoTipo tipo;
+	
+	private OperacaoPendenteCache operacaoPendente;
 	
 }

@@ -16,7 +16,7 @@ import italo.sisbanco.kernel.apidoc.banco.SacarEndpoint;
 import italo.sisbanco.kernel.apidoc.banco.TransferirEndpoint;
 import italo.sisbanco.kernel.exception.SistemaException;
 import italo.sisbanco.kernel.model.request.conta.ValorRequest;
-import italo.sisbanco.kernel.model.response.conta.TransacaoResponse;
+import italo.sisbanco.kernel.model.response.conta.OperacaoPendenteResponse;
 import italo.sisbanco.kernel.service.BancoService;
 
 @RestController
@@ -32,7 +32,7 @@ public class BancoController {
 	public ResponseEntity<Object> executaTransacaoCache( 
 			@PathVariable String transacaoId ) throws SistemaException {
 		
-		TransacaoResponse resp = bancoService.executaTransacaoCache( transacaoId );
+		OperacaoPendenteResponse resp = bancoService.executaTransacaoCache( transacaoId );
 		return ResponseEntity.ok( resp );
 	}
 	
@@ -43,7 +43,7 @@ public class BancoController {
 			@PathVariable Long contaId, 
 			@RequestBody ValorRequest request ) throws SistemaException {
 		
-		TransacaoResponse resp = bancoService.credita( contaId, request );
+		OperacaoPendenteResponse resp = bancoService.credita( contaId, request );
 		return ResponseEntity.ok( resp );		
 	}
 	
@@ -54,7 +54,7 @@ public class BancoController {
 			@PathVariable Long contaId, 
 			@RequestBody ValorRequest request ) throws SistemaException {
 		
-		TransacaoResponse resp = bancoService.debita( contaId, request );
+		OperacaoPendenteResponse resp = bancoService.debita( contaId, request );
 		return ResponseEntity.ok( resp );		
 	}
 	
@@ -66,7 +66,7 @@ public class BancoController {
 			@PathVariable Long destContaId,
 			@RequestBody ValorRequest request ) throws SistemaException {
 		
-		TransacaoResponse resp = bancoService.transfere( origContaId, destContaId, request );
+		OperacaoPendenteResponse resp = bancoService.transfere( origContaId, destContaId, request );
 		return ResponseEntity.ok( resp );		
 	}
 	

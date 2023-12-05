@@ -9,18 +9,18 @@ import org.springframework.stereotype.Service;
 import italo.sisbanco.kernel.Erros;
 import italo.sisbanco.kernel.exception.ServiceException;
 import italo.sisbanco.kernel.model.cache.TransacaoCache;
-import italo.sisbanco.kernel.repository.TransacaoCacheRepository;
+import italo.sisbanco.kernel.repository.OperTransacaoCacheRepository;
 
 @Service
 public class TransacaoCacheService {
 
 	@Autowired
-	private TransacaoCacheRepository transacaoCacheRepository;
+	private OperTransacaoCacheRepository transacaoCacheRepository;
 	
 	public TransacaoCache get( String transacaoId ) throws ServiceException {
 		Optional<TransacaoCache> tcacheOp = transacaoCacheRepository.findById( transacaoId );
 		if ( !tcacheOp.isPresent() )
-			throw new ServiceException( Erros.TRANSACAO_NAO_ENCONTRADA_EM_CACHE );
+			throw new ServiceException( Erros.OPER_TRANSACAO_NAO_ENCONTRADA_EM_CACHE );
 		
 		TransacaoCache tcache = tcacheOp.get();		
 		return tcache;

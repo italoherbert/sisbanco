@@ -91,7 +91,7 @@ public class KeycloakManager {
 	public GroupRepresentation getGroupRepresentation( Keycloak keycloak, String realm, String groupPath ) {
 		return keycloak.realm( realm ).getGroupByPath( groupPath );
 	}
-	
+		
 	public String getAdminRealm() {
 		return adminRealm;
 	}

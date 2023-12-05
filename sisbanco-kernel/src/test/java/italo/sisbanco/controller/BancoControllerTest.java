@@ -26,7 +26,7 @@ import italo.sisbanco.kernel.SisbancoKernelApplication;
 import italo.sisbanco.kernel.integration.KeycloakMicroserviceIntegration;
 import italo.sisbanco.kernel.message.TransacaoMessageSender;
 import italo.sisbanco.kernel.model.request.conta.ValorRequest;
-import italo.sisbanco.kernel.repository.TransacaoCacheRepository;
+import italo.sisbanco.kernel.repository.OperTransacaoCacheRepository;
 import italo.sisbanco.kernel.service.BancoService;
 
 @ActiveProfiles("test") 
@@ -50,7 +50,7 @@ public class BancoControllerTest {
 	private TransacaoMessageSender transacaoMessageSender;
 	
 	@MockBean
-	private TransacaoCacheRepository transacaoCacheManager;
+	private OperTransacaoCacheRepository transacaoCacheManager;
 							
 	@BeforeEach
 	public void setUp() {

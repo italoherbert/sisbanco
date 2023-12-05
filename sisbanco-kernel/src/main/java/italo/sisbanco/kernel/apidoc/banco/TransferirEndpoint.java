@@ -13,7 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import italo.sisbanco.kernel.config.OpenAPIConfiguration;
 import italo.sisbanco.kernel.model.response.ErroResponse;
-import italo.sisbanco.kernel.model.response.conta.TransacaoResponse;
+import italo.sisbanco.kernel.model.response.conta.OperacaoPendenteResponse;
 
 @Operation(
 		summary = "Responsável por efetuar a transferência em conta pelo titular. "
@@ -26,7 +26,7 @@ import italo.sisbanco.kernel.model.response.conta.TransacaoResponse;
 			description = "Transferẽncia realizada com sucesso ou armazenado em cache.",
 			content = {@Content(					
 				mediaType = "application/json", 
-				schema = @Schema(implementation = TransacaoResponse.class))}),
+				schema = @Schema(implementation = OperacaoPendenteResponse.class))}),
 	@ApiResponse(
 		responseCode = "403",
 		description = OpenAPIConfiguration.ERRO_403_MSG,

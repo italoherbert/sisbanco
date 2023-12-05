@@ -4,21 +4,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.github.dockerjava.api.model.Ports.Binding;
@@ -31,16 +25,13 @@ import italo.sisbanco.ext.postgresql.PostgreSQLTest;
 import italo.sisbanco.kernel.SisbancoKernelApplication;
 import italo.sisbanco.kernel.exception.ServiceException;
 import italo.sisbanco.kernel.integration.KeycloakMicroserviceIntegration;
-import italo.sisbanco.kernel.integration.model.Token;
-import italo.sisbanco.kernel.integration.model.TokenInfo;
-import italo.sisbanco.kernel.integration.model.UserCreated;
 import italo.sisbanco.kernel.integration.model.UserSaveRequest;
 import italo.sisbanco.kernel.message.TransacaoMessageSender;
 import italo.sisbanco.kernel.model.request.conta.ContaFiltroRequest;
 import italo.sisbanco.kernel.model.request.conta.ContaSaveRequest;
 import italo.sisbanco.kernel.model.request.conta.ValorRequest;
 import italo.sisbanco.kernel.model.response.conta.ContaResponse;
-import italo.sisbanco.kernel.repository.TransacaoCacheRepository;
+import italo.sisbanco.kernel.repository.OperTransacaoCacheRepository;
 import italo.sisbanco.kernel.service.ContaService;
 
 @ActiveProfiles("test")
@@ -52,7 +43,7 @@ public class ContaServiceTest extends PostgreSQLTest {
 	private ContaService contaService;
 					
 	@MockBean
-	private TransacaoCacheRepository transacaoCacheRepository;
+	private OperTransacaoCacheRepository transacaoCacheRepository;
 	
 	@MockBean
 	private TransacaoMessageSender transacaoMessageSender;
@@ -68,22 +59,7 @@ public class ContaServiceTest extends PostgreSQLTest {
 	
 	@MockBean
 	private Binding transacoesBinding;
-	
-	@Before
-	public void setUp() {
-		TokenInfo tokenInfo = mock( TokenInfo.class );
-		ResponseEntity<TokenInfo> tokenInfoResp = ResponseEntity.ok( tokenInfo );
 		
-		UserCreated created = mock( UserCreated.class );
-		ResponseEntity<UserCreated> createdResp = ResponseEntity.ok( created );
-		
-		ResponseEntity<Object> delResp = ResponseEntity.ok().build();
-				
-		when( keycloakMicroserviceIntegration.registraUser( any( UserSaveRequest.class), anyString() ) ).thenReturn( createdResp );
-		when( keycloakMicroserviceIntegration.deletaUser( anyString(), anyString() ) ).thenReturn( delResp );
-		when( keycloakMicroserviceIntegration.tokenInfo( any( Token.class ) ) ).thenReturn( tokenInfoResp );	
-	}
-	
 	public void registraTest() {
 		try {
 			UserSaveRequest userSave = new UserSaveRequest();

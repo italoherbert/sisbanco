@@ -14,29 +14,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.github.dockerjava.api.model.Ports.Binding;
 import com.rabbitmq.client.AMQP.Exchange;
 import com.rabbitmq.client.AMQP.Queue;
 
+import italo.sisbanco.ext.openfeign.OpenFeignClientsConfiguration;
 import italo.sisbanco.ext.postgresql.ContaBD;
 import italo.sisbanco.ext.postgresql.PostgreSQLTest;
 import italo.sisbanco.kernel.SisbancoKernelApplication;
 import italo.sisbanco.kernel.exception.ServiceException;
+import italo.sisbanco.kernel.integration.KeycloakMicroserviceIntegration;
 import italo.sisbanco.kernel.message.TransacaoMessageSender;
 import italo.sisbanco.kernel.model.Conta;
 import italo.sisbanco.kernel.model.cache.TransacaoCache;
 import italo.sisbanco.kernel.model.enums.TransacaoTipo;
 import italo.sisbanco.kernel.model.request.conta.ValorRequest;
 import italo.sisbanco.kernel.model.response.conta.ContaResponse;
-import italo.sisbanco.kernel.model.response.conta.TransacaoResponse;
-import italo.sisbanco.kernel.repository.TransacaoCacheRepository;
+import italo.sisbanco.kernel.model.response.conta.OperacaoPendenteResponse;
+import italo.sisbanco.kernel.repository.OperTransacaoCacheRepository;
 import italo.sisbanco.kernel.service.BancoService;
 import italo.sisbanco.kernel.service.ContaService;
 
 @ActiveProfiles("test") 
 @SpringBootTest(classes=SisbancoKernelApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
+@Import(OpenFeignClientsConfiguration.class)
 public class BancoServiceTest extends PostgreSQLTest {
 		
 	@Autowired
@@ -49,7 +53,10 @@ public class BancoServiceTest extends PostgreSQLTest {
 	private TransacaoMessageSender transacaoMessageSender;
 	
 	@MockBean
-	private TransacaoCacheRepository transacaoCacheRepository;
+	private OperTransacaoCacheRepository transacaoCacheRepository;
+	
+	@MockBean
+	private KeycloakMicroserviceIntegration keycloakMicroserviceIntegration;
 				
 	@MockBean
 	private Queue transacoesQueue;
@@ -64,9 +71,11 @@ public class BancoServiceTest extends PostgreSQLTest {
 	@ContaBD
 	public void creditoTest() {				
 		try {					
-			this.alteraContaValores( "joao", 0, 0, 1000 );
-						
-			TransacaoResponse resp = this.executaCredito( "joao", 300 );
+			this.alteraSaldo( "joao", 0 );
+			this.alteraCredito( "joao", 0 );
+			this.alteraDebitoSimplesLimite( "joao", 1000 ); 
+									
+			OperacaoPendenteResponse resp = this.executaCredito( "joao", 300 );
 			assertTrue( resp.isRealizada(), "CREDITO: Transação deveria ter sido realizada com sucessso." );			
 		} catch ( Exception e ) {
 			e.printStackTrace();
@@ -77,8 +86,10 @@ public class BancoServiceTest extends PostgreSQLTest {
 	@ContaBD
 	public void debitoTest() {			
 		try {					
-			this.alteraContaValores( "joao", 300, 500, 1000 );
-						
+			this.alteraSaldo( "joao", 300);
+			this.alteraCredito( "joao", 500);
+			this.alteraDebitoSimplesLimite( "joao", 1000 ); 
+									
 			this.executaDebito( "joao", 200 );
 			
 			this.executaDebito( "joao", 1001 );				
@@ -110,9 +121,14 @@ public class BancoServiceTest extends PostgreSQLTest {
 	@ContaBD
 	public void transferenciaTest() {				
 		try {					
-			this.alteraContaValores( "joao", 300, 500, 1000 );
-			this.alteraContaValores( "maria", 0, 0, 1000 );
-
+			this.alteraSaldo( "joao", 300 );
+			this.alteraCredito( "joao", 500 );
+			this.alteraDebitoSimplesLimite( "joao", 1000 ); 
+			
+			this.alteraSaldo( "maria", 0 );
+			this.alteraCredito( "maria", 0 );
+			this.alteraDebitoSimplesLimite( "maria", 1000 ); 
+			
 			this.executaTransferencia( "joao", "maria", 200 );
 			
 			this.executaTransferencia( "joao", "maria", 1001 );
@@ -142,7 +158,69 @@ public class BancoServiceTest extends PostgreSQLTest {
 		}
 	}
 	
-	private TransacaoResponse executaCredito( String username, double valor ) throws ServiceException {
+	@Test
+	@ContaBD
+	public void testAlteraSaldo() {
+		try {					
+			this.alteraSaldo( "joao", 300 );
+			this.alteraSaldo( "maria", 800 ); 
+													
+			assertEquals( this.getSaldo( "joao" ), 300, "Saldo inválido para titular joão." );
+			assertEquals( this.getSaldo( "maria" ), 800, "Saldo inválido para titular maria." );
+		} catch ( Exception e ) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	@ContaBD
+	public void testAlteraCredito() {
+		try {					
+			this.alteraCredito( "joao", 300 );
+			this.alteraCredito( "maria", 800 ); 
+			
+			try {
+				this.alteraCredito( "joao", -1 );
+				fail( "Deveria lançar exceção. Crédito negativo." );
+			} catch ( ServiceException e ) {
+				
+			}
+			
+			ContaResponse joaoConta = this.getContaByUsername( "joao" );
+			ContaResponse mariaConta = this.getContaByUsername( "maria" );
+													
+			assertEquals( joaoConta.getCredito(), 300, "Crédito inválido para titular joão." );
+			assertEquals( mariaConta.getCredito(), 800, "Crédito inválido para titular maria." );
+		} catch ( Exception e ) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	@ContaBD
+	public void testAlteraDebitoSimplesLimite() {
+		try {					
+			this.alteraDebitoSimplesLimite( "joao", 300 );
+			this.alteraDebitoSimplesLimite( "maria", 800 ); 
+			
+			try {
+				this.alteraDebitoSimplesLimite( "joao", -1 );
+				fail( "Deveria lançar exceção. Crédito negativo." );
+			} catch ( ServiceException e ) {
+				
+			}
+			
+			ContaResponse joaoConta = this.getContaByUsername( "joao" );
+			ContaResponse mariaConta = this.getContaByUsername( "maria" );
+													
+			assertEquals( joaoConta.getDebitoSimplesLimite(), 300, "Débito simples limite inválido para titular joão." );
+			assertEquals( mariaConta.getDebitoSimplesLimite(), 800, "Débito simples limite inválido para titular maria." );
+		} catch ( Exception e ) {
+			e.printStackTrace();
+		}
+	}
+	
+	private OperacaoPendenteResponse executaCredito( String username, double valor ) throws ServiceException {
 		ContaResponse conta = contaService.getByUsername( username );
 		assertNotNull( conta, "Conta não encontrada. Username="+username );
 		
@@ -151,7 +229,7 @@ public class BancoServiceTest extends PostgreSQLTest {
 		ValorRequest credito = new ValorRequest();
 		credito.setValor( valor );			
 		
-		TransacaoResponse resp = bancoService.credita( conta.getId(), credito );
+		OperacaoPendenteResponse resp = bancoService.credita( conta.getId(), credito );
 
 		ContaResponse conta2 = contaService.get( conta.getId() );
 		if ( resp.isRealizada() ) {
@@ -167,7 +245,7 @@ public class BancoServiceTest extends PostgreSQLTest {
 		return resp;
 	}
 	
-	private TransacaoResponse executaDebito( String username, double valor ) throws ServiceException {
+	private OperacaoPendenteResponse executaDebito( String username, double valor ) throws ServiceException {
 		ContaResponse conta = contaService.getByUsername( username );
 		assertNotNull( conta, "Conta não encontrada. Username="+username );
 		
@@ -176,7 +254,7 @@ public class BancoServiceTest extends PostgreSQLTest {
 		ValorRequest debito = new ValorRequest();
 		debito.setValor( valor );
 		
-		TransacaoResponse resp = bancoService.debita( conta.getId(), debito );
+		OperacaoPendenteResponse resp = bancoService.debita( conta.getId(), debito );
 		
 		ContaResponse conta2 = contaService.get( conta.getId() );
 		
@@ -193,7 +271,7 @@ public class BancoServiceTest extends PostgreSQLTest {
 		return resp;
 	}
 	
-	private TransacaoResponse executaTransferencia( String origUsername, String destUsername, double valor ) throws ServiceException {
+	private OperacaoPendenteResponse executaTransferencia( String origUsername, String destUsername, double valor ) throws ServiceException {
 		ContaResponse contaOrig = contaService.getByUsername( origUsername );		
 		ContaResponse contaDest = contaService.getByUsername( destUsername );
 		
@@ -206,7 +284,7 @@ public class BancoServiceTest extends PostgreSQLTest {
 		ValorRequest transferencia = new ValorRequest();
 		transferencia.setValor( valor );
 		
-		TransacaoResponse resp = bancoService.transfere( contaOrig.getId(), contaDest.getId(), transferencia ); 
+		OperacaoPendenteResponse resp = bancoService.transfere( contaOrig.getId(), contaDest.getId(), transferencia ); 
 			
 		
 		ContaResponse contaOrig2 = contaService.getByUsername( origUsername );		
@@ -230,7 +308,7 @@ public class BancoServiceTest extends PostgreSQLTest {
 				
 		return resp;
 	}
-	
+			
 	private double getSaldo( String username ) throws ServiceException {
 		ContaResponse resp = contaService.getByUsername( username );
 		assertNotNull( resp, "Não foi possível encontrar a conta pelo username: "+username );
@@ -238,21 +316,31 @@ public class BancoServiceTest extends PostgreSQLTest {
 		return resp.getSaldo();
 	}
 		
-	private void alteraContaValores( String username, double saldo, double credito, double semAutorizacaoDebitoLimite ) throws ServiceException {
+	private void alteraCredito( String username, double credito ) throws ServiceException {
+		ContaResponse resp = this.getContaByUsername( username );
+		ValorRequest valor = new ValorRequest();
+		valor.setValor( credito );		
+		contaService.alteraCredito( resp.getId(), valor );
+	}
+	
+	private void alteraDebitoSimplesLimite( String username, double debitoSimplesLimite ) throws ServiceException {
+		ContaResponse resp = this.getContaByUsername( username );
+		ValorRequest valor = new ValorRequest();
+		valor.setValor( debitoSimplesLimite );		
+		contaService.alteraDebitoSimplesLimite( resp.getId(), valor );
+	}
+	
+	private void alteraSaldo( String username, double saldo ) throws ServiceException {
+		ContaResponse resp = this.getContaByUsername( username );
+		ValorRequest valor = new ValorRequest();
+		valor.setValor( saldo );		
+		contaService.alteraSaldo( resp.getId(), valor );
+	}
+	
+	private ContaResponse getContaByUsername( String username ) throws ServiceException {
 		ContaResponse resp = contaService.getByUsername( username );
 		assertNotNull( resp, "Não foi possível encontrar a conta pelo username: "+username );
-		
-		ValorRequest saldoValor = new ValorRequest();
-		saldoValor.setValor( saldo );		
-		contaService.alteraSaldo( resp.getId(), saldoValor );
-		
-		ValorRequest creditoValor = new ValorRequest();
-		creditoValor.setValor( credito );		
-		contaService.alteraCredito( resp.getId(), creditoValor );
-		
-		ValorRequest semAutorizacaoDebitoLimiteValor = new ValorRequest();
-		semAutorizacaoDebitoLimiteValor.setValor( semAutorizacaoDebitoLimite );		
-		contaService.alteraSemAutorizacaoDebitoLimite( resp.getId(), semAutorizacaoDebitoLimiteValor );
+		return resp;
 	}
 	
 }

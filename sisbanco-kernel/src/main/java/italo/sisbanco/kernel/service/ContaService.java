@@ -19,16 +19,20 @@ import italo.sisbanco.kernel.model.request.conta.ContaSaveRequest;
 import italo.sisbanco.kernel.model.request.conta.ValorRequest;
 import italo.sisbanco.kernel.model.response.conta.ContaResponse;
 import italo.sisbanco.kernel.repository.ContaRepository;
+import italo.sisbanco.kernel.service.manager.ContaAlterManager;
 import italo.sisbanco.kernel.service.mapper.ContaMapper;
 
 @Service
 public class ContaService {
-
-	@Autowired
-	private ContaRepository contaRepository;
 	
 	@Autowired
 	private KeycloakMicroserviceIntegration keycloak;
+	
+	@Autowired
+	private ContaAlterManager contaAlterManager;
+
+	@Autowired
+	private ContaRepository contaRepository;
 	
 	@Autowired
 	private ContaMapper contaMapper;
@@ -81,33 +85,15 @@ public class ContaService {
 	}
 	
 	public void alteraSaldo( Long contaId, ValorRequest valor ) throws ServiceException {
-		Optional<Conta> contaOp = contaRepository.findById( contaId );
-		if ( !contaOp.isPresent() )
-			throw new ServiceException( Erros.CONTA_NAO_ENCONTRADA );
-		
-		Conta conta = contaOp.get();
-		conta.setSaldo( valor.getValor() );
-		contaRepository.save( conta );		
+		contaAlterManager.alteraSaldo( contaId, valor.getValor() ); 		
 	}
 	
 	public void alteraCredito( Long contaId, ValorRequest valor ) throws ServiceException {
-		Optional<Conta> contaOp = contaRepository.findById( contaId );
-		if ( !contaOp.isPresent() )
-			throw new ServiceException( Erros.CONTA_NAO_ENCONTRADA );
-		
-		Conta conta = contaOp.get();
-		conta.setCredito( valor.getValor() );
-		contaRepository.save( conta );		
+		contaAlterManager.alteraCredito( contaId, valor.getValor() ); 		
 	}
 	
-	public void alteraSemAutorizacaoDebitoLimite( Long contaId, ValorRequest valor ) throws ServiceException {
-		Optional<Conta> contaOp = contaRepository.findById( contaId );
-		if ( !contaOp.isPresent() )
-			throw new ServiceException( Erros.CONTA_NAO_ENCONTRADA );
-		
-		Conta conta = contaOp.get();
-		conta.setSemAutorizacaoDebitoLimite( valor.getValor() );
-		contaRepository.save( conta );		
+	public void alteraDebitoSimplesLimite( Long contaId, ValorRequest valor ) throws ServiceException {
+		contaAlterManager.alteraDebitoSimplesLimite( contaId, valor.getValor() ); 		
 	}
 	
 	public ContaResponse get( Long contaId ) throws ServiceException {

@@ -1,5 +1,7 @@
 package italo.sisbanco.ext.openfeign;
 
+import static org.mockito.Mockito.mock;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -7,8 +9,8 @@ import org.springframework.context.annotation.Configuration;
 public class OpenFeignClientsConfiguration {
 
 	@Bean
-	KeycloakMicroserviceClient keycloakMicroservice() {
-		return new KeycloakMicroserviceClient();
+	MockedKeycloakMicroserviceIntegration keycloakMicroserviceIntegration() {
+		return mock( MockedKeycloakMicroserviceIntegration.class );
 	}
 	
 }

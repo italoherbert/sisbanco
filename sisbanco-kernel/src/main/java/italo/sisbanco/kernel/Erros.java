@@ -14,9 +14,12 @@ public interface Erros {
 	public final static String CREDITO_INSUFICIENTE = "conta.credito.insuficiente";
 	public final static String SALDO_INSUFICIENTE = "conta.saldo.insuficiente";
 
-	public final static String TRANSACAO_NAO_ENCONTRADA_EM_CACHE = "transacao.em.cache.nao.encontrada";
-	public final static String TRANSACAO_TIPO_INVALIDO = "transacao.em.cache.tipo.invalido";
+	public final static String OPER_TRANSACAO_NAO_ENCONTRADA_EM_CACHE = "oper.transacao.em.cache.nao.encontrada";
+	public final static String OPER_ALTER_VALOR_EM_CONTA_NAO_ENCONTRADA_EM_CACHE = "oper.alter.valor.em.conta.em.cache.nao.encontrada";
 	
+	public final static String TRANSACAO_TIPO_INVALIDO = "oper.transacao.em.cache.tipo.invalido";
 	
+	public final static String CREDITO_NEGATIVO = "credito.negativo";
+	public final static String DEBITO_SIMPLES_LIMITE_NEGATIVO = "debito.simples.limite.negativo";
 		
 }

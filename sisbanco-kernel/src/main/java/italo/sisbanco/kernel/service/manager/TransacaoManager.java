@@ -12,7 +12,7 @@ import italo.sisbanco.kernel.repository.ContaRepository;
 import jakarta.transaction.Transactional;
 
 @Component
-public class TransacaoManagerService {
+public class TransacaoManager {
 
 	@Autowired
 	private ContaRepository contaRepository;

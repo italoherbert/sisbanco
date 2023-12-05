@@ -12,31 +12,35 @@ import italo.sisbanco.kernel.model.Conta;
 import italo.sisbanco.kernel.model.cache.TransacaoCache;
 import italo.sisbanco.kernel.model.enums.TransacaoTipo;
 import italo.sisbanco.kernel.model.request.conta.ValorRequest;
-import italo.sisbanco.kernel.model.response.conta.TransacaoResponse;
+import italo.sisbanco.kernel.model.response.conta.OperacaoPendenteResponse;
 import italo.sisbanco.kernel.repository.ContaRepository;
-import italo.sisbanco.kernel.repository.TransacaoCacheRepository;
-import italo.sisbanco.kernel.service.manager.TransacaoManagerService;
+import italo.sisbanco.kernel.repository.OperTransacaoCacheRepository;
+import italo.sisbanco.kernel.service.manager.TransacaoManager;
+import italo.sisbanco.kernel.service.operacoes.pendentes.OperacaoPendente;
 
 @Service
 public class BancoService {
 
 	@Autowired
-	private TransacaoManagerService transacaoManagerService;
+	private TransacaoManager transacaoManagerService;
 	
 	@Autowired
-	private TransacaoCacheRepository transacaoCacheRepository;
+	private OperTransacaoCacheRepository transacaoCacheRepository;
 	
 	@Autowired
-	private ContaRepository contaRepository;
+	private ContaRepository contaRepository;	
 	
-	public TransacaoResponse executaTransacaoCache( String transacaoId ) throws ServiceException {
+	@Autowired
+	private OperacaoPendente operDebitoTransacaoPendenteExecutor;
+	
+	public OperacaoPendenteResponse executaTransacaoCache( String transacaoId ) throws ServiceException {
 		Optional<TransacaoCache> tcacheOp = transacaoCacheRepository.findById( transacaoId );
 		if ( !tcacheOp.isPresent() )
-			throw new ServiceException( Erros.TRANSACAO_NAO_ENCONTRADA_EM_CACHE );
+			throw new ServiceException( Erros.OPER_TRANSACAO_NAO_ENCONTRADA_EM_CACHE );
 		
 		TransacaoCache tcache = tcacheOp.get();
 		
-		TransacaoResponse resp = new TransacaoResponse();
+		OperacaoPendenteResponse resp = new OperacaoPendenteResponse();
 		resp.setTipo( tcache.getTipo() );
 		
 		if( tcache.getTipo() == TransacaoTipo.DEBITO ) {
@@ -88,7 +92,7 @@ public class BancoService {
 		}		
 	}
 	
-	public TransacaoResponse credita( Long contaId, ValorRequest request ) throws ServiceException {
+	public OperacaoPendenteResponse credita( Long contaId, ValorRequest request ) throws ServiceException {
 		Optional<Conta> contaOp = contaRepository.findById( contaId );
 		if ( !contaOp.isPresent() )
 			throw new ServiceException( Erros.CONTA_NAO_ENCONTRADA );
@@ -100,7 +104,7 @@ public class BancoService {
 		
 		transacaoManagerService.credita( conta, valor );
 		
-		TransacaoResponse resp = new TransacaoResponse();
+		OperacaoPendenteResponse resp = new OperacaoPendenteResponse();
 		resp.setSaldoAnterior( saldo );
 		resp.setSaldoAtual( saldo + valor ); 
 		resp.setRealizada( true );
@@ -108,7 +112,7 @@ public class BancoService {
 		return resp;
 	}
 	
-	public TransacaoResponse debita( Long contaId, ValorRequest request ) throws ServiceException {
+	public OperacaoPendenteResponse debita( Long contaId, ValorRequest request ) throws ServiceException {
 		Optional<Conta> contaOp = contaRepository.findById( contaId );
 		if ( !contaOp.isPresent() )
 			throw new ServiceException( Erros.CONTA_NAO_ENCONTRADA );
@@ -118,11 +122,11 @@ public class BancoService {
 		
 		double valor = request.getValor();
 		
-		TransacaoResponse resp = new TransacaoResponse();
+		OperacaoPendenteResponse resp = new OperacaoPendenteResponse();
 		resp.setSaldoAnterior( conta.getSaldo() ); 
 		resp.setTipo( TransacaoTipo.DEBITO ); 
 		
-		if ( valor > conta.getSemAutorizacaoDebitoLimite() ) {
+		if ( valor > conta.getDebitoSimplesLimite() ) {
 			TransacaoCache tcache = new TransacaoCache();
 			tcache.setOrigContaId( conta.getId() );
 			tcache.setValor( valor );
@@ -143,7 +147,7 @@ public class BancoService {
 		return resp;
 	}
 	
-	public TransacaoResponse transfere( Long origemContaId, Long destContaId, ValorRequest request ) throws ServiceException {
+	public OperacaoPendenteResponse transfere( Long origemContaId, Long destContaId, ValorRequest request ) throws ServiceException {
 		Optional<Conta> origemContaOp = contaRepository.findById( origemContaId );
 		if ( !origemContaOp.isPresent() )
 			throw new ServiceException( Erros.CONTA_ORIGEM_NAO_ENCONTRADA );
@@ -159,11 +163,11 @@ public class BancoService {
 		
 		double valor = request.getValor();
 		
-		TransacaoResponse resp = new TransacaoResponse();		
+		OperacaoPendenteResponse resp = new OperacaoPendenteResponse();		
 		resp.setSaldoAnterior( origSaldo );
 		resp.setTipo( TransacaoTipo.TRANSFERENCIA ); 
 		
-		if ( valor > origem.getSemAutorizacaoDebitoLimite() ) {
+		if ( valor > origem.getDebitoSimplesLimite() ) {
 			TransacaoCache tcache = new TransacaoCache();
 			tcache.setOrigContaId( origem.getId() );
 			tcache.setDestContaId( dest.getId() ); 
