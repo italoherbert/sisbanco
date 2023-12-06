@@ -8,13 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import italo.sisbanco.kernel.Erros;
+import italo.sisbanco.kernel.components.mapper.OperacaoPendenteMapper;
 import italo.sisbanco.kernel.enums.AlteraValorEmContaTipo;
 import italo.sisbanco.kernel.enums.TransacaoTipo;
 import italo.sisbanco.kernel.exception.ServiceException;
 import italo.sisbanco.kernel.model.Conta;
 import italo.sisbanco.kernel.model.cache.AlteraValorEmContaCache;
 import italo.sisbanco.kernel.model.cache.TransacaoCache;
-import italo.sisbanco.kernel.model.mapper.OperacaoPendenteMapper;
 import italo.sisbanco.kernel.model.response.conta.OperacaoPendenteResponse;
 import italo.sisbanco.kernel.repository.ContaRepository;
 import italo.sisbanco.kernel.repository.OperAlteraValorEmContaCacheRepository;

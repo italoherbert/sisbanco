@@ -1,12 +1,12 @@
-package italo.sisbanco.kernel.model.mapper;
+package italo.sisbanco.kernel.components.mapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import italo.sisbanco.kernel.components.builder.response.OperacaoPendenteResponseBuilder;
 import italo.sisbanco.kernel.enums.AlteraValorEmContaTipo;
 import italo.sisbanco.kernel.enums.TransacaoTipo;
 import italo.sisbanco.kernel.model.Conta;
-import italo.sisbanco.kernel.model.builder.response.OperacaoPendenteResponseBuilder;
 import italo.sisbanco.kernel.model.response.conta.OperacaoPendenteResponse;
 
 @Component

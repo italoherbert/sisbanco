@@ -1,4 +1,4 @@
-package italo.sisbanco.kernel.model.builder;
+package italo.sisbanco.kernel.components.builder;
 
 import java.util.Date;
 
@@ -32,7 +32,7 @@ public class AlteraValorEmContaCacheBuilder {
 		return this;
 	}
 	
-	public AlteraValorEmContaCacheBuilder contaOrigemId( long contaOrigemId ) {
+	public AlteraValorEmContaCacheBuilder contaId( long contaOrigemId ) {
 		alteraValorEmConta.setContaId( contaOrigemId );
 		return this;
 	}

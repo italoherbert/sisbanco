@@ -21,9 +21,8 @@ import italo.sisbanco.ext.openfeign.FeignClientsTestConfiguration;
 import italo.sisbanco.ext.rabbitmq.RabbitMQTestConfiguration;
 import italo.sisbanco.ext.redis.RedisTest;
 import italo.sisbanco.kernel.SisbancoKernelApplication;
-import italo.sisbanco.kernel.components.operacoes.pendentes.OperacaoPendenteExecutor;
+import italo.sisbanco.kernel.components.builder.TransacaoCacheBuilder;
 import italo.sisbanco.kernel.enums.TransacaoTipo;
-import italo.sisbanco.kernel.model.builder.TransacaoCacheBuilder;
 import italo.sisbanco.kernel.model.cache.TransacaoCache;
 import italo.sisbanco.kernel.repository.OperAlteraValorEmContaCacheRepository;
 import italo.sisbanco.kernel.repository.OperTransacaoCacheRepository;
@@ -38,9 +37,6 @@ public class TransacaoCacheRepositoryTest extends RedisTest {
 
 	@Autowired
 	private OperTransacaoCacheRepository transacaoCacheRepository;	
-	
-	@MockBean
-	private OperacaoPendenteExecutor operacaoPendenteExecutor;		
 	
 	@MockBean
 	private OperAlteraValorEmContaCacheRepository alteraValorEmContaCacheRepository;

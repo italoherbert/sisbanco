@@ -28,7 +28,6 @@ import italo.sisbanco.ext.openfeign.FeignClientsTestConfiguration;
 import italo.sisbanco.ext.postgresql.ContaBD;
 import italo.sisbanco.ext.rabbitmq.RabbitMQTestConfiguration;
 import italo.sisbanco.kernel.SisbancoKernelApplication;
-import italo.sisbanco.kernel.components.operacoes.pendentes.OperacaoPendenteExecutor;
 import italo.sisbanco.kernel.integration.model.UserSaveRequest;
 import italo.sisbanco.kernel.model.request.conta.ContaFiltroRequest;
 import italo.sisbanco.kernel.model.request.conta.ContaSaveRequest;
@@ -53,10 +52,7 @@ public class ContaControllerTest {
 	
 	@MockBean
 	private ContaService contaService;
-	
-	@MockBean
-	private OperacaoPendenteExecutor operacaoPendenteExecutor;
-	
+		
 	@MockBean
 	private OperTransacaoCacheRepository transacaoCacheRepository;
 			

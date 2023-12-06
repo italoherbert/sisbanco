@@ -21,9 +21,9 @@ import italo.sisbanco.ext.openfeign.FeignClientsTestConfiguration;
 import italo.sisbanco.ext.rabbitmq.RabbitMQTestConfiguration;
 import italo.sisbanco.ext.redis.RedisTest;
 import italo.sisbanco.kernel.SisbancoKernelApplication;
+import italo.sisbanco.kernel.components.builder.AlteraValorEmContaCacheBuilder;
 import italo.sisbanco.kernel.components.operacoes.pendentes.OperacaoPendenteExecutor;
 import italo.sisbanco.kernel.enums.AlteraValorEmContaTipo;
-import italo.sisbanco.kernel.model.builder.AlteraValorEmContaCacheBuilder;
 import italo.sisbanco.kernel.model.cache.AlteraValorEmContaCache;
 import italo.sisbanco.kernel.repository.OperAlteraValorEmContaCacheRepository;
 import italo.sisbanco.kernel.repository.OperTransacaoCacheRepository;
@@ -51,21 +51,21 @@ public class AlterValorEmContaCacheRepositoryTest extends RedisTest {
 		final long CONTA_ID2 = 3;
 		
 		AlteraValorEmContaCache tcache1 = AlteraValorEmContaCacheBuilder.builder()
-				.contaOrigemId( CONTA_ID1 )
+				.contaId( CONTA_ID1 )
 				.dataOperacao( new Date() )
 				.tipo( AlteraValorEmContaTipo.CREDITO )
 				.valor( 100 )				
 				.get();
 		
 		AlteraValorEmContaCache tcache2 = AlteraValorEmContaCacheBuilder.builder()
-				.contaOrigemId( CONTA_ID2 )
+				.contaId( CONTA_ID2 )
 				.dataOperacao( new Date() )
 				.tipo( AlteraValorEmContaTipo.CREDITO )
 				.valor( 100 )				
 				.get();
 		
 		AlteraValorEmContaCache tcache3 = AlteraValorEmContaCacheBuilder.builder()
-				.contaOrigemId( CONTA_ID1 )
+				.contaId( CONTA_ID1 )
 				.dataOperacao( new Date() )
 				.tipo( AlteraValorEmContaTipo.DEBITO_SIMPLES_LIMITE )
 				.valor( 100 )				

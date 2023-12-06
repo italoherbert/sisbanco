@@ -1,4 +1,4 @@
-package italo.sisbanco.kernel.model.builder;
+package italo.sisbanco.kernel.components.builder;
 
 import java.util.Date;
 

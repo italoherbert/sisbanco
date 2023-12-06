@@ -1,12 +1,12 @@
-package italo.sisbanco.kernel.model.builder.response;
+package italo.sisbanco.kernel.components.builder.response;
 
 import java.util.Date;
 
+import italo.sisbanco.kernel.components.mapper.ContaMapper;
 import italo.sisbanco.kernel.enums.AlteraValorEmContaTipo;
 import italo.sisbanco.kernel.enums.OperacaoPendenteTipo;
 import italo.sisbanco.kernel.enums.TransacaoTipo;
 import italo.sisbanco.kernel.model.Conta;
-import italo.sisbanco.kernel.model.mapper.ContaMapper;
 import italo.sisbanco.kernel.model.response.conta.ContaResponse;
 import italo.sisbanco.kernel.model.response.conta.OperacaoPendenteResponse;
 

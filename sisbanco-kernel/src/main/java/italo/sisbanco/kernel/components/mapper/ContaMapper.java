@@ -1,4 +1,4 @@
-package italo.sisbanco.kernel.model.mapper;
+package italo.sisbanco.kernel.components.mapper;
 
 import org.springframework.stereotype.Component;
 

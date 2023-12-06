@@ -27,7 +27,6 @@ import italo.sisbanco.ext.openfeign.FeignClientsTestConfiguration;
 import italo.sisbanco.ext.postgresql.ContaBD;
 import italo.sisbanco.ext.rabbitmq.RabbitMQTestConfiguration;
 import italo.sisbanco.kernel.SisbancoKernelApplication;
-import italo.sisbanco.kernel.components.operacoes.pendentes.OperacaoPendenteExecutor;
 import italo.sisbanco.kernel.model.request.conta.ValorRequest;
 import italo.sisbanco.kernel.repository.OperAlteraValorEmContaCacheRepository;
 import italo.sisbanco.kernel.repository.OperTransacaoCacheRepository;
@@ -50,15 +49,12 @@ public class BancoControllerTest {
 	
 	@MockBean
 	private BancoService bancoService;
-			
+	
 	@MockBean
 	private OperTransacaoCacheRepository transacaoCacheRepository;
 	
 	@MockBean
-	private OperAlteraValorEmContaCacheRepository alteraValorEmContaCacheRepository;
-			
-	@MockBean
-	private OperacaoPendenteExecutor operacaoPendenteExecutor;
+	private OperAlteraValorEmContaCacheRepository alteraValorEmContaCacheRepository;	
 	
 	@BeforeEach
 	public void setUp() {
