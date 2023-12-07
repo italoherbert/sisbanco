@@ -21,12 +21,12 @@ public interface KeycloakMicroserviceIntegration {
 	@PostMapping("/token-info")
 	public ResponseEntity<TokenInfo> tokenInfo( @RequestBody Token token );
 	
-	@PostMapping("/users/registra")
+	@PostMapping("/users")
 	public ResponseEntity<UserCreated> registraUser( 
 			@RequestBody UserSaveRequest request, 
 			@RequestHeader("Authorization") String authorization ); 
 	
-	@DeleteMapping("/users/deleta/{userId}")
+	@DeleteMapping("/users/{userId}")
 	public ResponseEntity<Object> deletaUser( 
 			@PathVariable String userId, 
 			@RequestHeader("Authorization") String authorization ); 

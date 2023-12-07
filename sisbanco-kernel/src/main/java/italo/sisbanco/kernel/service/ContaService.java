@@ -143,8 +143,12 @@ public class ContaService {
 		Conta conta = contaOp.get();
 		String userId = conta.getUserId();
 				
-		keycloak.deletaUser( userId, authorizationHeader );
-		contaRepository.deleteById( contaId ); 
+		try {
+			keycloak.deletaUser( userId, authorizationHeader );
+			contaRepository.deleteById( contaId ); 
+		} catch ( FeignClientException e ) {	
+			throw new ErrorException( e.status(), e.contentUTF8() );
+		}
 	}
 	
 }
