@@ -17,7 +17,7 @@ import italo.sisbanco.kernel.components.builder.TransacaoCacheBuilder;
 import italo.sisbanco.kernel.components.operacoes.pendentes.transacao.DebitoOperacaoPendente;
 import italo.sisbanco.kernel.enums.OperacaoPendenteTipo;
 import italo.sisbanco.kernel.enums.TransacaoTipo;
-import italo.sisbanco.kernel.exception.ServiceException;
+import italo.sisbanco.kernel.exception.ErrorException;
 import italo.sisbanco.kernel.model.Conta;
 import italo.sisbanco.kernel.model.cache.TransacaoCache;
 import italo.sisbanco.kernel.model.response.conta.OperacaoPendenteResponse;
@@ -44,7 +44,7 @@ public class DebitoOperacaoPendenteTest extends AbstractOperacaoPendenteTest {
 	}
 
 	@Override
-	protected OperacaoPendenteResponse registraOperacaoEExecuta( Long contaId ) throws ServiceException {
+	protected OperacaoPendenteResponse registraOperacaoEExecuta( Long contaId ) throws ErrorException {
 		TransacaoCache tc = TransacaoCacheBuilder.builder()
 				.contaOrigemId( contaId )
 				.contaDestinoId( 0 )

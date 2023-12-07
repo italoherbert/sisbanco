@@ -3,7 +3,6 @@ package italo.sisbanco.kernel.repository;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -17,7 +16,7 @@ import italo.sisbanco.kernel.model.cache.AlteraValorEmContaCache;
 @Repository
 public class OperAlteraValorEmContaCacheRepository {
 
-	public final static String KEY = "valor";
+	public final static String KEY = "VALOR_EM_CONTA";
 	
 	private HashOperations<String, String, AlteraValorEmContaCache> hashOperations;
 	
@@ -26,13 +25,8 @@ public class OperAlteraValorEmContaCacheRepository {
 	}
 	
 	@CachePut(value="valor_em_conta_cache", key="#p0") 
-	public void save( AlteraValorEmContaCache valor ) {
-		String id = valor.getId();
-		if ( id == null ) {
-			id =  UUID.randomUUID().toString();
-			valor.setId( id );
-		}
-		hashOperations.put( KEY, id, valor ); 
+	public void save( AlteraValorEmContaCache valor ) {		
+		hashOperations.put( KEY, valor.getId(), valor ); 		
 	}
 	
 	@Cacheable(value="transacao_cache", key="#id")
@@ -54,7 +48,7 @@ public class OperAlteraValorEmContaCacheRepository {
 		AlteraValorEmContaCache alterValorCache = null;
 		while( alterValorCacheIT.hasNext() && alterValorCache == null ) {
 			AlteraValorEmContaCache alterValorCache2 = alterValorCacheIT.next();
-			if ( alterValorCache2.getOperacaoPendente().getId() == operacaoPendenteId ) 
+			if ( alterValorCache2.getOperacaoPendente().getId().equals( operacaoPendenteId ) ) 
 				alterValorCache = alterValorCache2;			
 		}
 					
@@ -68,7 +62,10 @@ public class OperAlteraValorEmContaCacheRepository {
 	@CacheEvict(value="valor_em_conta_cache", key="#id") 
 	public void deleteById( String id ) {
 		hashOperations.delete( KEY, id );
-	}	
-	
+	}			
+
+	public void deleteAll() {
+		hashOperations.entries( KEY ).values().stream().forEach( (v) -> hashOperations.delete( KEY, v.getId() ) );
+	}
 	
 }

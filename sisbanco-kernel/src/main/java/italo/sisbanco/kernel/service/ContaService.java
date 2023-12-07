@@ -12,7 +12,7 @@ import feign.FeignException.FeignClientException;
 import italo.sisbanco.kernel.Erros;
 import italo.sisbanco.kernel.components.manager.ContaAlterManager;
 import italo.sisbanco.kernel.components.mapper.ContaMapper;
-import italo.sisbanco.kernel.exception.ServiceException;
+import italo.sisbanco.kernel.exception.ErrorException;
 import italo.sisbanco.kernel.integration.KeycloakMicroserviceIntegration;
 import italo.sisbanco.kernel.integration.model.UserCreated;
 import italo.sisbanco.kernel.model.Conta;
@@ -37,10 +37,10 @@ public class ContaService {
 	@Autowired
 	private ContaMapper contaMapper;
 	
-	public ContaResponse registra( ContaSaveRequest request, String authorizationHeader ) throws ServiceException {
+	public ContaResponse registra( ContaSaveRequest request, String authorizationHeader ) throws ErrorException {
 		boolean existe = contaRepository.existeTitular( request.getTitular() );
 		if ( existe )
-			throw new ServiceException( Erros.TITULAR_JA_EXISTE );
+			throw new ErrorException( Erros.TITULAR_JA_EXISTE );
 				
 		try {
 			ResponseEntity<UserCreated> resp = 
@@ -57,17 +57,17 @@ public class ContaService {
 				contaMapper.carregaResponse( contaResp, conta ); 
 				return contaResp;
 			} else {
-				throw new ServiceException( Erros.KEYCLOAK_USER_NAO_CRIADO );
+				throw new ErrorException( Erros.KEYCLOAK_USER_NAO_CRIADO );
 			}
 		} catch ( FeignClientException e ) {
-			throw new ServiceException( e.status(), e.contentUTF8() );
+			throw new ErrorException( e.status(), e.contentUTF8() );
 		}
 	}
 	
-	public void altera( Long contaId, ContaSaveRequest request ) throws ServiceException {
+	public void altera( Long contaId, ContaSaveRequest request ) throws ErrorException {
 		Optional<Conta> contaOp = contaRepository.findById( contaId );
 		if ( !contaOp.isPresent() )
-			throw new ServiceException( Erros.CONTA_NAO_ENCONTRADA );
+			throw new ErrorException( Erros.CONTA_NAO_ENCONTRADA );
 		
 		Conta conta = contaOp.get();
 		
@@ -77,29 +77,29 @@ public class ContaService {
 		if ( !novoTitular.equalsIgnoreCase( titular ) ) {
 			boolean existe = contaRepository.existeTitular( novoTitular );
 			if ( existe )
-				throw new ServiceException( Erros.TITULAR_JA_EXISTE );
+				throw new ErrorException( Erros.TITULAR_JA_EXISTE );
 		}
 		
 		contaMapper.carregaParaAlteracao( conta, request ); 
 		contaRepository.save( conta );	
 	}
 	
-	public void alteraSaldo( Long contaId, ValorRequest valor ) throws ServiceException {
+	public void alteraSaldo( Long contaId, ValorRequest valor ) throws ErrorException {
 		contaAlterManager.alteraSaldo( contaId, valor.getValor() ); 		
 	}
 	
-	public void alteraCredito( Long contaId, ValorRequest valor ) throws ServiceException {
+	public void alteraCredito( Long contaId, ValorRequest valor ) throws ErrorException {
 		contaAlterManager.alteraCredito( contaId, valor.getValor() ); 		
 	}
 	
-	public void alteraDebitoSimplesLimite( Long contaId, ValorRequest valor ) throws ServiceException {
+	public void alteraDebitoSimplesLimite( Long contaId, ValorRequest valor ) throws ErrorException {
 		contaAlterManager.alteraDebitoSimplesLimite( contaId, valor.getValor() ); 		
 	}
 	
-	public ContaResponse get( Long contaId ) throws ServiceException {
+	public ContaResponse get( Long contaId ) throws ErrorException {
 		Optional<Conta> contaOp = contaRepository.findById( contaId );
 		if ( !contaOp.isPresent() )
-			throw new ServiceException( Erros.CONTA_NAO_ENCONTRADA );
+			throw new ErrorException( Erros.CONTA_NAO_ENCONTRADA );
 		
 		Conta conta = contaOp.get();
 		
@@ -108,10 +108,10 @@ public class ContaService {
 		return resp;
 	}
 	
-	public ContaResponse getByUsername( String username ) throws ServiceException {
+	public ContaResponse getByUsername( String username ) throws ErrorException {
 		Optional<Conta> contaOp = contaRepository.buscaPorUsername( username );
 		if ( !contaOp.isPresent() )
-			throw new ServiceException( Erros.CONTA_NAO_ENCONTRADA );
+			throw new ErrorException( Erros.CONTA_NAO_ENCONTRADA );
 		
 		Conta conta = contaOp.get();
 				
@@ -135,10 +135,10 @@ public class ContaService {
 		return responses;
 	}
 	
-	public void deleta( Long contaId, String authorizationHeader ) throws ServiceException {
+	public void deleta( Long contaId, String authorizationHeader ) throws ErrorException {
 		Optional<Conta> contaOp = contaRepository.findById( contaId );
 		if ( !contaOp.isPresent() )
-			throw new ServiceException( Erros.CONTA_NAO_ENCONTRADA );
+			throw new ErrorException( Erros.CONTA_NAO_ENCONTRADA );
 		
 		Conta conta = contaOp.get();
 		String userId = conta.getUserId();

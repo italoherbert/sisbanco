@@ -10,7 +10,7 @@ import italo.sisbanco.kernel.components.manager.ContaAlterManager;
 import italo.sisbanco.kernel.components.mapper.ContaMapper;
 import italo.sisbanco.kernel.components.operacoes.pendentes.OperacaoPendente;
 import italo.sisbanco.kernel.enums.AlteraValorEmContaTipo;
-import italo.sisbanco.kernel.exception.ServiceException;
+import italo.sisbanco.kernel.exception.ErrorException;
 import italo.sisbanco.kernel.model.Conta;
 import italo.sisbanco.kernel.model.cache.AlteraValorEmContaCache;
 import italo.sisbanco.kernel.model.response.conta.OperacaoPendenteResponse;
@@ -25,7 +25,7 @@ public class AlterDebitoSimplesLimiteOperacaoPendente implements OperacaoPendent
 	private ContaMapper contaMapper;
 	
 	@Override
-	public OperacaoPendenteResponse executa( AlteraValorEmContaCache alterValorCache ) throws ServiceException {				
+	public OperacaoPendenteResponse executa( AlteraValorEmContaCache alterValorCache ) throws ErrorException {				
 		long contaId = alterValorCache.getContaId();
 		double valor = alterValorCache.getValor();
 		

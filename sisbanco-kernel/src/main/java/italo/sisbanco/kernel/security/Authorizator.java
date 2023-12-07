@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import italo.sisbanco.kernel.Erros;
+import italo.sisbanco.kernel.exception.AuthorizatorException;
 import italo.sisbanco.kernel.integration.KeycloakMicroserviceIntegration;
 import italo.sisbanco.kernel.integration.model.Token;
 import italo.sisbanco.kernel.integration.model.TokenInfo;

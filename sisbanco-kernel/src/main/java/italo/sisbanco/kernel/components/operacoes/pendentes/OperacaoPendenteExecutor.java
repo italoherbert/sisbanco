@@ -10,7 +10,7 @@ import italo.sisbanco.kernel.components.operacoes.pendentes.altervaloremconta.Al
 import italo.sisbanco.kernel.components.operacoes.pendentes.altervaloremconta.AlterDebitoSimplesLimiteOperacaoPendente;
 import italo.sisbanco.kernel.components.operacoes.pendentes.transacao.DebitoOperacaoPendente;
 import italo.sisbanco.kernel.components.operacoes.pendentes.transacao.TransferenciaOperacaoPendente;
-import italo.sisbanco.kernel.exception.ServiceException;
+import italo.sisbanco.kernel.exception.ErrorException;
 import italo.sisbanco.kernel.model.cache.AlteraValorEmContaCache;
 import italo.sisbanco.kernel.model.cache.TransacaoCache;
 import italo.sisbanco.kernel.model.response.conta.OperacaoPendenteResponse;
@@ -39,7 +39,7 @@ public class OperacaoPendenteExecutor {
 	@Autowired
 	private AlterDebitoSimplesLimiteOperacaoPendente alterDebitoSimplesLimiteOperacaoPendente;
 		
-	public OperacaoPendenteResponse executa( String operacaoPendenteId ) throws ServiceException {
+	public OperacaoPendenteResponse executa( String operacaoPendenteId ) throws ErrorException {
 		Optional<TransacaoCache> transacaoCacheOp = transacaoCacheRepository.findByOperacaoPendenteId( operacaoPendenteId );
 		
 		if ( transacaoCacheOp.isPresent() ) {
@@ -50,7 +50,7 @@ public class OperacaoPendenteExecutor {
 				case TRANSFERENCIA:
 					return transferenciaOperacaoPendente.executa( transacaoCache );
 				default:
-					throw new ServiceException( Erros.OPER_TRANSACAO_TIPO_INVALIDO );
+					throw new ErrorException( Erros.OPER_TRANSACAO_TIPO_INVALIDO );
 			}			
 		} else {
 			Optional<AlteraValorEmContaCache> alterVCacheOp = alterValorEmContaCacheRepository.findByOperacaoPendenteId( operacaoPendenteId );
@@ -63,10 +63,10 @@ public class OperacaoPendenteExecutor {
 					case DEBITO_SIMPLES_LIMITE:
 						return alterDebitoSimplesLimiteOperacaoPendente.executa( alterVCache );						
 					default:
-						throw new ServiceException( Erros.OPER_ALTER_VALOR_EM_CONTA_TIPO_INVALIDO );
+						throw new ErrorException( Erros.OPER_ALTER_VALOR_EM_CONTA_TIPO_INVALIDO );
 				}
 			} else {
-				throw new ServiceException( Erros.OPERACAO_PENDENTE_NAO_ENCONTRADA );
+				throw new ErrorException( Erros.OPERACAO_PENDENTE_NAO_ENCONTRADA );
 			}
 		}						
 	}

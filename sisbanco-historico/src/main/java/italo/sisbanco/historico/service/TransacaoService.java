@@ -22,7 +22,7 @@ public class TransacaoService {
 	@Autowired
 	private TransacaoRepository transacaoRepository;
 		
-	public Transacao registraTransacao( TransacaoMessage request ) {
+	public Transacao registraTransacao( TransacaoMessage request ) throws ErrorException {
 		Transacao transacao = new Transacao();
 		transacao.setUsername( request.getUsername() );
 		transacao.setValor( request.getValor() );
@@ -47,7 +47,7 @@ public class TransacaoService {
 		return transacoes;
 	}
 	
-	public Transacao get( String id ) {
+	public Transacao get( String id ) throws ErrorException {
 		Optional<Transacao> transacaoOp = transacaoRepository.findById( id );
 		if ( !transacaoOp.isPresent() )
 			throw new ErrorException( Erros.TRANSACAO_NAO_ENCONTRADA );
@@ -55,7 +55,7 @@ public class TransacaoService {
 		return transacaoOp.get();
 	}
 	
-	public void deleta( String id ) {
+	public void deleta( String id ) throws ErrorException {
 		boolean existe = transacaoRepository.existsById( id );
 		if ( !existe )
 			throw new ErrorException( Erros.TRANSACAO_NAO_ENCONTRADA );

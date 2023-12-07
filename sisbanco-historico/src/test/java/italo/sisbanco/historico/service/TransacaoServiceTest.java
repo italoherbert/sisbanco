@@ -46,29 +46,34 @@ public class TransacaoServiceTest extends MongoDBTest {
 	
 	@Test
 	public void test() {
-		TransacaoMessage tm = new TransacaoMessage();
-		tm.setUsername( "abc" );
-		tm.setTipo( "CREDITO" );
-		tm.setValor( 100 );
-		tm.setDataOperacao( new Date() );
-		
-		Transacao t = transacaoService.registraTransacao( tm );
-		
-		String tid = t.getId();
-		
-		t = transacaoService.get( tid );
-		assertEquals( t.getUsername(), tm.getUsername() );
-		assertEquals( t.getValor(), tm.getValor() );
-		assertEquals( t.getDataOperacao(), tm.getDataOperacao() );
-		assertEquals( t.getTipo(), tm.getTipo() );
-		
-		transacaoService.deleta( tid );
-				
 		try {
-			t = transacaoService.get( tid );
-			fail( "Deveria lançar exceção porque a transação já foi removida." );
-		} catch ( ErrorException e ) {
+			TransacaoMessage tm = new TransacaoMessage();
+			tm.setUsername( "abc" );
+			tm.setTipo( "CREDITO" );
+			tm.setValor( 100 );
+			tm.setDataOperacao( new Date() );
 			
+			Transacao t = transacaoService.registraTransacao( tm );
+			
+			String tid = t.getId();
+			
+			t = transacaoService.get( tid );
+			assertEquals( t.getUsername(), tm.getUsername() );
+			assertEquals( t.getValor(), tm.getValor() );
+			assertEquals( t.getDataOperacao(), tm.getDataOperacao() );
+			assertEquals( t.getTipo(), tm.getTipo() );
+			
+			transacaoService.deleta( tid );
+					
+			try {
+				t = transacaoService.get( tid );
+				fail( "Deveria lançar exceção porque a transação já foi removida." );
+			} catch ( ErrorException e ) {
+				
+			}
+		} catch ( ErrorException e ) {
+			e.printStackTrace();
+			fail( e.getErrorCode() );
 		}
 	}
 		

@@ -24,7 +24,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import italo.sisbanco.keycloak.Erros;
-import italo.sisbanco.keycloak.exception.ServiceException;
+import italo.sisbanco.keycloak.exception.ErrorException;
 import italo.sisbanco.keycloak.manager.KeycloakManager;
 import italo.sisbanco.keycloak.model.Login;
 import italo.sisbanco.keycloak.model.Token;
@@ -41,7 +41,7 @@ public class TokenService {
 	
 	private final ObjectMapper objectMapper = new ObjectMapper();
 	
-	public Token login( Login request ) throws ServiceException {
+	public Token login( Login request ) throws ErrorException {
 		try {
 			AccessTokenResponse resp = keycloakManager.token( request.getUsername(), request.getPassword() );
 
@@ -49,18 +49,18 @@ public class TokenService {
 			token.setAccessToken( resp.getToken() ); 
 			return token;
 		} catch ( NotAuthorizedException e ) {
-			throw new ServiceException( Erros.USER_NAO_ENCONTRADO );
+			throw new ErrorException( Erros.USER_NAO_ENCONTRADO );
 		} catch ( BadRequestException e ) {
 			e.printStackTrace();
-			throw new ServiceException( Erros.TOKEN_SOLICITACAO_FALHA );
+			throw new ErrorException( Erros.TOKEN_SOLICITACAO_FALHA );
 		} catch ( WebApplicationException e ) {
-			throw new ServiceException( Erros.TOKEN_SOLICITACAO_FALHA );
+			throw new ErrorException( Erros.TOKEN_SOLICITACAO_FALHA );
 		}				
 	}
 		
 		
 	
-	public TokenInfo tokenInfo( Token token ) throws ServiceException {
+	public TokenInfo tokenInfo( Token token ) throws ErrorException {
 		String realmPublicKey = keycloakManager.getAppRealmPublicKey();
 		try {
 			byte[] publicKeyBytes = Base64.getDecoder().decode( realmPublicKey );
@@ -97,13 +97,13 @@ public class TokenService {
 			info.setRoles( roles );
 			return info;
 		} catch ( MalformedJwtException e ) {
-			throw new ServiceException( Erros.TOKEN_INVALIDO );
+			throw new ErrorException( Erros.TOKEN_INVALIDO );
 		} catch ( ExpiredJwtException e ) {
-			throw new ServiceException( Erros.TOKEN_EXPIRADO );	
+			throw new ErrorException( Erros.TOKEN_EXPIRADO );	
 		} catch ( SignatureException e ) {
-			throw new ServiceException( Erros.TOKEN_ASSINATURA_INVALIDA );
+			throw new ErrorException( Erros.TOKEN_ASSINATURA_INVALIDA );
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-			throw new ServiceException( Erros.TOKEN_CHAVE_PUBLICA_INVALIDA );
+			throw new ErrorException( Erros.TOKEN_CHAVE_PUBLICA_INVALIDA );
 		}	
 	}
 	

@@ -16,15 +16,15 @@ import italo.sisbanco.keycloak.Erros;
 import italo.sisbanco.keycloak.model.ErroResponse;
 
 @ControllerAdvice
-public class SistemaExceptionHandler {
+public class GlobalExceptionHandler {
 
 	@Autowired
 	private MessageSource messageSource;
 		
-	@ExceptionHandler(SistemaException.class)
-	public ResponseEntity<Object> trataSistemaException( SistemaException e ) {
+	@ExceptionHandler(ErrorException.class)
+	public ResponseEntity<Object> trataSistemaException( ErrorException e ) {
 		try {
-			String message = messageSource.getMessage( e.getErroChave(), e.getErroParams(), Locale.getDefault() );
+			String message = messageSource.getMessage( e.getErrorChave(), e.getErrorParams(), Locale.getDefault() );
 			return ResponseEntity.status( 400 ).body( new ErroResponse( message ) );
 		} catch ( NoSuchMessageException e2 ) {
 			return ResponseEntity.status( 400 ).body( new ErroResponse( e2.getMessage() ) );

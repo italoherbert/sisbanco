@@ -3,7 +3,6 @@ package italo.sisbanco.kernel.repository;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -26,13 +25,8 @@ public class OperTransacaoCacheRepository {
 	}
 	
 	@CachePut(value="transacao_cache", key="#p0") 
-	public void save( TransacaoCache transacao ) {
-		String id = transacao.getId();
-		if ( id == null ) {
-			id =  UUID.randomUUID().toString();
-			transacao.setId( id );
-		}
-		hashOperations.put( KEY, id, transacao ); 
+	public void save( TransacaoCache transacao ) {		
+		hashOperations.put( KEY, transacao.getId(), transacao ); 		
 	}
 	
 	@Cacheable(value="transacao_cache", key="#id")
@@ -41,7 +35,7 @@ public class OperTransacaoCacheRepository {
 		return Optional.ofNullable( tc );
 	}
 	
-	public List<TransacaoCache> findByContaId( Long contaId ) {
+	public List<TransacaoCache> findByContaId( long contaId ) {
 		return hashOperations.entries( KEY ).values().stream() 
 				.filter( t -> t.getOrigContaId() == contaId )
 				.toList();
@@ -53,10 +47,12 @@ public class OperTransacaoCacheRepository {
 		TransacaoCache tcache = null;		
 		while( transacoesCacheIT.hasNext() && tcache == null ) {
 			TransacaoCache tcache2 = transacoesCacheIT.next();
-			if ( tcache2.getOperacaoPendente().getId() == operacaoPendenteId )
+			if ( tcache2.getOperacaoPendente().getId().equals( operacaoPendenteId ) ) {
 				tcache = tcache2;
+			}
 		}
 				
+		System.out.println( "Não Achou= "+operacaoPendenteId );
 		return Optional.ofNullable( tcache );		
 	}
 	
@@ -68,5 +64,9 @@ public class OperTransacaoCacheRepository {
 	public void deleteById( String id ) {
 		hashOperations.delete( KEY, id );
 	}	
+	
+	public void deleteAll() {
+		hashOperations.entries( KEY ).values().stream().forEach( (tc) -> hashOperations.delete( KEY, tc.getId() ) );
+	}
 	
 }

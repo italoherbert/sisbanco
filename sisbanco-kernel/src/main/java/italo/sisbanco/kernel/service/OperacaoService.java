@@ -11,10 +11,9 @@ import italo.sisbanco.kernel.components.builder.TransacaoCacheBuilder;
 import italo.sisbanco.kernel.components.builder.response.OperacaoPendenteResponseBuilder;
 import italo.sisbanco.kernel.components.manager.TransacaoManager;
 import italo.sisbanco.kernel.components.mapper.ContaMapper;
-import italo.sisbanco.kernel.components.operacoes.pendentes.OperacaoPendenteExecutor;
 import italo.sisbanco.kernel.enums.OperacaoPendenteTipo;
 import italo.sisbanco.kernel.enums.TransacaoTipo;
-import italo.sisbanco.kernel.exception.ServiceException;
+import italo.sisbanco.kernel.exception.ErrorException;
 import italo.sisbanco.kernel.model.Conta;
 import italo.sisbanco.kernel.model.cache.OperacaoPendenteCache;
 import italo.sisbanco.kernel.model.cache.TransacaoCache;
@@ -25,7 +24,7 @@ import italo.sisbanco.kernel.repository.ContaRepository;
 import italo.sisbanco.kernel.repository.OperTransacaoCacheRepository;
 
 @Service
-public class BancoService {
+public class OperacaoService {
 
 	@Autowired
 	private TransacaoManager transacaoManagerService;
@@ -35,24 +34,14 @@ public class BancoService {
 	
 	@Autowired
 	private ContaRepository contaRepository;	
-	
-	@Autowired
-	private OperacaoPendenteExecutor operacaoPendenteExecutor;
-	
+		
 	@Autowired
 	private ContaMapper contaMapper;
-	
-	public OperacaoPendenteResponse executaOperacaoPendente( String operacaoPendenteId ) throws ServiceException {
-		OperacaoPendenteResponse resp = operacaoPendenteExecutor.executa( operacaoPendenteId );
-		if ( resp == null )
-			throw new ServiceException( Erros.OPER_ALTER_VALOR_EM_CONTA_NAO_ENCONTRADA_EM_CACHE );
-		return resp;				
-	}
-	
-	public OperacaoPendenteResponse credita( Long contaId, ValorRequest request ) throws ServiceException {
+			
+	public OperacaoPendenteResponse credita( Long contaId, ValorRequest request ) throws ErrorException {
 		Optional<Conta> contaOp = contaRepository.findById( contaId );
 		if ( !contaOp.isPresent() )
-			throw new ServiceException( Erros.CONTA_NAO_ENCONTRADA );
+			throw new ErrorException( Erros.CONTA_NAO_ENCONTRADA );
 		
 		Conta conta = contaOp.get();
 		double saldoAnterior = conta.getSaldo();
@@ -73,10 +62,10 @@ public class BancoService {
 				.get();		
 	}
 	
-	public OperacaoPendenteResponse debita( Long contaId, ValorRequest request ) throws ServiceException {
+	public OperacaoPendenteResponse debita( Long contaId, ValorRequest request ) throws ErrorException {
 		Optional<Conta> contaOp = contaRepository.findById( contaId );
 		if ( !contaOp.isPresent() )
-			throw new ServiceException( Erros.CONTA_NAO_ENCONTRADA );
+			throw new ErrorException( Erros.CONTA_NAO_ENCONTRADA );
 		
 		Conta conta = contaOp.get();
 		double saldo = conta.getSaldo();
@@ -112,14 +101,14 @@ public class BancoService {
 				.get();
 	}
 	
-	public OperacaoPendenteResponse transfere( Long origemContaId, Long destContaId, ValorRequest request ) throws ServiceException {
+	public OperacaoPendenteResponse transfere( Long origemContaId, Long destContaId, ValorRequest request ) throws ErrorException {
 		Optional<Conta> origemContaOp = contaRepository.findById( origemContaId );
 		if ( !origemContaOp.isPresent() )
-			throw new ServiceException( Erros.CONTA_ORIGEM_NAO_ENCONTRADA );
+			throw new ErrorException( Erros.CONTA_ORIGEM_NAO_ENCONTRADA );
 		
 		Optional<Conta> destContaOp = contaRepository.findById( destContaId );
 		if ( !destContaOp.isPresent() )
-			throw new ServiceException( Erros.CONTA_DEST_NAO_ENCONTRADA );
+			throw new ErrorException( Erros.CONTA_DEST_NAO_ENCONTRADA );
 				
 		Conta origem = origemContaOp.get();
 		Conta dest = destContaOp.get();

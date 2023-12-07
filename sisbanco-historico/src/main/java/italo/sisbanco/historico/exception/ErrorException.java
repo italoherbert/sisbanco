@@ -1,6 +1,6 @@
 package italo.sisbanco.historico.exception;
 
-public class ErrorException extends RuntimeException {
+public class ErrorException extends Exception {
 
 	private static final long serialVersionUID = 1L;
 

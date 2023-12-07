@@ -1,5 +1,6 @@
 package italo.sisbanco.kernel.exception;
 
+import java.util.Iterator;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,20 +15,22 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import italo.sisbanco.kernel.Erros;
 import italo.sisbanco.kernel.model.response.ErroResponse;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 
 @ControllerAdvice
-public class SistemaExceptionHandler {
+public class GlobalExceptionHandler {
 
 	@Autowired
 	private MessageSource messageSource;
 			
-	@ExceptionHandler(SistemaException.class)
-	public ResponseEntity<Object> trataSistemaException( SistemaException e ) {
+	@ExceptionHandler(ErrorException.class)
+	public ResponseEntity<Object> trataSistemaException( ErrorException e ) {
 		if ( e.getMessageBody() != null ) {
 			return ResponseEntity.status( e.getStatus() ).body( e.getMessageBody() );
 		} else {		
 			try {
-				String message = messageSource.getMessage( e.getErroChave(), e.getErroParams(), Locale.getDefault() );
+				String message = messageSource.getMessage( e.getErrorChave(), e.getErrorParams(), Locale.getDefault() );
 				return ResponseEntity.status( 400 ).body( new ErroResponse( message ) );
 			} catch ( NoSuchMessageException e2 ) {
 				return ResponseEntity.status( 400 ).body( new ErroResponse( e2.getMessage() ) );
@@ -44,6 +47,17 @@ public class SistemaExceptionHandler {
 			return ResponseEntity.status( 403 ).body( new ErroResponse( e2.getMessage() ) );
 		}
 	}
+		
+	@ExceptionHandler(ConstraintViolationException.class)
+	public ResponseEntity<Object> trataConstraintViolationException( ConstraintViolationException e ) {
+		Iterator<ConstraintViolation<?>> it = e.getConstraintViolations().iterator();
+		
+		String msg = "Erro de validação.";
+		if ( it.hasNext() )
+			msg = it.next().getMessage();
+		
+		return ResponseEntity.status( 400 ).body( new ErroResponse( msg ) );
+	}	
 	
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<Object> trataMensagemErroException( MethodArgumentNotValidException e ) {						

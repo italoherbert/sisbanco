@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 
 import italo.sisbanco.ext.RedisPostgreSQLTest;
 import italo.sisbanco.ext.openfeign.FeignClientsTestConfiguration;
@@ -22,28 +21,27 @@ import italo.sisbanco.ext.postgresql.ContaBD;
 import italo.sisbanco.ext.rabbitmq.RabbitMQTestConfiguration;
 import italo.sisbanco.kernel.SisbancoKernelApplication;
 import italo.sisbanco.kernel.enums.TransacaoTipo;
-import italo.sisbanco.kernel.exception.ServiceException;
+import italo.sisbanco.kernel.exception.ErrorException;
 import italo.sisbanco.kernel.message.TransacaoMessageSender;
 import italo.sisbanco.kernel.model.Conta;
 import italo.sisbanco.kernel.model.request.conta.ValorRequest;
 import italo.sisbanco.kernel.model.response.conta.ContaResponse;
 import italo.sisbanco.kernel.model.response.conta.OperacaoPendenteResponse;
-import italo.sisbanco.kernel.service.BancoService;
 import italo.sisbanco.kernel.service.ContaService;
+import italo.sisbanco.kernel.service.OperacaoService;
 
-@ActiveProfiles("test") 
 @SpringBootTest(classes=SisbancoKernelApplication.class)
 @Import({
 	RabbitMQTestConfiguration.class, 
 	FeignClientsTestConfiguration.class
 })
-public class BancoServiceTest extends RedisPostgreSQLTest {
+public class OperacaoServiceTest extends RedisPostgreSQLTest {
 		
 	@Autowired
 	private ContaService contaService;
 	
 	@Autowired
-	private BancoService bancoService;		
+	private OperacaoService operacaoService;		
 		
 	@MockBean
 	private TransacaoMessageSender transacaoMessageSender;
@@ -78,7 +76,7 @@ public class BancoServiceTest extends RedisPostgreSQLTest {
 			try {
 				this.executaDebito( "joao", 601 );
 				fail( "Deveria ter lançado exceção. ");
-			} catch ( ServiceException e ) {
+			} catch ( ErrorException e ) {
 				
 			}
 			
@@ -88,13 +86,14 @@ public class BancoServiceTest extends RedisPostgreSQLTest {
 			try {
 				this.executaDebito( "joao", 0.1 );
 				fail( "Deveria ter lançado exceção. ");
-			} catch ( ServiceException e ) {
+			} catch ( ErrorException e ) {
 				
 			}			
 
 			verify( transacaoMessageSender, times( 2 ) ).envia( any(Conta.class), anyDouble(), any(TransacaoTipo.class) );
-		} catch ( Exception e ) {
+		} catch ( ErrorException e ) {
 			e.printStackTrace();
+			fail( e.getErrorChave() );
 		}
 	}
 	
@@ -117,7 +116,7 @@ public class BancoServiceTest extends RedisPostgreSQLTest {
 			try {
 				this.executaTransferencia( "joao", "maria", 700 );				
 				fail( "Transferencia realizada sem saldo suficiente." );
-			} catch ( ServiceException e ) {
+			} catch ( ErrorException e ) {
 				
 			}
 			
@@ -126,7 +125,7 @@ public class BancoServiceTest extends RedisPostgreSQLTest {
 			try {
 				this.executaTransferencia( "joao", "maria", 0.1 );
 				fail( "Transferencia realizada sem saldo suficiente." );
-			} catch ( ServiceException e ) {
+			} catch ( ErrorException e ) {
 				
 			}
 								
@@ -134,8 +133,9 @@ public class BancoServiceTest extends RedisPostgreSQLTest {
 			assertEquals( this.getSaldo( "maria" ), 800, "Saldo inválido para titular maria." );
 
 			verify( transacaoMessageSender, times( 2 ) ).envia( any(Conta.class), anyDouble(), any(TransacaoTipo.class) );
-		} catch ( Exception e ) {
+		} catch ( ErrorException e ) {
 			e.printStackTrace();
+			fail( e.getErrorChave() );			
 		}
 	}
 	
@@ -148,8 +148,9 @@ public class BancoServiceTest extends RedisPostgreSQLTest {
 													
 			assertEquals( this.getSaldo( "joao" ), 300, "Saldo inválido para titular joão." );
 			assertEquals( this.getSaldo( "maria" ), 800, "Saldo inválido para titular maria." );
-		} catch ( Exception e ) {
+		} catch ( ErrorException e ) {
 			e.printStackTrace();
+			fail( e.getErrorChave() );
 		}
 	}
 	
@@ -163,7 +164,7 @@ public class BancoServiceTest extends RedisPostgreSQLTest {
 			try {
 				this.alteraCredito( "joao", -1 );
 				fail( "Deveria lançar exceção. Crédito negativo." );
-			} catch ( ServiceException e ) {
+			} catch ( ErrorException e ) {
 				
 			}
 			
@@ -172,8 +173,9 @@ public class BancoServiceTest extends RedisPostgreSQLTest {
 													
 			assertEquals( joaoConta.getCredito(), 300, "Crédito inválido para titular joão." );
 			assertEquals( mariaConta.getCredito(), 800, "Crédito inválido para titular maria." );
-		} catch ( Exception e ) {
+		} catch ( ErrorException e ) {
 			e.printStackTrace();
+			fail( e.getErrorChave() );
 		}
 	}
 	
@@ -187,7 +189,7 @@ public class BancoServiceTest extends RedisPostgreSQLTest {
 			try {
 				this.alteraDebitoSimplesLimite( "joao", -1 );
 				fail( "Deveria lançar exceção. Crédito negativo." );
-			} catch ( ServiceException e ) {
+			} catch ( ErrorException e ) {
 				
 			}
 			
@@ -196,12 +198,13 @@ public class BancoServiceTest extends RedisPostgreSQLTest {
 													
 			assertEquals( joaoConta.getDebitoSimplesLimite(), 300, "Débito simples limite inválido para titular joão." );
 			assertEquals( mariaConta.getDebitoSimplesLimite(), 800, "Débito simples limite inválido para titular maria." );
-		} catch ( Exception e ) {
+		} catch ( ErrorException e ) {
 			e.printStackTrace();
+			fail( e.getErrorChave() );
 		}
 	}
 	
-	private OperacaoPendenteResponse executaCredito( String username, double valor ) throws ServiceException {
+	private OperacaoPendenteResponse executaCredito( String username, double valor ) throws ErrorException {
 		ContaResponse conta = contaService.getByUsername( username );
 		assertNotNull( conta, "Conta não encontrada. Username="+username );
 		
@@ -210,7 +213,7 @@ public class BancoServiceTest extends RedisPostgreSQLTest {
 		ValorRequest credito = new ValorRequest();
 		credito.setValor( valor );			
 		
-		OperacaoPendenteResponse resp = bancoService.credita( conta.getId(), credito );
+		OperacaoPendenteResponse resp = operacaoService.credita( conta.getId(), credito );
 
 		ContaResponse conta2 = contaService.get( conta.getId() );
 		if ( resp.isRealizada() ) {
@@ -228,7 +231,7 @@ public class BancoServiceTest extends RedisPostgreSQLTest {
 		return resp;
 	}
 	
-	private OperacaoPendenteResponse executaDebito( String username, double valor ) throws ServiceException {
+	private OperacaoPendenteResponse executaDebito( String username, double valor ) throws ErrorException {
 		ContaResponse conta = contaService.getByUsername( username );
 		assertNotNull( conta, "Conta não encontrada. Username="+username );
 		
@@ -237,7 +240,7 @@ public class BancoServiceTest extends RedisPostgreSQLTest {
 		ValorRequest debito = new ValorRequest();
 		debito.setValor( valor );
 		
-		OperacaoPendenteResponse resp = bancoService.debita( conta.getId(), debito );
+		OperacaoPendenteResponse resp = operacaoService.debita( conta.getId(), debito );
 		
 		ContaResponse conta2 = contaService.get( conta.getId() );
 		
@@ -255,7 +258,7 @@ public class BancoServiceTest extends RedisPostgreSQLTest {
 		return resp;
 	}
 	
-	private OperacaoPendenteResponse executaTransferencia( String origUsername, String destUsername, double valor ) throws ServiceException {
+	private OperacaoPendenteResponse executaTransferencia( String origUsername, String destUsername, double valor ) throws ErrorException {
 		ContaResponse contaOrig = contaService.getByUsername( origUsername );		
 		ContaResponse contaDest = contaService.getByUsername( destUsername );
 		
@@ -268,7 +271,7 @@ public class BancoServiceTest extends RedisPostgreSQLTest {
 		ValorRequest transferencia = new ValorRequest();
 		transferencia.setValor( valor );
 		
-		OperacaoPendenteResponse resp = bancoService.transfere( contaOrig.getId(), contaDest.getId(), transferencia ); 
+		OperacaoPendenteResponse resp = operacaoService.transfere( contaOrig.getId(), contaDest.getId(), transferencia ); 
 					
 		ContaResponse contaOrig2 = contaService.getByUsername( origUsername );		
 		ContaResponse contaDest2 = contaService.getByUsername( destUsername );
@@ -293,35 +296,35 @@ public class BancoServiceTest extends RedisPostgreSQLTest {
 		return resp;
 	}
 			
-	private double getSaldo( String username ) throws ServiceException {
+	private double getSaldo( String username ) throws ErrorException {
 		ContaResponse resp = contaService.getByUsername( username );
 		assertNotNull( resp, "Não foi possível encontrar a conta pelo username: "+username );
 		
 		return resp.getSaldo();
 	}
 		
-	private void alteraCredito( String username, double credito ) throws ServiceException {
+	private void alteraCredito( String username, double credito ) throws ErrorException {
 		ContaResponse resp = this.getContaByUsername( username );
 		ValorRequest valor = new ValorRequest();
 		valor.setValor( credito );		
 		contaService.alteraCredito( resp.getId(), valor );
 	}
 	
-	private void alteraDebitoSimplesLimite( String username, double debitoSimplesLimite ) throws ServiceException {
+	private void alteraDebitoSimplesLimite( String username, double debitoSimplesLimite ) throws ErrorException {
 		ContaResponse resp = this.getContaByUsername( username );
 		ValorRequest valor = new ValorRequest();
 		valor.setValor( debitoSimplesLimite );		
 		contaService.alteraDebitoSimplesLimite( resp.getId(), valor );
 	}
 	
-	private void alteraSaldo( String username, double saldo ) throws ServiceException {
+	private void alteraSaldo( String username, double saldo ) throws ErrorException {
 		ContaResponse resp = this.getContaByUsername( username );
 		ValorRequest valor = new ValorRequest();
 		valor.setValor( saldo );		
 		contaService.alteraSaldo( resp.getId(), valor );
 	}
 	
-	private ContaResponse getContaByUsername( String username ) throws ServiceException {
+	private ContaResponse getContaByUsername( String username ) throws ErrorException {
 		ContaResponse resp = contaService.getByUsername( username );
 		assertNotNull( resp, "Não foi possível encontrar a conta pelo username: "+username );
 		return resp;

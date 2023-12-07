@@ -17,7 +17,7 @@ import italo.sisbanco.kernel.components.builder.AlteraValorEmContaCacheBuilder;
 import italo.sisbanco.kernel.components.operacoes.pendentes.altervaloremconta.AlterDebitoSimplesLimiteOperacaoPendente;
 import italo.sisbanco.kernel.enums.AlteraValorEmContaTipo;
 import italo.sisbanco.kernel.enums.OperacaoPendenteTipo;
-import italo.sisbanco.kernel.exception.ServiceException;
+import italo.sisbanco.kernel.exception.ErrorException;
 import italo.sisbanco.kernel.model.Conta;
 import italo.sisbanco.kernel.model.cache.AlteraValorEmContaCache;
 import italo.sisbanco.kernel.model.response.conta.OperacaoPendenteResponse;
@@ -42,7 +42,7 @@ public class AlterDebitoSimplesLimiteOperacaoPendenteTest extends AbstractOperac
 	}
 
 	@Override
-	protected OperacaoPendenteResponse registraOperacaoEExecuta( Long contaId ) throws ServiceException {
+	protected OperacaoPendenteResponse registraOperacaoEExecuta( Long contaId ) throws ErrorException {
 		AlteraValorEmContaCache alterValor = AlteraValorEmContaCacheBuilder.builder()
 				.contaId( contaId )
 				.dataOperacao( new Date() )

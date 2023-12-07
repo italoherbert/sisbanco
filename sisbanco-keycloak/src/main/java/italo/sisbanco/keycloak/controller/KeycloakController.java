@@ -13,7 +13,7 @@ import italo.sisbanco.keycloak.apidoc.DeletaUserEndpoint;
 import italo.sisbanco.keycloak.apidoc.RegistraUserEndpoint;
 import italo.sisbanco.keycloak.apidoc.TokenEndpoint;
 import italo.sisbanco.keycloak.apidoc.TokenInfoEndpoint;
-import italo.sisbanco.keycloak.exception.SistemaException;
+import italo.sisbanco.keycloak.exception.ErrorException;
 import italo.sisbanco.keycloak.model.Login;
 import italo.sisbanco.keycloak.model.Token;
 import italo.sisbanco.keycloak.model.TokenInfo;
@@ -35,30 +35,30 @@ public class KeycloakController {
 	
 	@TokenEndpoint
 	@PostMapping(value="/token")	
-	public ResponseEntity<Object> login( @Valid @RequestBody Login request ) throws SistemaException {
+	public ResponseEntity<Object> login( @Valid @RequestBody Login request ) throws ErrorException {
 		Token resp = keycloakService.login( request );
 		return ResponseEntity.ok( resp );
 	}
 	
 	@TokenInfoEndpoint
 	@PostMapping(value="/token-info")
-	public ResponseEntity<Object> tokenInfo( @Valid @RequestBody Token token ) throws SistemaException {
+	public ResponseEntity<Object> tokenInfo( @Valid @RequestBody Token token ) throws ErrorException {
 		TokenInfo info = keycloakService.tokenInfo( token );
 		return ResponseEntity.ok( info );
 	}
 	
 	@RegistraUserEndpoint
 	@PreAuthorize("hasAuthority('userCreateWRITE')")
-	@PostMapping(value="/users/registra")
-	public ResponseEntity<Object> registraUser( @Valid @RequestBody UserSaveRequest request ) throws SistemaException {
+	@PostMapping(value="/users")
+	public ResponseEntity<Object> registraUser( @Valid @RequestBody UserSaveRequest request ) throws ErrorException {
 		UserCreated created = userService.novoUsuario( request );
 		return ResponseEntity.ok( created );
 	}
 	
 	@DeletaUserEndpoint
 	@PreAuthorize("hasAuthority('userDELETE')")
-	@DeleteMapping(value="/users/deleta/{userId}")
-	public ResponseEntity<Object> deletaUser( String userId ) throws SistemaException {
+	@DeleteMapping(value="/users/{userId}")
+	public ResponseEntity<Object> deletaUser( String userId ) throws ErrorException {
 		userService.removeUser( userId );
 		return ResponseEntity.ok().build();
 	}

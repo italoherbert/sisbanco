@@ -1,6 +1,7 @@
 package italo.sisbanco.kernel.components.builder;
 
 import java.util.Date;
+import java.util.UUID;
 
 import italo.sisbanco.kernel.enums.OperacaoPendenteTipo;
 import italo.sisbanco.kernel.enums.TransacaoTipo;
@@ -13,9 +14,11 @@ public class TransacaoCacheBuilder {
 	
 	public TransacaoCacheBuilder() {
 		OperacaoPendenteCache oper = new OperacaoPendenteCache();
+		oper.setId( UUID.randomUUID().toString() ); 
 		oper.setTipo( OperacaoPendenteTipo.TRANSACAO );
 		
 		transacao = new TransacaoCache();
+		transacao.setId( UUID.randomUUID().toString() ); 
 		transacao.setOperacaoPendente( oper );
 		transacao.setDataOperacao( null ); 
 	}

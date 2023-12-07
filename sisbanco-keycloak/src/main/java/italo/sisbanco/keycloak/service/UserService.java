@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import italo.sisbanco.keycloak.Erros;
-import italo.sisbanco.keycloak.exception.ServiceException;
+import italo.sisbanco.keycloak.exception.ErrorException;
 import italo.sisbanco.keycloak.manager.KeycloakManager;
 import italo.sisbanco.keycloak.model.UserCreated;
 import italo.sisbanco.keycloak.model.UserSaveRequest;
@@ -24,7 +24,7 @@ public class UserService {
 	@Autowired
 	private KeycloakManager keycloakManager;
 
-	public UserCreated novoUsuario( UserSaveRequest request ) throws ServiceException {				
+	public UserCreated novoUsuario( UserSaveRequest request ) throws ErrorException {				
 		try {
 			Keycloak keycloak = keycloakManager.getKeycloakAdmin();
 			String appRealm = keycloakManager.getAppRealm();
@@ -36,7 +36,7 @@ public class UserService {
 			try {
 				group = keycloakManager.getGroupRepresentation( keycloak, appRealm, groupPath );			
 			} catch ( NotFoundException e ) {
-				throw new ServiceException( Erros.USER_PATH_GROUP_NAO_ENCONTRADO );
+				throw new ErrorException( Erros.USER_PATH_GROUP_NAO_ENCONTRADO );
 			}
 			
 			UserRepresentation user = new UserRepresentation();
@@ -49,7 +49,7 @@ public class UserService {
 			Response resp = keycloakManager.criaUser( keycloak, appRealm, user );
 			
 			if ( resp.getStatus() != 201 )
-				throw new ServiceException( Erros.USER_REGISTRO_FALHA );			
+				throw new ErrorException( Erros.USER_REGISTRO_FALHA );			
 			
 			String userId = CreatedResponseUtil.getCreatedId( resp );
 			
@@ -68,26 +68,26 @@ public class UserService {
 			return created;
 		} catch ( WebApplicationException e ) {			
 			if ( e.getResponse().getStatus() == 409 )
-				throw new ServiceException( Erros.USER_REGISTRO_JA_EXISTE );
+				throw new ErrorException( Erros.USER_REGISTRO_JA_EXISTE );
 			
 			e.printStackTrace();
-			throw new ServiceException( Erros.USER_REGISTRO_FALHA );
+			throw new ErrorException( Erros.USER_REGISTRO_FALHA );
 		}
 	} 
 	
-	public void removeUser( String userId ) throws ServiceException {
+	public void removeUser( String userId ) throws ErrorException {
 		try {
 			Keycloak keycloak = keycloakManager.getKeycloakAdmin();
 			String appRealm = keycloakManager.getAppRealm();
 			
 			Response resp = keycloakManager.deletaUser( keycloak, appRealm, userId );
 			if ( resp.getStatus() != 200 )
-				throw new ServiceException( Erros.USER_DELETE_FALHA );
+				throw new ErrorException( Erros.USER_DELETE_FALHA );
 		} catch ( NotFoundException e ) {
-			throw new ServiceException( Erros.USER_NAO_ENCONTRADO );			
+			throw new ErrorException( Erros.USER_NAO_ENCONTRADO );			
 		} catch ( WebApplicationException e ) {
 			e.printStackTrace();
-			throw new ServiceException( Erros.USER_DELETE_FALHA );
+			throw new ErrorException( Erros.USER_DELETE_FALHA );
 		}
 	}
 	

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 import italo.sisbanco.kernel.Erros;
 import italo.sisbanco.kernel.enums.TransacaoTipo;
-import italo.sisbanco.kernel.exception.ServiceException;
+import italo.sisbanco.kernel.exception.ErrorException;
 import italo.sisbanco.kernel.message.TransacaoMessageSender;
 import italo.sisbanco.kernel.model.Conta;
 import italo.sisbanco.kernel.repository.ContaRepository;
@@ -20,16 +20,16 @@ public class TransacaoManager {
 	@Autowired
 	private TransacaoMessageSender transacaoMessageSender;
 					
-	public void credita( Conta conta, double valor ) throws ServiceException {				
+	public void credita( Conta conta, double valor ) throws ErrorException {				
 		conta.setSaldo( conta.getSaldo() + valor );
 		contaRepository.save( conta );
 
 		transacaoMessageSender.envia( conta, valor, TransacaoTipo.CREDITO );
 	}
 	
-	public void debita( Conta conta, double valor ) throws ServiceException {				
+	public void debita( Conta conta, double valor ) throws ErrorException {				
 		if ( conta.getSaldo()-valor < -conta.getCredito() )
-			throw new ServiceException( Erros.CREDITO_INSUFICIENTE );
+			throw new ErrorException( Erros.CREDITO_INSUFICIENTE );
 			
 		conta.setSaldo( conta.getSaldo() - valor ); 
 		contaRepository.save( conta );
@@ -38,9 +38,9 @@ public class TransacaoManager {
 	}
 	
 	@Transactional
-	public void transfere( Conta origem, Conta dest, double valor ) throws ServiceException {				
+	public void transfere( Conta origem, Conta dest, double valor ) throws ErrorException {				
 		if ( origem.getSaldo()-valor < -origem.getCredito() )
-			throw new ServiceException( Erros.CREDITO_INSUFICIENTE );
+			throw new ErrorException( Erros.CREDITO_INSUFICIENTE );
 		
 		origem.setSaldo( origem.getSaldo() - valor );
 		dest.setSaldo( dest.getSaldo() + valor ); 

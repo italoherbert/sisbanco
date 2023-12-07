@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 
 import italo.sisbanco.ext.openfeign.FeignClientsTestConfiguration;
 import italo.sisbanco.ext.rabbitmq.RabbitMQTestConfiguration;
@@ -27,7 +26,6 @@ import italo.sisbanco.kernel.model.cache.TransacaoCache;
 import italo.sisbanco.kernel.repository.OperAlteraValorEmContaCacheRepository;
 import italo.sisbanco.kernel.repository.OperTransacaoCacheRepository;
 
-@ActiveProfiles("test")
 @SpringBootTest(classes=SisbancoKernelApplication.class)
 @Import({
 	RabbitMQTestConfiguration.class, 
@@ -41,8 +39,57 @@ public class TransacaoCacheRepositoryTest extends RedisTest {
 	@MockBean
 	private OperAlteraValorEmContaCacheRepository alteraValorEmContaCacheRepository;
 				
+	public void test1() {
+		TransacaoCache tc; 
+		
+		transacaoCacheRepository.save( tc = TransacaoCacheBuilder.builder()
+				.contaOrigemId( 1 )
+				.dataOperacao( new Date() )
+				.tipo( TransacaoTipo.DEBITO )
+				.valor( 100 )				
+				.get() ); 
+		
+		Optional<TransacaoCache> tcOp = transacaoCacheRepository.findById( tc.getId() );
+		if ( !tcOp.isPresent() )
+			fail( "Transação que foi registrada não foi encontrada em cache." );
+		
+		TransacaoCache tc2 = tcOp.get();
+		
+		assertNotNull( tc.getOperacaoPendente(), "Operação pendente nula." );
+		assertNotNull( tc2.getOperacaoPendente(), "Operação pendente nula." );
+
+		assertEquals( tc2.getId(), tc.getId(), "IDs não correspondem." );
+		assertEquals( tc2.getOperacaoPendente().getId(), tc.getOperacaoPendente().getId() );
+		
+		assertNotNull( tc2.getId(), "ID nulo" );
+		assertNotNull( tc2.getOperacaoPendente().getId(), "ID de operação pendente nulo." );
+		assertEquals( tc2.getOrigContaId(), 1, "Contas de origem não correspondem." );
+		assertNotNull( tc2.getDataOperacao(), "Data de operação nula." );
+		assertEquals( tc2.getTipo(), TransacaoTipo.DEBITO, "Tipos não correspondem." );
+		assertEquals( tc2.getValor(), 100, "Valores não correspondem." );
+		
+		tcOp = transacaoCacheRepository.findByOperacaoPendenteId( tc.getOperacaoPendente().getId() );
+		if ( !tcOp.isPresent() )
+			fail( "Transação que foi registrada não foi encontrada em cache." );
+		
+		tc2 = tcOp.get();
+		
+		assertNotNull( tc.getOperacaoPendente(), "Operação pendente nula." );
+		assertNotNull( tc2.getOperacaoPendente(), "Operação pendente nula." );
+
+		assertEquals( tc2.getId(), tc.getId(), "IDs não correspondem." );
+		assertEquals( tc2.getOperacaoPendente().getId(), tc.getOperacaoPendente().getId() );
+		
+		assertNotNull( tc2.getId(), "ID nulo" );
+		assertNotNull( tc2.getOperacaoPendente().getId(), "ID de operação pendente nulo." );
+		assertEquals( tc2.getOrigContaId(), 1, "Contas de origem não correspondem." );
+		assertNotNull( tc2.getDataOperacao(), "Data de operação nula." );
+		assertEquals( tc2.getTipo(), TransacaoTipo.CREDITO, "Tipos não correspondem." );
+		assertEquals( tc2.getValor(), 100, "Valores não correspondem." );
+	}
+	
 	@Test
-	public void test() {
+	public void test2() {
 		final long CONTA_ID1 = 2;
 		final long CONTA_ID2 = 3;
 		final long CONTA_ID3 = 4;
@@ -50,7 +97,7 @@ public class TransacaoCacheRepositoryTest extends RedisTest {
 		TransacaoCache tcache1 = TransacaoCacheBuilder.builder()
 				.contaOrigemId( CONTA_ID1 )
 				.dataOperacao( new Date() )
-				.tipo( TransacaoTipo.CREDITO )
+				.tipo( TransacaoTipo.TRANSFERENCIA )
 				.valor( 100 )				
 				.get();
 		

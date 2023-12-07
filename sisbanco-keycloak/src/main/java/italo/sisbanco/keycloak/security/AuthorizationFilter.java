@@ -12,7 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import italo.sisbanco.keycloak.exception.ServiceException;
+import italo.sisbanco.keycloak.exception.ErrorException;
 import italo.sisbanco.keycloak.model.Token;
 import italo.sisbanco.keycloak.model.TokenInfo;
 import italo.sisbanco.keycloak.service.TokenService;
@@ -57,8 +57,8 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 					new UsernamePasswordAuthenticationToken( username, null, authorities );
 			
 			SecurityContextHolder.getContext().setAuthentication( userPassToken );		
-		} catch ( ServiceException e ) {
-			String message = messageSource.getMessage( e.getErroChave(), e.getErroParams(), Locale.getDefault() );
+		} catch ( ErrorException e ) {
+			String message = messageSource.getMessage( e.getErrorChave(), e.getErrorParams(), Locale.getDefault() );
 			httpUtil.sendErrorResponse( response, "{ \"mensagem\": \""+message+"\"}" );
 			return;
 		}

@@ -1,10 +1,12 @@
 package italo.sisbanco.controller;
 
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -94,6 +96,7 @@ public class KeycloakControllerTest {
 					.andExpect( status().isOk() );
 		} catch (Exception e) {
 			e.printStackTrace();
+			fail( e.getMessage() );
 		}
 	}
 	
@@ -110,6 +113,7 @@ public class KeycloakControllerTest {
 					.andExpect( status().isOk() );
 		} catch (Exception e) {
 			e.printStackTrace();
+			fail( e.getMessage() );
 		}
 	}
 	
@@ -126,13 +130,28 @@ public class KeycloakControllerTest {
 				
 		try {
 			mockMvc.perform(
-				post( "/api/keycloak/users/registra" )
+				post( "/api/keycloak/users" )
 					.contentType( MediaType.APPLICATION_JSON )
 					.content( objectMapper.writeValueAsBytes( user ) ) )
 				.andDo( print() )
 					.andExpect( status().isOk() );
 		} catch (Exception e) {
 			e.printStackTrace();
+			fail( e.getMessage() );
+		}
+	}
+	
+	@Test
+	@WithMockUser(username="user", authorities = {"userDELETE"})
+	public void deletaUser() {						
+		try {
+			mockMvc.perform(
+					delete( "/api/keycloak/users/-1" ) )
+				.andDo( print() )
+					.andExpect( status().isOk() );
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail( e.getMessage() );
 		}
 	}
 	

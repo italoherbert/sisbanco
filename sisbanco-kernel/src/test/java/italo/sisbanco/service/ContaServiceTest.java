@@ -11,14 +11,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 
 import italo.sisbanco.ext.RedisPostgreSQLTest;
 import italo.sisbanco.ext.openfeign.FeignClientsTestConfiguration;
 import italo.sisbanco.ext.postgresql.ContaBD;
 import italo.sisbanco.ext.rabbitmq.RabbitMQTestConfiguration;
 import italo.sisbanco.kernel.SisbancoKernelApplication;
-import italo.sisbanco.kernel.exception.ServiceException;
+import italo.sisbanco.kernel.exception.ErrorException;
 import italo.sisbanco.kernel.integration.model.UserSaveRequest;
 import italo.sisbanco.kernel.model.request.conta.ContaFiltroRequest;
 import italo.sisbanco.kernel.model.request.conta.ContaSaveRequest;
@@ -26,7 +25,6 @@ import italo.sisbanco.kernel.model.request.conta.ValorRequest;
 import italo.sisbanco.kernel.model.response.conta.ContaResponse;
 import italo.sisbanco.kernel.service.ContaService;
 
-@ActiveProfiles("test")
 @SpringBootTest(classes=SisbancoKernelApplication.class)
 @Import({
 	RabbitMQTestConfiguration.class, 
@@ -58,11 +56,12 @@ public class ContaServiceTest extends RedisPostgreSQLTest {
 			try {
 				contaService.getByUsername( resp.getUsername() );
 				fail( "Registro de conta deveria ter lançado exceção, pois a conta foi removida." );
-			} catch ( ServiceException e ) {
+			} catch ( ErrorException e ) {
 				
 			}
-		} catch ( Exception e ) {
-			e.printStackTrace();
+		} catch ( ErrorException e ) {
+			e.printStackTrace();			
+			fail( e.getErrorChave() ); 
 		}
 	}
 			
@@ -78,8 +77,9 @@ public class ContaServiceTest extends RedisPostgreSQLTest {
 			contaSave.setTitular( "mariano" );
 			
 			contaService.altera( conta.getId(), contaSave );			
-		} catch ( ServiceException e ) {
+		} catch ( ErrorException e ) {
 			e.printStackTrace();
+			fail( e.getErrorChave() );
 		}
 	}
 	
@@ -99,11 +99,12 @@ public class ContaServiceTest extends RedisPostgreSQLTest {
 			try {
 				conta = contaService.get( -1L );
 				fail( "Conta acessada com ID inválido." );
-			} catch ( ServiceException e ) {
+			} catch ( ErrorException e ) {
 				
 			}									
-		} catch ( ServiceException e ) {
+		} catch ( ErrorException e ) {
 			e.printStackTrace();
+			fail( e.getErrorChave() );
 		}
 	}
 	
@@ -123,11 +124,12 @@ public class ContaServiceTest extends RedisPostgreSQLTest {
 			try {
 				conta = contaService.getByUsername( "abc" );
 				fail( "Conta acessada com Username inválido." );
-			} catch ( ServiceException e ) {
+			} catch ( ErrorException e ) {
 				
 			}									
-		} catch ( ServiceException e ) {
+		} catch ( ErrorException e ) {
 			e.printStackTrace();
+			fail( e.getErrorChave() );
 		}
 	}
 	
@@ -145,8 +147,9 @@ public class ContaServiceTest extends RedisPostgreSQLTest {
 			
 			conta = contaService.getByUsername( "jose" );
 			assertEquals( conta.getSaldo(), valor, "Saldo não alterado." );
-		} catch ( ServiceException e ) {
+		} catch ( ErrorException e ) {
 			e.printStackTrace();
+			fail( e.getErrorChave() );
 		}
 	}
 	
@@ -164,7 +167,7 @@ public class ContaServiceTest extends RedisPostgreSQLTest {
 			
 			conta = contaService.getByUsername( "jose" );
 			assertEquals( conta.getCredito(), valor, "Crédito não alterado." );
-		} catch ( ServiceException e ) {
+		} catch ( ErrorException e ) {
 			e.printStackTrace();
 		}
 	}
@@ -203,7 +206,7 @@ public class ContaServiceTest extends RedisPostgreSQLTest {
 			try {			
 				contaService.deleta( -1L, "" );
 				fail( "Não deveria ser possível deletar por um ID negativo." );
-			} catch ( ServiceException e ) {
+			} catch ( ErrorException e ) {
 				
 			}
 			
@@ -214,8 +217,9 @@ public class ContaServiceTest extends RedisPostgreSQLTest {
 			
 			List<ContaResponse> contas = contaService.filtra( filtro );
 			assertTrue( contas.isEmpty(), "Deveriam ter sido removidas todas as contas." );
-		} catch ( ServiceException e ) {
+		} catch ( ErrorException e ) {
 			e.printStackTrace();
+			fail( e.getErrorChave() );
 		}
 	}
 	

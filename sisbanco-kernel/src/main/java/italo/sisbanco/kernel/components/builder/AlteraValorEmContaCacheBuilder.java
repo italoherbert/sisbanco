@@ -1,6 +1,7 @@
 package italo.sisbanco.kernel.components.builder;
 
 import java.util.Date;
+import java.util.UUID;
 
 import italo.sisbanco.kernel.enums.AlteraValorEmContaTipo;
 import italo.sisbanco.kernel.enums.OperacaoPendenteTipo;
@@ -13,9 +14,11 @@ public class AlteraValorEmContaCacheBuilder {
 	
 	public AlteraValorEmContaCacheBuilder() {
 		OperacaoPendenteCache oper = new OperacaoPendenteCache();
+		oper.setId( UUID.randomUUID().toString() ); 
 		oper.setTipo( OperacaoPendenteTipo.ALTER_VALOR_EM_CONTA );
 		
 		alteraValorEmConta = new AlteraValorEmContaCache();
+		alteraValorEmConta.setId( UUID.randomUUID().toString() ); 
 		alteraValorEmConta.setOperacaoPendente( oper ); 
 	}
 	
@@ -50,12 +53,7 @@ public class AlteraValorEmContaCacheBuilder {
 	public AlteraValorEmContaCacheBuilder tipo( AlteraValorEmContaTipo tipo ) {
 		alteraValorEmConta.setTipo( tipo );
 		return this;
-	}
-	
-	public AlteraValorEmContaCacheBuilder operacaoPendenteTipo( OperacaoPendenteTipo tipo ) {
-		alteraValorEmConta.getOperacaoPendente().setTipo( tipo );
-		return this;
-	}			
+	}	
 	
 }
 

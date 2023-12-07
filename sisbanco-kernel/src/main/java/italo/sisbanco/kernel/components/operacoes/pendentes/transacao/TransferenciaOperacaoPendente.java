@@ -12,7 +12,7 @@ import italo.sisbanco.kernel.components.manager.TransacaoManager;
 import italo.sisbanco.kernel.components.mapper.ContaMapper;
 import italo.sisbanco.kernel.components.operacoes.pendentes.OperacaoPendente;
 import italo.sisbanco.kernel.enums.TransacaoTipo;
-import italo.sisbanco.kernel.exception.ServiceException;
+import italo.sisbanco.kernel.exception.ErrorException;
 import italo.sisbanco.kernel.model.Conta;
 import italo.sisbanco.kernel.model.cache.TransacaoCache;
 import italo.sisbanco.kernel.model.response.conta.OperacaoPendenteResponse;
@@ -35,7 +35,7 @@ public class TransferenciaOperacaoPendente implements OperacaoPendente<Transacao
 	private ContaMapper contaMapper;
 	
 	@Override
-	public OperacaoPendenteResponse executa( TransacaoCache transacaoCache ) throws ServiceException {											
+	public OperacaoPendenteResponse executa( TransacaoCache transacaoCache ) throws ErrorException {											
 		String transacaoCacheId = transacaoCache.getId();
 		
 		Long origemContaId = transacaoCache.getOrigContaId();
@@ -44,11 +44,11 @@ public class TransferenciaOperacaoPendente implements OperacaoPendente<Transacao
 		
 		Optional<Conta> origemContaOp = contaRepository.findById( origemContaId );
 		if ( !origemContaOp.isPresent() )
-			throw new ServiceException( Erros.CONTA_ORIGEM_NAO_ENCONTRADA );
+			throw new ErrorException( Erros.CONTA_ORIGEM_NAO_ENCONTRADA );
 		
 		Optional<Conta> destContaOp = contaRepository.findById( destContaId );
 		if ( !destContaOp.isPresent() )
-			throw new ServiceException( Erros.CONTA_DEST_NAO_ENCONTRADA );
+			throw new ErrorException( Erros.CONTA_DEST_NAO_ENCONTRADA );
 				
 		Conta origem = origemContaOp.get();
 		Conta dest = destContaOp.get();

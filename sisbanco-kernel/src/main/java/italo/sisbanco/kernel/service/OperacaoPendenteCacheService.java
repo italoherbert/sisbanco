@@ -9,9 +9,10 @@ import org.springframework.stereotype.Service;
 
 import italo.sisbanco.kernel.Erros;
 import italo.sisbanco.kernel.components.mapper.OperacaoPendenteMapper;
+import italo.sisbanco.kernel.components.operacoes.pendentes.OperacaoPendenteExecutor;
 import italo.sisbanco.kernel.enums.AlteraValorEmContaTipo;
 import italo.sisbanco.kernel.enums.TransacaoTipo;
-import italo.sisbanco.kernel.exception.ServiceException;
+import italo.sisbanco.kernel.exception.ErrorException;
 import italo.sisbanco.kernel.model.Conta;
 import italo.sisbanco.kernel.model.cache.AlteraValorEmContaCache;
 import italo.sisbanco.kernel.model.cache.TransacaoCache;
@@ -33,9 +34,19 @@ public class OperacaoPendenteCacheService {
 	private ContaRepository contaRepository;
 	
 	@Autowired
+	private OperacaoPendenteExecutor operacaoPendenteExecutor;
+	
+	@Autowired
 	private OperacaoPendenteMapper operacaoPendenteMapper;
+	
+	public OperacaoPendenteResponse executa( String operacaoPendenteId ) throws ErrorException {
+		OperacaoPendenteResponse resp = operacaoPendenteExecutor.executa( operacaoPendenteId );
+		if ( resp == null )
+			throw new ErrorException( Erros.OPER_ALTER_VALOR_EM_CONTA_NAO_ENCONTRADA_EM_CACHE );
+		return resp;				
+	}
 		
-	public OperacaoPendenteResponse get( String operacaoPendenteId ) throws ServiceException {
+	public OperacaoPendenteResponse get( String operacaoPendenteId ) throws ErrorException {
 		Optional<TransacaoCache> transacaoCacheOp = transacaoCacheRepository.findByOperacaoPendenteId( operacaoPendenteId );
 						
 		if ( transacaoCacheOp.isPresent() ) {
@@ -46,7 +57,7 @@ public class OperacaoPendenteCacheService {
 			
 			Optional<Conta> contaOp = contaRepository.findById( contaId );
 			if ( !contaOp.isPresent() )
-				throw new ServiceException( Erros.CONTA_ORIGEM_NAO_ENCONTRADA );
+				throw new ErrorException( Erros.CONTA_ORIGEM_NAO_ENCONTRADA );
 			
 			Conta conta = contaOp.get();
 			
@@ -62,21 +73,21 @@ public class OperacaoPendenteCacheService {
 				
 				Optional<Conta> contaOp = contaRepository.findById( contaId );
 				if ( !contaOp.isPresent() )
-					throw new ServiceException( Erros.CONTA_NAO_ENCONTRADA );
+					throw new ErrorException( Erros.CONTA_NAO_ENCONTRADA );
 				
 				Conta conta = contaOp.get();
 								
 				return operacaoPendenteMapper.alterValorEmContaResponse( conta, tipo );
 			} else {
-				throw new ServiceException( Erros.OPERACAO_PENDENTE_NAO_ENCONTRADA );
+				throw new ErrorException( Erros.OPERACAO_PENDENTE_NAO_ENCONTRADA );
 			}
 		}						
 	}
 	
-	public List<OperacaoPendenteResponse> listaPorConta( Long contaId ) throws ServiceException {		
+	public List<OperacaoPendenteResponse> listaPorConta( Long contaId ) throws ErrorException {		
 		Optional<Conta> contaOp = contaRepository.findById( contaId );
 		if ( !contaOp.isPresent() )
-			throw new ServiceException( Erros.CONTA_NAO_ENCONTRADA );
+			throw new ErrorException( Erros.CONTA_NAO_ENCONTRADA );
 		
 		Conta conta = contaOp.get();
 		

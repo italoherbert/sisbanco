@@ -9,6 +9,7 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import italo.sisbanco.kernel.model.cache.AlteraValorEmContaCache;
 import italo.sisbanco.kernel.model.cache.TransacaoCache;
 
 @Configuration
@@ -26,10 +27,17 @@ public class RedisConfiguration {
 	}
 	
 	@Bean
-	RedisTemplate<String, TransacaoCache> redisTemplate() {
+	RedisTemplate<String, TransacaoCache> transacaoRedisTemplate() {
 		RedisTemplate<String, TransacaoCache> redisTemplate = new RedisTemplate<>();
 		redisTemplate.setConnectionFactory( jedisConnectionFactory() );
 		return redisTemplate;
 	}	
+	
+	@Bean
+	RedisTemplate<String, AlteraValorEmContaCache> alterValorEmContaRedisTemplate() {
+		RedisTemplate<String, AlteraValorEmContaCache> redisTemplate = new RedisTemplate<>();
+		redisTemplate.setConnectionFactory( jedisConnectionFactory() );
+		return redisTemplate;
+	}
 	
 }

@@ -3,6 +3,7 @@ package italo.sisbanco.components.operacoes.pendentes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Optional;
 
@@ -11,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import italo.sisbanco.ext.postgresql.ContaBD;
 import italo.sisbanco.ext.redis.RedisTest;
-import italo.sisbanco.kernel.exception.ServiceException;
+import italo.sisbanco.kernel.exception.ErrorException;
 import italo.sisbanco.kernel.model.Conta;
 import italo.sisbanco.kernel.model.response.conta.OperacaoPendenteResponse;
 import italo.sisbanco.kernel.repository.ContaRepository;
@@ -23,7 +24,7 @@ public abstract class AbstractOperacaoPendenteTest extends RedisTest {
 	
 	protected abstract void configuraContaRegistro( Conta conta );
 	
-	protected abstract OperacaoPendenteResponse registraOperacaoEExecuta( Long contaId ) throws ServiceException;
+	protected abstract OperacaoPendenteResponse registraOperacaoEExecuta( Long contaId ) throws ErrorException;
 	
 	protected abstract void assertOpResponse( OperacaoPendenteResponse resp, Conta conta );
 	
@@ -53,8 +54,9 @@ public abstract class AbstractOperacaoPendenteTest extends RedisTest {
 			assertTrue( resp.isRealizada(), "A operação deveria ter sido realizada. " );
 			
 			this.assertOpResponse( resp, conta );
-		} catch ( ServiceException e ) {
+		} catch ( ErrorException e ) {
 			e.printStackTrace();
+			fail( e.getErrorChave() );
 		}		
 	}
 	
