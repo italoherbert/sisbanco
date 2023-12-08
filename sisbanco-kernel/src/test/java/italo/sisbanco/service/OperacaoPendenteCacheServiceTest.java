@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
 import italo.sisbanco.ext.RedisPostgreSQLTest;
+import italo.sisbanco.ext.log.MainConfiguration;
 import italo.sisbanco.ext.openfeign.FeignClientsTestConfiguration;
 import italo.sisbanco.ext.postgresql.ContaBD;
 import italo.sisbanco.ext.rabbitmq.RabbitMQTestConfiguration;
@@ -36,6 +37,7 @@ import italo.sisbanco.kernel.service.OperacaoPendenteCacheService;
 
 @SpringBootTest(classes=SisbancoKernelApplication.class)
 @Import({
+	MainConfiguration.class, 
 	RabbitMQTestConfiguration.class, 
 	FeignClientsTestConfiguration.class
 })

@@ -16,6 +16,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 
 import italo.sisbanco.ext.RedisPostgreSQLTest;
+import italo.sisbanco.ext.log.MainConfiguration;
 import italo.sisbanco.ext.openfeign.FeignClientsTestConfiguration;
 import italo.sisbanco.ext.postgresql.ContaBD;
 import italo.sisbanco.ext.rabbitmq.RabbitMQTestConfiguration;
@@ -32,6 +33,7 @@ import italo.sisbanco.kernel.service.OperacaoService;
 
 @SpringBootTest(classes=SisbancoKernelApplication.class)
 @Import({
+	MainConfiguration.class, 
 	RabbitMQTestConfiguration.class, 
 	FeignClientsTestConfiguration.class
 })
@@ -321,6 +323,7 @@ public class OperacaoServiceTest extends RedisPostgreSQLTest {
 		ContaResponse resp = this.getContaByUsername( username );
 		ValorRequest valor = new ValorRequest();
 		valor.setValor( saldo );		
+		contaService.alteraSaldo( resp.getId(), valor );
 		contaService.alteraSaldo( resp.getId(), valor );
 	}
 	

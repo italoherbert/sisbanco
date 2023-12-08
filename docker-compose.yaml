@@ -25,7 +25,7 @@ services:
     ports:
       - 5433:5432
     volumes:
-      - sisbanco_kernel_data:/var/lib/postgresql/data 
+      - sisbanco_kernel_data:/var/lib/postgresql/data
 
   sisbanco-historico-db:
     image: mongo
@@ -45,11 +45,11 @@ services:
     image: redis
     container_name: sisbanco-cache-db
     restart: always    
-    command: redis-server --save 20 1 --loglevel warning --requirePass 123
+    command: redis-server --save 60 1000 --loglevel debug --requirePass 123
     ports:
       - 6379:6379
     volumes:
-      - sisbanco_cache_data:/data
+      - sisbanco_cache_data:/data    
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -88,7 +88,7 @@ services:
     container_name: sisbanco-eureka
     restart: always
     environment:
-      SERVER_PORT: 8761
+      SERVER_PORT: 8761    
     ports:
       - 8761:8761
 
@@ -105,7 +105,7 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: admin
       KEYCLOAK_APP_REALM: sisbanco
       KEYCLOAK_APP_CLIENT_ID: sisbanco-app
-      KEYCLOAK_APP_REALM_PUBLIC_KEY: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAm9Zcq/6Pq7BLuLsn6b7X0HYl/paFeC6qHr65y3FOoc7bYucPa2RcWVKazjVuRWOLZ9N6ppw9CNcLCgIyZ1ctDOzIRLGj2WbypxJ2lsEImVj6dQMSCRLhbuHrRVHSCguc7NqXThME/U+VwIL10duLoqmvUFhESZwDlXZr+CyGzOPGsSGzlmvjdV4GQlQfLrQKUiQy+gKascdpbTOVsojb+7iE6bLFc66KSo2jCmkYt9zSpSFIxGd62mAOE5Q0CPU1wmS//mI5v4Ep8biPNtfFnK5L9nV2bkicl9r0XMWgp6cQ4uErTU5j/atCEtRNR9qicNSxz/xn0bMYbuhl76RF8QIDAQAB
+      KEYCLOAK_APP_REALM_PUBLIC_KEY: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAm9Zcq/6Pq7BLuLsn6b7X0HYl/paFeC6qHr65y3FOoc7bYucPa2RcWVKazjVuRWOLZ9N6ppw9CNcLCgIyZ1ctDOzIRLGj2WbypxJ2lsEImVj6dQMSCRLhbuHrRVHSCguc7NqXThME/U+VwIL10duLoqmvUFhESZwDlXZr+CyGzOPGsSGzlmvjdV4GQlQfLrQKUiQy+gKascdpbTOVsojb+7iE6bLFc66KSo2jCmkYt9zSpSFIxGd62mAOE5Q0CPU1wmS//mI5v4Ep8biPNtfFnK5L9nV2bkicl9r0XMWgp6cQ4uErTU5j/atCEtRNR9qicNSxz/xn0bMYbuhl76RF8QIDAQAB    
     depends_on:
       - keycloak
       - sisbanco-eureka    
@@ -130,6 +130,7 @@ services:
       RABBITMQ_TRANSACOES_QUEUE: transacoes-queue
       RABBITMQ_TRANSACOES_EXCHANGE: transacoes-exchange
       RABBITMQ_TRANSACOES_ROUTING_KEY: transacoes-routing-key
+      GLOBAL_ERRO_LOG_FILE: /var/log/sisbanco/kernel-error.log    
     depends_on:
       - keycloak
       - rabbitmq
@@ -154,7 +155,7 @@ services:
       RABBITMQ_USERNAME: admin
       RABBITMQ_PASSWORD: admin
       RABBITMQ_QUEUE: transacoes-queue
-      TRANSACOES_ERRO_LOG_FILE: C:/Users/italo/sisbanco/transacoes.log
+      GLOBAL_ERRO_LOG_FILE: /var/log/sisbanco/historico-error.log            
     depends_on:
       - sisbanco-eureka
       - sisbanco-keycloak
@@ -169,7 +170,7 @@ services:
       EUREKA_URL: http://sisbanco-eureka:8761/eureka
       SERVER_PORT: 8080
     ports:
-      - 8080:8080
+      - 8080:8080       
     depends_on:
       - sisbanco-eureka
       - sisbanco-keycloak

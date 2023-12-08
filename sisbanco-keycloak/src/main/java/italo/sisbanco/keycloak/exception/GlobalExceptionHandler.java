@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
 	private MessageSource messageSource;
 		
 	@ExceptionHandler(ErrorException.class)
-	public ResponseEntity<Object> trataSistemaException( ErrorException e ) {
+	public ResponseEntity<Object> trataErrorException( ErrorException e ) {
 		try {
 			String message = messageSource.getMessage( e.getErrorChave(), e.getErrorParams(), Locale.getDefault() );
 			return ResponseEntity.status( 400 ).body( new ErroResponse( message ) );

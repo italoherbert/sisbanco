@@ -1,4 +1,4 @@
-package italo.sisbanco.historico.exception;
+package italo.sisbanco.shared.util;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,18 +9,15 @@ import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-import org.springframework.amqp.rabbit.listener.api.RabbitListenerErrorHandler;
-import org.springframework.amqp.rabbit.support.ListenerExecutionFailedException;
+public class LoggerBuilder {
 
-public class TransacaoRabbitListenerErrorHandler implements RabbitListenerErrorHandler {
-			
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat( "dd/MM/yyyy HH:mm:ss" );
 	
-	private final Logger logger;
+	private Logger logger;
 	private FileHandler fileHandler;
 	
-	public TransacaoRabbitListenerErrorHandler( String errorLogFile ) {
-		logger = Logger.getLogger( "queue-transacoes" );
+	public Logger build( String loggerName, String errorLogFile ) {
+		logger = Logger.getLogger( loggerName );
 
 		if ( errorLogFile != null ) {
 			File file = new File( errorLogFile );
@@ -37,19 +34,10 @@ public class TransacaoRabbitListenerErrorHandler implements RabbitListenerErrorH
 			
 			logger.addHandler( fileHandler );
 		}
+		
+		return logger;
 	}
 	
-	@Override
-	public Object handleError(
-			org.springframework.amqp.core.Message amqpMessage, 
-			org.springframework.messaging.Message<?> message,
-			ListenerExecutionFailedException exception) throws Exception {
-
-		String body = new String( amqpMessage.getBody() );
-		logger.severe( "Mensagem em formato inválido. Mensagem= "+body );
-		return null;
-	}
-
 	class LoggerFormatter extends Formatter {
 
 		@Override

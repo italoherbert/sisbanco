@@ -60,6 +60,7 @@ public class TransferenciaOperacaoPendente implements OperacaoPendente<Transacao
 									
 		return OperacaoPendenteResponseBuilder.builder()
 				.conta( origem, contaMapper )
+				.valor( valor ) 
 				.saldoAnterior( saldoAnterior )
 				.dataOperacao( new Date() )
 				.transacaoTipo( TransacaoTipo.TRANSFERENCIA )

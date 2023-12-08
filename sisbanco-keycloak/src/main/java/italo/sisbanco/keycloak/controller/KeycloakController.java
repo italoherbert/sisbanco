@@ -34,7 +34,7 @@ public class KeycloakController {
 	private UserService userService;
 	
 	@TokenEndpoint
-	@PostMapping(value="/token")	
+	@PostMapping("/token")	
 	public ResponseEntity<Object> login( @Valid @RequestBody Login request ) throws ErrorException {
 		Token resp = keycloakService.login( request );
 		return ResponseEntity.ok( resp );
@@ -49,7 +49,7 @@ public class KeycloakController {
 	
 	@RegistraUserEndpoint
 	@PreAuthorize("hasAuthority('userCreateWRITE')")
-	@PostMapping(value="/users")
+	@PostMapping("/users")
 	public ResponseEntity<Object> registraUser( @Valid @RequestBody UserSaveRequest request ) throws ErrorException {
 		UserCreated created = userService.novoUsuario( request );
 		return ResponseEntity.ok( created );
@@ -57,7 +57,7 @@ public class KeycloakController {
 	
 	@DeletaUserEndpoint
 	@PreAuthorize("hasAuthority('userDELETE')")
-	@DeleteMapping(value="/users/{userId}")
+	@DeleteMapping("/users/{userId}")
 	public ResponseEntity<Object> deletaUser( String userId ) throws ErrorException {
 		userService.removeUser( userId );
 		return ResponseEntity.ok().build();

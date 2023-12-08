@@ -10,7 +10,7 @@ import italo.sisbanco.kernel.model.response.conta.ContaResponse;
 @Component
 public class ContaMapper {
 	
-	public void carregaParaRegistro( Conta c, ContaSaveRequest req, String userId ) {
+	public void carregaParaRegistroInicial( Conta c, ContaSaveRequest req, String userId ) {
 		c.setTitular( req.getTitular() );
 		c.setUsername( req.getUser().getUsername() ); 
 		c.setUserId( userId ); 
@@ -19,7 +19,7 @@ public class ContaMapper {
 		c.setDebitoSimplesLimite( Constantes.DEBITO_SIMPLES_LIMITE_INICIAL );
 	}
 	
-	public void carregaParaAlteracao( Conta c, ContaSaveRequest req ) {
+	public void carregaParaAlteracaoSimplificada( Conta c, ContaSaveRequest req ) {
 		c.setTitular( req.getTitular() );		
 	}
 	

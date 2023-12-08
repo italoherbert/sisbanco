@@ -1,15 +1,12 @@
 package italo.sisbanco.historico.ext.mongodb;
 
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-@ActiveProfiles("test") 
 @Testcontainers
-//@AutoConfigureDataMongo
 public class MongoDBTest {
 
 	private static MongoDBContainer mongoContainer;

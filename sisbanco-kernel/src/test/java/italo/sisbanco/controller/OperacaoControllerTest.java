@@ -22,6 +22,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import italo.sisbanco.ext.log.MainConfiguration;
 import italo.sisbanco.ext.openfeign.FeignClientsTestConfiguration;
 import italo.sisbanco.ext.postgresql.ContaBD;
 import italo.sisbanco.ext.rabbitmq.RabbitMQTestConfiguration;
@@ -33,6 +34,7 @@ import italo.sisbanco.kernel.service.OperacaoService;
 
 @SpringBootTest(classes=SisbancoKernelApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 @Import({
+	MainConfiguration.class, 
 	RabbitMQTestConfiguration.class, 
 	FeignClientsTestConfiguration.class
 })
@@ -62,11 +64,27 @@ public class OperacaoControllerTest {
 				.build();		
 	}				
 		
-	@Test
+	@Test	
 	@ContaBD
-	@WithMockUser(username="cliente", authorities = { "contaDonoWRITE" } ) 
+	@WithMockUser(username="maria", authorities = { "contaDonoWRITE" } ) 
 	public void testCreditar() {		
-		int contaId = 1;
+		this.creditar( 3, 200 );
+		this.creditar( 1, 403 );
+		this.creditar( 2, 403 );
+		this.creditar( 4, 403 );
+		
+		this.debitar( 3, 200 );
+		this.debitar( 1, 403 );
+		this.debitar( 2, 403 );
+		this.debitar( 4, 403 );		
+		
+		this.transferir( 3, 200 ); 	
+		this.transferir( 1, 403 ); 
+		this.transferir( 2, 403 );
+		this.transferir( 4, 403 );
+	}			
+				
+	public void creditar( int contaId, int expectedStatus ) {		
 		double valor = 300;
 		
 		try {
@@ -78,18 +96,14 @@ public class OperacaoControllerTest {
 						.contentType(MediaType.APPLICATION_JSON )
 						.content( objectMapper.writeValueAsBytes( credito ) ) )
 				.andDo( print() )
-					.andExpect( status().isOk() );			
+					.andExpect( status().is( expectedStatus ) );			
 		} catch ( Exception e ) {
 			e.printStackTrace();
 			fail( e.getMessage() );
 		}		
 	}
 	
-	@Test
-	@ContaBD
-	@WithMockUser(username="cliente", authorities = { "contaDonoWRITE" } ) 
-	public void testDebitar() {		
-		int contaId = 1;
+	public void debitar( int contaId, int expectedStatus ) {		
 		double valor = 300;
 		
 		try {
@@ -101,18 +115,14 @@ public class OperacaoControllerTest {
 						.contentType(MediaType.APPLICATION_JSON )
 						.content( objectMapper.writeValueAsBytes( debito ) ) )
 				.andDo( print() )
-					.andExpect( status().isOk() );			
+					.andExpect( status().is( expectedStatus) );			
 		} catch ( Exception e ) {
 			e.printStackTrace();
 			fail( e.getMessage() );
 		}		
 	}
 	
-	@Test		
-	@ContaBD
-	@WithMockUser(username="cliente", authorities = { "contaDonoWRITE" } ) 
-	public void testTransferir() {		
-		int origContaId = 1;
+	public void transferir( int origContaId, int expectedStatus ) {		
 		int destContaId = 2;
 		
 		double valor = 300;
@@ -126,11 +136,11 @@ public class OperacaoControllerTest {
 						.contentType(MediaType.APPLICATION_JSON )
 						.content( objectMapper.writeValueAsBytes( transferencia ) ) )
 				.andDo( print() )
-					.andExpect( status().isOk() );			
+					.andExpect( status().is( expectedStatus ) );			
 		} catch ( Exception e ) {
 			e.printStackTrace();
 			fail( e.getMessage() );
 		}		
-	}			
-				
+	}
+	
 }

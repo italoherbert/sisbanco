@@ -52,6 +52,7 @@ public class OperacaoPendenteCacheService {
 		if ( transacaoCacheOp.isPresent() ) {
 			TransacaoCache transacaoCache = transacaoCacheOp.get();
 			TransacaoTipo tipo = transacaoCache.getTipo();
+			double valor = transacaoCache.getValor();
 			
 			long contaId = transacaoCache.getOrigContaId();
 			
@@ -61,13 +62,14 @@ public class OperacaoPendenteCacheService {
 			
 			Conta conta = contaOp.get();
 			
-			return operacaoPendenteMapper.transacaoResponse( conta, tipo );
+			return operacaoPendenteMapper.transacaoResponse( conta, tipo, valor );
 		} else {
 			Optional<AlteraValorEmContaCache> alterVCacheOp = alteraValorEmContaCacheRepository.findByOperacaoPendenteId( operacaoPendenteId );
 			
 			if ( alterVCacheOp.isPresent() ) {
 				AlteraValorEmContaCache alterVCache = alterVCacheOp.get();
 				AlteraValorEmContaTipo tipo = alterVCache.getTipo();
+				double valor = alterVCache.getValor();
 				
 				long contaId = alterVCache.getContaId();
 				
@@ -77,7 +79,7 @@ public class OperacaoPendenteCacheService {
 				
 				Conta conta = contaOp.get();
 								
-				return operacaoPendenteMapper.alterValorEmContaResponse( conta, tipo );
+				return operacaoPendenteMapper.alterValorEmContaResponse( conta, tipo, valor );
 			} else {
 				throw new ErrorException( Erros.OPERACAO_PENDENTE_NAO_ENCONTRADA );
 			}
@@ -97,13 +99,15 @@ public class OperacaoPendenteCacheService {
 		List<OperacaoPendenteResponse> lista = new ArrayList<>();
 		
 		for( TransacaoCache tc : transacoes ) {
-			TransacaoTipo tipo = tc.getTipo();								
-			lista.add( operacaoPendenteMapper.transacaoResponse( conta, tipo ) );
+			TransacaoTipo tipo = tc.getTipo();	
+			double valor = tc.getValor();
+			lista.add( operacaoPendenteMapper.transacaoResponse( conta, tipo, valor ) );
 		}
 		
 		for( AlteraValorEmContaCache alterV : alters ) {
-			AlteraValorEmContaTipo tipo = alterV.getTipo();			
-			lista.add( operacaoPendenteMapper.alterValorEmContaResponse( conta, tipo ) );
+			AlteraValorEmContaTipo tipo = alterV.getTipo();		
+			double valor = alterV.getValor();
+			lista.add( operacaoPendenteMapper.alterValorEmContaResponse( conta, tipo, valor ) );
 		}
 			
 		return lista;

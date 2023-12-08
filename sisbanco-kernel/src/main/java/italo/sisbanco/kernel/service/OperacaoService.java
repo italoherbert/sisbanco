@@ -31,7 +31,7 @@ public class OperacaoService {
 	
 	@Autowired
 	private OperTransacaoCacheRepository transacaoCacheRepository;
-	
+		
 	@Autowired
 	private ContaRepository contaRepository;	
 		

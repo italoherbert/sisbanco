@@ -15,6 +15,7 @@ import italo.sisbanco.kernel.apidoc.banco.TransferirEndpoint;
 import italo.sisbanco.kernel.exception.ErrorException;
 import italo.sisbanco.kernel.model.request.conta.ValorRequest;
 import italo.sisbanco.kernel.model.response.conta.OperacaoPendenteResponse;
+import italo.sisbanco.kernel.security.Authorizator;
 import italo.sisbanco.kernel.service.OperacaoService;
 
 @RestController
@@ -22,7 +23,10 @@ import italo.sisbanco.kernel.service.OperacaoService;
 public class OperacaoController {
 	
 	@Autowired
-	private OperacaoService bancoService;
+	private OperacaoService operacaoService;
+	
+	@Autowired
+	private Authorizator authorizator;
 			
 	@DepositarEndpoint
 	@PreAuthorize("hasAuthority('contaDonoWRITE')")
@@ -31,7 +35,9 @@ public class OperacaoController {
 			@PathVariable Long contaId, 
 			@RequestBody ValorRequest request ) throws ErrorException {
 		
-		OperacaoPendenteResponse resp = bancoService.credita( contaId, request );
+		authorizator.ownerAuthorize( contaId );
+		
+		OperacaoPendenteResponse resp = operacaoService.credita( contaId, request );
 		return ResponseEntity.ok( resp );		
 	}
 	
@@ -42,7 +48,9 @@ public class OperacaoController {
 			@PathVariable Long contaId, 
 			@RequestBody ValorRequest request ) throws ErrorException {
 		
-		OperacaoPendenteResponse resp = bancoService.debita( contaId, request );
+		authorizator.ownerAuthorize( contaId );
+
+		OperacaoPendenteResponse resp = operacaoService.debita( contaId, request );
 		return ResponseEntity.ok( resp );		
 	}
 	
@@ -54,7 +62,9 @@ public class OperacaoController {
 			@PathVariable Long destContaId,
 			@RequestBody ValorRequest request ) throws ErrorException {
 		
-		OperacaoPendenteResponse resp = bancoService.transfere( origContaId, destContaId, request );
+		authorizator.ownerAuthorize( origContaId );
+		
+		OperacaoPendenteResponse resp = operacaoService.transfere( origContaId, destContaId, request );
 		return ResponseEntity.ok( resp );		
 	}
 	

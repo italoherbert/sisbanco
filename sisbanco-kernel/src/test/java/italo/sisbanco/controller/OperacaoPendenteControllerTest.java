@@ -3,6 +3,7 @@ package italo.sisbanco.controller;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -18,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import italo.sisbanco.ext.log.MainConfiguration;
 import italo.sisbanco.ext.openfeign.FeignClientsTestConfiguration;
 import italo.sisbanco.ext.postgresql.ContaBD;
 import italo.sisbanco.ext.rabbitmq.RabbitMQTestConfiguration;
@@ -28,6 +30,7 @@ import italo.sisbanco.kernel.service.OperacaoPendenteCacheService;
 
 @SpringBootTest(classes=SisbancoKernelApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 @Import({
+	MainConfiguration.class, 
 	RabbitMQTestConfiguration.class, 
 	FeignClientsTestConfiguration.class
 })
@@ -61,7 +64,7 @@ public class OperacaoPendenteControllerTest {
 	public void testExecuta() {		
 		try {
 			mockMvc.perform( 
-					get( "/api/kernel/operacoes/pendentes/-1/exec" ) )
+					post( "/api/kernel/operacoes/pendentes/-1/exec" ) )
 				.andDo( print() )
 				.andExpect( status().isOk() ); 
 		} catch ( Exception e ) {
@@ -91,7 +94,7 @@ public class OperacaoPendenteControllerTest {
 	public void testLista() {		
 		try {
 			mockMvc.perform( 
-					get( "/api/kernel/operacoes/pendentes/contas/-1/lista" ) )
+					get( "/api/kernel/operacoes/pendentes/contas/-1" ) )
 				.andDo( print() )
 				.andExpect( status().isOk() ); 
 		} catch ( Exception e ) {

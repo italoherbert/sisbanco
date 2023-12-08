@@ -21,9 +21,9 @@ public class HttpUtil {
 		return null;
 	}
 		
-	public void sendErrorResponse( HttpServletResponse response, String content ) throws ServletException, IOException {
+	public void sendErrorResponse( HttpServletResponse response, int status, String content ) throws ServletException, IOException {
 		response.setContentType( "application/json" );
-		response.setStatus( HttpServletResponse.SC_BAD_REQUEST );
+		response.setStatus( status );
 		
 		PrintWriter writer = new PrintWriter( response.getOutputStream() );
 		writer.print( content ); 

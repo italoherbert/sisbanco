@@ -16,27 +16,35 @@ import italo.sisbanco.kernel.model.cache.TransacaoCache;
 @Profile("!test")
 public class RedisConfiguration {
 
+	@Value("${spring.data.redis.host}")
+	private String host;
+	
+	@Value("${spring.data.redis.port}")
+	private int port;
+	
 	@Value("${spring.data.redis.password}")
 	private String password;		
-		
+			
 	@Bean
 	JedisConnectionFactory jedisConnectionFactory() {
-		RedisStandaloneConfiguration conf = new RedisStandaloneConfiguration();		
+		RedisStandaloneConfiguration conf = new RedisStandaloneConfiguration( host, port );		
 		conf.setPassword( RedisPassword.of( password ) );
 		return new JedisConnectionFactory( conf );
 	}
 	
 	@Bean
-	RedisTemplate<String, TransacaoCache> transacaoRedisTemplate() {
+	RedisTemplate<String, TransacaoCache> transacaoRedisTemplate( 
+			JedisConnectionFactory connectionFactory ) {
 		RedisTemplate<String, TransacaoCache> redisTemplate = new RedisTemplate<>();
-		redisTemplate.setConnectionFactory( jedisConnectionFactory() );
+		redisTemplate.setConnectionFactory( connectionFactory );
 		return redisTemplate;
 	}	
 	
 	@Bean
-	RedisTemplate<String, AlteraValorEmContaCache> alterValorEmContaRedisTemplate() {
+	RedisTemplate<String, AlteraValorEmContaCache> alterValorEmContaRedisTemplate( 
+			JedisConnectionFactory connectionFactory ) {
 		RedisTemplate<String, AlteraValorEmContaCache> redisTemplate = new RedisTemplate<>();
-		redisTemplate.setConnectionFactory( jedisConnectionFactory() );
+		redisTemplate.setConnectionFactory( connectionFactory );
 		return redisTemplate;
 	}
 	

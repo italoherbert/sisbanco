@@ -59,7 +59,9 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 			SecurityContextHolder.getContext().setAuthentication( userPassToken );		
 		} catch ( ErrorException e ) {
 			String message = messageSource.getMessage( e.getErrorChave(), e.getErrorParams(), Locale.getDefault() );
-			httpUtil.sendErrorResponse( response, "{ \"mensagem\": \""+message+"\"}" );
+			httpUtil.sendErrorResponse( response, 
+					HttpServletResponse.SC_UNAUTHORIZED,
+					"{ \"mensagem\": \""+message+"\"}" );
 			return;
 		}
 

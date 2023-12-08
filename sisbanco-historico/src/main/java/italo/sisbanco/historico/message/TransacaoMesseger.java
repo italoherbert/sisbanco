@@ -1,4 +1,4 @@
-package italo.sisbanco.historico.service.message;
+package italo.sisbanco.historico.message;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,7 @@ import italo.sisbanco.historico.service.TransacaoService;
 import jakarta.validation.Valid;
 
 @Component
-public class TransacaoMessageService {
+public class TransacaoMesseger {
 
 	@Autowired
 	private TransacaoService transacaoService;

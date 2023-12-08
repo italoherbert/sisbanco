@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
+import italo.sisbanco.ext.log.MainConfiguration;
 import italo.sisbanco.ext.openfeign.FeignClientsTestConfiguration;
 import italo.sisbanco.ext.rabbitmq.RabbitMQTestConfiguration;
 import italo.sisbanco.kernel.SisbancoKernelApplication;
@@ -24,7 +25,11 @@ import italo.sisbanco.kernel.model.response.conta.OperacaoPendenteResponse;
 import italo.sisbanco.kernel.repository.OperAlteraValorEmContaCacheRepository;
 
 @SpringBootTest(classes = SisbancoKernelApplication.class)
-@Import({RabbitMQTestConfiguration.class, FeignClientsTestConfiguration.class})
+@Import({
+	MainConfiguration.class, 
+	RabbitMQTestConfiguration.class, 
+	FeignClientsTestConfiguration.class
+})
 public class AlterDebitoSimplesLimiteOperacaoPendenteTest extends AbstractOperacaoPendenteTest {	
 	
 	@Autowired
@@ -64,6 +69,7 @@ public class AlterDebitoSimplesLimiteOperacaoPendenteTest extends AbstractOperac
 	protected void assertOpResponse(OperacaoPendenteResponse resp, Conta conta) {
 		assertEquals( resp.getConta().getDebitoSimplesLimite(), novoDebitoSimplesLimiteValor, "Os valores de debito simples limite não correspondem." );
 		assertEquals( resp.getSaldoAnterior(), conta.getSaldo(), "Saldos não correspondem." );		
+		assertEquals( resp.getValor(), resp.getConta().getDebitoSimplesLimite(), "Limites de débito simples não correspondem." );
 		
 		assertEquals( resp.getOperacaoTipo(), OperacaoPendenteTipo.ALTER_VALOR_EM_CONTA, "Tipos de operação não correspondem." );
 		assertEquals( resp.getAlteraValorEmContaTipo(), AlteraValorEmContaTipo.DEBITO_SIMPLES_LIMITE, "Tipos de alteração de valor em conta não correspondem." );

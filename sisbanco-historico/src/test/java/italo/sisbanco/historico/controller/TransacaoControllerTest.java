@@ -11,18 +11,21 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.mongodb.client.MongoClient;
-
 import italo.sisbanco.historico.SisbancoHistoricoApplication;
+import italo.sisbanco.historico.config.MainConfiguration;
+import italo.sisbanco.historico.ext.mongodb.MongoConfiguration;
+import italo.sisbanco.historico.ext.rabbitmq.RabbitTestConfiguration;
+import italo.sisbanco.historico.message.TransacaoMesseger;
 import italo.sisbanco.historico.service.TransacaoService;
-import italo.sisbanco.historico.service.message.TransacaoMessageService;
 
 @SpringBootTest(classes=SisbancoHistoricoApplication.class)
+@Import({MainConfiguration.class, MongoConfiguration.class, RabbitTestConfiguration.class})
 public class TransacaoControllerTest {
 			
 	@Autowired
@@ -34,11 +37,8 @@ public class TransacaoControllerTest {
 	private TransacaoService transacaoService;
 		
 	@MockBean
-	private TransacaoMessageService transacaoMessageService;
-		
-	@MockBean
-	private MongoClient mongoClient;
-			
+	private TransacaoMesseger transacaoMessager;
+					
 	@BeforeEach
 	public void setUp() {
 		mockMvc = MockMvcBuilders

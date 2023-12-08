@@ -4,16 +4,16 @@ public class ErrorException extends Exception {
 
 	private static final long serialVersionUID = 1L;
 
-	private String errorCode;	
+	private String errorChave;	
 	private Object[] errorParams;
 	
-	public ErrorException( String errorCode, Object... errorParams ) {
-		this.errorCode = errorCode;
+	public ErrorException( String errorChave, Object... errorParams ) {
+		this.errorChave = errorChave;
 		this.errorParams = errorParams;
 	}
 
-	public String getErrorCode() {
-		return errorCode;
+	public String getErrorChave() {
+		return errorChave;
 	}
 
 	public Object[] getErrorParams() {

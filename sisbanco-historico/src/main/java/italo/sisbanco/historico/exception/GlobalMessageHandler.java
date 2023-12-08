@@ -3,6 +3,7 @@ package italo.sisbanco.historico.exception;
 import java.nio.file.AccessDeniedException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -16,6 +17,16 @@ public class GlobalMessageHandler {
 
 	@Autowired
 	private MessageSourceAdapter messageSourceAdapter;
+	
+	@ExceptionHandler(ErrorException.class)
+	public ResponseEntity<Object> trataErrorException( ErrorException e ) {				
+		try {
+			String message = messageSourceAdapter.getMessage( e.getErrorChave(), e.getErrorParams() );
+			return ResponseEntity.status( 400 ).body( new ErroResponse( message ) );
+		} catch ( NoSuchMessageException e2 ) {
+			return ResponseEntity.status( 400 ).body( new ErroResponse( e2.getMessage() ) );
+		}		
+	}	
 				
 	@ExceptionHandler(AccessDeniedException.class)
 	public ResponseEntity<Object> trataAccessDeniedException( AccessDeniedException e ) {

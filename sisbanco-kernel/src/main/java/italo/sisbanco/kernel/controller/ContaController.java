@@ -25,6 +25,7 @@ import italo.sisbanco.kernel.exception.ErrorException;
 import italo.sisbanco.kernel.model.request.conta.ContaFiltroRequest;
 import italo.sisbanco.kernel.model.request.conta.ContaSaveRequest;
 import italo.sisbanco.kernel.model.response.conta.ContaResponse;
+import italo.sisbanco.kernel.security.Authorizator;
 import italo.sisbanco.kernel.service.ContaService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -37,6 +38,9 @@ public class ContaController {
 		
 	@Autowired
 	private ContaService contaService;
+	
+	@Autowired
+	private Authorizator authorizator;
 	
 	@RegistraContaEndpoint
 	@PreAuthorize("hasAuthority('contaWRITE')")
@@ -56,6 +60,10 @@ public class ContaController {
 	public ResponseEntity<Object> altera(
 			@PathVariable Long contaId, 
 			@Valid @RequestBody ContaSaveRequest request ) throws ErrorException {
+		
+		if ( !authorizator.hasAuthority( "contaWRITE" ) )
+			authorizator.ownerAuthorize( contaId );
+		
 		contaService.altera( contaId, request );
 		return ResponseEntity.ok().build();
 	}
@@ -89,6 +97,9 @@ public class ContaController {
 	public ResponseEntity<Object> deleta(
 			@PathVariable Long contaId,
 			HttpServletRequest httpRequest ) throws ErrorException {
+		
+		if ( !authorizator.hasAuthority( "contaDELETE" ) )
+			authorizator.ownerAuthorize( contaId );
 		
 		String authorizationHeader = httpRequest.getHeader( "Authorization" );
 		contaService.deleta( contaId, authorizationHeader );		

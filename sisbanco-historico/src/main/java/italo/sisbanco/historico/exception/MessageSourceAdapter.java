@@ -13,12 +13,12 @@ public class MessageSourceAdapter {
 	@Autowired
 	private MessageSource messageSource;
 	
-	public String getMessage( String errorCode, String... errorParams ) {
+	public String getMessage( String errorCode, Object... errorParams ) {
 		try {
 			return messageSource.getMessage( errorCode, errorParams, Locale.getDefault() );
 		} catch ( NoSuchMessageException e2 ) {
 			return e2.getMessage();
 		}
 	}
-	
+		
 }

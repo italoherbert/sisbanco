@@ -6,26 +6,23 @@ import org.springframework.amqp.rabbit.listener.api.RabbitListenerErrorHandler;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-import italo.sisbanco.historico.exception.TransacaoRabbitListenerErrorHandler;
+import italo.sisbanco.historico.log.GlobalLogger;
+import italo.sisbanco.historico.message.error.handler.TransacaoRabbitListenerErrorHandler;
 
 @Configuration
 @Profile("!test")
 public class RabbitMQConfiguration {	
-	
-	@Value("${config.message.logging.error.file}")
-	private String transacoesErrorLogFile;
-	
+		
 	@Autowired
 	private ConnectionFactory connectionFactory;
-	
+		
 	@Bean("transacaoRabbitListenerErrorHandler") 
-	RabbitListenerErrorHandler transacaoRabbitListenerErrorHandler() {
-		return new TransacaoRabbitListenerErrorHandler( transacoesErrorLogFile );
+	RabbitListenerErrorHandler transacaoRabbitListenerErrorHandler( GlobalLogger globalLogger ) {
+		return new TransacaoRabbitListenerErrorHandler( globalLogger );
 	}
 	
 	@Bean

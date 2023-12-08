@@ -23,17 +23,18 @@ public class GlobalExceptionHandler {
 
 	@Autowired
 	private MessageSource messageSource;
-			
+	
 	@ExceptionHandler(ErrorException.class)
-	public ResponseEntity<Object> trataSistemaException( ErrorException e ) {
+	public ResponseEntity<Object> trataErrorException( ErrorException e ) {
 		if ( e.getMessageBody() != null ) {
 			return ResponseEntity.status( e.getStatus() ).body( e.getMessageBody() );
 		} else {		
+			int status = ( e instanceof AuthorizatorException ? 403 : 400 );
 			try {
 				String message = messageSource.getMessage( e.getErrorChave(), e.getErrorParams(), Locale.getDefault() );
-				return ResponseEntity.status( 400 ).body( new ErroResponse( message ) );
+				return ResponseEntity.status( status ).body( new ErroResponse( message ) );
 			} catch ( NoSuchMessageException e2 ) {
-				return ResponseEntity.status( 400 ).body( new ErroResponse( e2.getMessage() ) );
+				return ResponseEntity.status( status ).body( new ErroResponse( e2.getMessage() ) );
 			}
 		}
 	}		
@@ -46,7 +47,7 @@ public class GlobalExceptionHandler {
 		} catch ( NoSuchMessageException e2 ) {
 			return ResponseEntity.status( 403 ).body( new ErroResponse( e2.getMessage() ) );
 		}
-	}
+	}		
 		
 	@ExceptionHandler(ConstraintViolationException.class)
 	public ResponseEntity<Object> trataConstraintViolationException( ConstraintViolationException e ) {

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
+import italo.sisbanco.ext.log.MainConfiguration;
 import italo.sisbanco.ext.openfeign.FeignClientsTestConfiguration;
 import italo.sisbanco.ext.rabbitmq.RabbitMQTestConfiguration;
 import italo.sisbanco.kernel.SisbancoKernelApplication;
@@ -24,7 +25,11 @@ import italo.sisbanco.kernel.model.response.conta.OperacaoPendenteResponse;
 import italo.sisbanco.kernel.repository.OperTransacaoCacheRepository;
 
 @SpringBootTest(classes = SisbancoKernelApplication.class)
-@Import({RabbitMQTestConfiguration.class, FeignClientsTestConfiguration.class})
+@Import({
+	MainConfiguration.class, 
+	RabbitMQTestConfiguration.class, 
+	FeignClientsTestConfiguration.class
+})
 public class TransferenciaOperacaoPendenteTest extends AbstractOperacaoPendenteTest {	
 	
 	@Autowired
@@ -66,6 +71,7 @@ public class TransferenciaOperacaoPendenteTest extends AbstractOperacaoPendenteT
 
 	@Override
 	protected void assertOpResponse(OperacaoPendenteResponse resp, Conta conta) {
+		assertEquals( resp.getValor(), transferenciaValor, "Valores de transferencia não correspondem." );
 		assertEquals( resp.getSaldoAnterior(), conta.getSaldo() + transferenciaValor, "Saldos não correspondem." );		
 
 		assertEquals( resp.getOperacaoTipo(), OperacaoPendenteTipo.TRANSACAO, "Tipos de operação não correspondem." );

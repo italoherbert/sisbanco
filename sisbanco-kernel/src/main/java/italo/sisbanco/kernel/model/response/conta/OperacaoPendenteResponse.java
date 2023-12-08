@@ -13,6 +13,8 @@ public class OperacaoPendenteResponse {
 	private boolean realizada;
 
 	private double saldoAnterior;
+	
+	private double valor;
 		
 	private ContaResponse conta;
 	

@@ -60,7 +60,8 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 				System.out.println( "ERRO:  "+resp.getStatusCode().value() );
 			}
 		} catch ( FeignClientException e ) {
-			httpUtil.sendErrorResponse( response, e.contentUTF8() );
+			httpUtil.sendErrorResponse( response, 
+					HttpServletResponse.SC_UNAUTHORIZED, e.contentUTF8() );
 			return;
 		}
 

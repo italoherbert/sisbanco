@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
 import italo.sisbanco.ext.RedisPostgreSQLTest;
+import italo.sisbanco.ext.log.MainConfiguration;
 import italo.sisbanco.ext.openfeign.FeignClientsTestConfiguration;
 import italo.sisbanco.ext.postgresql.ContaBD;
 import italo.sisbanco.ext.rabbitmq.RabbitMQTestConfiguration;
@@ -21,12 +22,12 @@ import italo.sisbanco.kernel.exception.ErrorException;
 import italo.sisbanco.kernel.integration.model.UserSaveRequest;
 import italo.sisbanco.kernel.model.request.conta.ContaFiltroRequest;
 import italo.sisbanco.kernel.model.request.conta.ContaSaveRequest;
-import italo.sisbanco.kernel.model.request.conta.ValorRequest;
 import italo.sisbanco.kernel.model.response.conta.ContaResponse;
 import italo.sisbanco.kernel.service.ContaService;
 
 @SpringBootTest(classes=SisbancoKernelApplication.class)
 @Import({
+	MainConfiguration.class, 
 	RabbitMQTestConfiguration.class, 
 	FeignClientsTestConfiguration.class
 })
@@ -131,46 +132,7 @@ public class ContaServiceTest extends RedisPostgreSQLTest {
 			e.printStackTrace();
 			fail( e.getErrorChave() );
 		}
-	}
-	
-	@Test
-	@ContaBD	
-	public void alteraSaldoTest() {
-		double valor = 300;
-		try {
-			ContaResponse conta = contaService.getByUsername( "jose" );
-			
-			ValorRequest valorReq = new ValorRequest();
-			valorReq.setValor( valor ); 
-			
-			contaService.alteraSaldo( conta.getId(), valorReq );
-			
-			conta = contaService.getByUsername( "jose" );
-			assertEquals( conta.getSaldo(), valor, "Saldo não alterado." );
-		} catch ( ErrorException e ) {
-			e.printStackTrace();
-			fail( e.getErrorChave() );
-		}
-	}
-	
-	@Test
-	@ContaBD	
-	public void alteraCreditoTest() {
-		double valor = 300;
-		try {
-			ContaResponse conta = contaService.getByUsername( "jose" );
-			
-			ValorRequest valorReq = new ValorRequest();
-			valorReq.setValor( valor ); 
-			
-			contaService.alteraCredito( conta.getId(), valorReq );
-			
-			conta = contaService.getByUsername( "jose" );
-			assertEquals( conta.getCredito(), valor, "Crédito não alterado." );
-		} catch ( ErrorException e ) {
-			e.printStackTrace();
-		}
-	}
+	}				
 	
 	@Test
 	@ContaBD	

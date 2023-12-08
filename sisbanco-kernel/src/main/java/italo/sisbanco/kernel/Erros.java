@@ -3,6 +3,8 @@ package italo.sisbanco.kernel;
 public interface Erros {
 
 	public final static String ACESSO_NAO_AUTORIZADO = "acesso.nao.autorizado";
+	
+	public final static String USER_ID_NULO = "user.id.nulo";
 
 	public final static String TITULAR_JA_EXISTE = "titular.ja.existe";
 	public final static String KEYCLOAK_USER_NAO_CRIADO = "keycloak.user.nao.criado";
@@ -24,5 +26,5 @@ public interface Erros {
 	
 	public final static String CREDITO_NEGATIVO = "credito.negativo";
 	public final static String DEBITO_SIMPLES_LIMITE_NEGATIVO = "debito.simples.limite.negativo";
-		
+			
 }

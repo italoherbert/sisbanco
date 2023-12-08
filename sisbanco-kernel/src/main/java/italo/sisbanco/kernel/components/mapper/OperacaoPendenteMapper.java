@@ -15,22 +15,24 @@ public class OperacaoPendenteMapper {
 	@Autowired
 	private ContaMapper contaMapper;	
 	
-	public OperacaoPendenteResponse alterValorEmContaResponse( Conta conta, AlteraValorEmContaTipo tipo ) {				
+	public OperacaoPendenteResponse alterValorEmContaResponse( Conta conta, AlteraValorEmContaTipo tipo, double valor ) {				
 		double saldo = conta.getSaldo();
 		
 		return OperacaoPendenteResponseBuilder.builder()
 				.conta( conta, contaMapper )
+				.valor( valor ) 
 				.saldoAnterior( saldo )
 				.alterValorEmContaTipo( tipo )
 				.realizada( false )				
 				.get();				
 	}
 	
-	public OperacaoPendenteResponse transacaoResponse( Conta conta, TransacaoTipo tipo ) {
+	public OperacaoPendenteResponse transacaoResponse( Conta conta, TransacaoTipo tipo, double valor ) {
 		double saldo = conta.getSaldo();
 		
 		return OperacaoPendenteResponseBuilder.builder()
 				.conta( conta, contaMapper )
+				.valor( valor ) 
 				.saldoAnterior( saldo )
 				.transacaoTipo( tipo )
 				.realizada( false ) 

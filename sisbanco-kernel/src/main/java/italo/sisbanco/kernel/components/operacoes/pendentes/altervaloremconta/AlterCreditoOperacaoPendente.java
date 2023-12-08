@@ -35,6 +35,7 @@ public class AlterCreditoOperacaoPendente implements OperacaoPendente<AlteraValo
 		
 		return OperacaoPendenteResponseBuilder.builder()
 				.conta( conta, contaMapper )
+				.valor( valor ) 
 				.saldoAnterior( saldo )
 				.dataOperacao( new Date() )
 				.alterValorEmContaTipo( AlteraValorEmContaTipo.CREDITO )

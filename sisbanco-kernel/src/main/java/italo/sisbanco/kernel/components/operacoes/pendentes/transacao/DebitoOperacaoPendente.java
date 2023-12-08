@@ -54,6 +54,7 @@ public class DebitoOperacaoPendente implements OperacaoPendente<TransacaoCache> 
 				
 		return OperacaoPendenteResponseBuilder.builder()
 			.conta( conta, contaMapper )
+			.valor( valor ) 
 			.saldoAnterior( saldoAnterior )
 			.dataOperacao( new Date() )
 			.transacaoTipo( TransacaoTipo.DEBITO )

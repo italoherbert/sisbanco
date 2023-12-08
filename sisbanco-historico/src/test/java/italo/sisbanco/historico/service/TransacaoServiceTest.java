@@ -12,37 +12,27 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 
 import italo.sisbanco.historico.SisbancoHistoricoApplication;
+import italo.sisbanco.historico.config.MainConfiguration;
 import italo.sisbanco.historico.exception.ErrorException;
-import italo.sisbanco.historico.exception.TransacaoRabbitListenerErrorHandler;
 import italo.sisbanco.historico.ext.mongodb.MongoDBTest;
 import italo.sisbanco.historico.ext.rabbitmq.RabbitTestConfiguration;
+import italo.sisbanco.historico.message.TransacaoMesseger;
+import italo.sisbanco.historico.message.error.handler.TransacaoRabbitListenerErrorHandler;
 import italo.sisbanco.historico.model.Transacao;
 import italo.sisbanco.historico.model.message.TransacaoMessage;
-import italo.sisbanco.historico.service.message.TransacaoMessageService;
 
 @SpringBootTest(classes=SisbancoHistoricoApplication.class)
-@Import(RabbitTestConfiguration.class)
+@Import({MainConfiguration.class, RabbitTestConfiguration.class})
 public class TransacaoServiceTest extends MongoDBTest {
 		
 	@Autowired
 	private TransacaoService transacaoService;
+		
+	@MockBean
+	private TransacaoMesseger transacaoMesseger;
 	
 	@MockBean
-	private TransacaoMessageService transacaoMessageService;
-	
-	@MockBean
-	private TransacaoRabbitListenerErrorHandler transacaoRabbitListenerErrorHandler;
-	
-	@Test
-	public void test2() {
-		for( int i = 0; i < 10; i++ ) {
-			TransacaoMessage tm = new TransacaoMessage();
-			tm.setUsername( "abc" );
-			tm.setTipo( "CREDITO" );
-			tm.setValor( 100 );
-			tm.setDataOperacao( new Date() );
-		}
-	}
+	private TransacaoRabbitListenerErrorHandler transacaoRabbitListenerErrorHandler;	
 	
 	@Test
 	public void test() {
@@ -73,7 +63,7 @@ public class TransacaoServiceTest extends MongoDBTest {
 			}
 		} catch ( ErrorException e ) {
 			e.printStackTrace();
-			fail( e.getErrorCode() );
+			fail( e.getErrorChave() );
 		}
 	}
 		

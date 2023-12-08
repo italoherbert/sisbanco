@@ -24,10 +24,12 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import italo.sisbanco.ext.log.MainConfiguration;
 import italo.sisbanco.ext.openfeign.FeignClientsTestConfiguration;
 import italo.sisbanco.ext.postgresql.ContaBD;
 import italo.sisbanco.ext.rabbitmq.RabbitMQTestConfiguration;
 import italo.sisbanco.kernel.SisbancoKernelApplication;
+import italo.sisbanco.kernel.exception.ErrorException;
 import italo.sisbanco.kernel.integration.model.UserSaveRequest;
 import italo.sisbanco.kernel.model.request.conta.ContaSaveRequest;
 import italo.sisbanco.kernel.repository.OperAlteraValorEmContaCacheRepository;
@@ -36,6 +38,7 @@ import italo.sisbanco.kernel.service.ContaService;
 
 @SpringBootTest(classes=SisbancoKernelApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 @Import({
+	MainConfiguration.class, 
 	RabbitMQTestConfiguration.class, 
 	FeignClientsTestConfiguration.class
 })
@@ -63,6 +66,111 @@ public class ContaControllerTest {
 				.webAppContextSetup( context )
 				.apply( springSecurity() )
 				.build();								
+	}
+	
+	@Test
+	@ContaBD
+	@WithMockUser(username = "jose", authorities = { "contaDonoWRITE" })
+	public void testComPermissaoSeUsuarioDono() {
+		try {
+			long JOSE_CONTA_ID = 2;
+			long OUTRA_CONTA_ID = 1;
+			
+			UserSaveRequest user = new UserSaveRequest();
+			user.setUsername( "pereira" );
+			
+			ContaSaveRequest req = new ContaSaveRequest();
+			req.setTitular( "pereira" );
+			req.setUser( user ); 
+						
+			mockMvc.perform( 
+					put( "/api/kernel/contas/"+OUTRA_CONTA_ID )
+						.contentType( MediaType.APPLICATION_JSON )
+						.content( objectMapper.writeValueAsBytes( req ) ) )
+				.andDo( print() )
+					.andExpect( status().is( 403 ) ); 
+			
+			mockMvc.perform( 
+					put( "/api/kernel/contas/"+JOSE_CONTA_ID )
+						.contentType( MediaType.APPLICATION_JSON )
+						.content( objectMapper.writeValueAsBytes( req ) ) )
+				.andDo( print() )
+					.andExpect( status().isOk() );
+			
+		} catch ( ErrorException e ) {
+			e.printStackTrace();
+			fail( e.getErrorChave() );
+		} catch ( Exception e ) {
+			e.printStackTrace();
+			fail( e.getMessage() );
+		}
+	}
+	
+	@Test
+	@ContaBD
+	@WithMockUser( username = "cliente", authorities = { "contaWRITE" })
+	private void testComPermissaoSeUsuarioFuncionario() {
+		try {
+			long JOSE_CONTA_ID = 2;
+			long OUTRA_CONTA_ID = 1;
+			
+			UserSaveRequest user = new UserSaveRequest();
+			user.setUsername( "pereira" );
+			
+			ContaSaveRequest req = new ContaSaveRequest();
+			req.setTitular( "pereira" );
+			req.setUser( user ); 
+						
+			mockMvc.perform( 
+					put( "/api/kernel/contas/"+OUTRA_CONTA_ID )
+						.contentType( MediaType.APPLICATION_JSON )
+						.content( objectMapper.writeValueAsBytes( req ) ) )
+				.andDo( print() )
+					.andExpect( status().isOk() ); 
+			
+			mockMvc.perform( 
+					put( "/api/kernel/contas/"+JOSE_CONTA_ID )
+						.contentType( MediaType.APPLICATION_JSON )
+						.content( objectMapper.writeValueAsBytes( req ) ) )
+				.andDo( print() )
+					.andExpect( status().isOk() );
+			
+		} catch ( ErrorException e ) {
+			e.printStackTrace();
+			fail( e.getErrorChave() );
+		} catch ( Exception e ) {
+			e.printStackTrace();
+			fail( e.getMessage() );
+		}
+	}
+	
+	@Test
+	@ContaBD
+	@WithMockUser( username = "cliente", authorities = { "contaREAD" })
+	private void testSemPermissaoDeEscrita() {
+		try {
+			long OUTRA_CONTA_ID = 1;
+			
+			UserSaveRequest user = new UserSaveRequest();
+			user.setUsername( "pereira" );
+			
+			ContaSaveRequest req = new ContaSaveRequest();
+			req.setTitular( "pereira" );
+			req.setUser( user ); 
+						
+			mockMvc.perform( 
+					put( "/api/kernel/contas/"+OUTRA_CONTA_ID )
+						.contentType( MediaType.APPLICATION_JSON )
+						.content( objectMapper.writeValueAsBytes( req ) ) )
+				.andDo( print() )
+					.andExpect( status().is( 403 ) ); 						
+		} catch ( ErrorException e ) {
+			e.printStackTrace();
+			fail( e.getErrorChave() );
+		} catch ( Exception e ) {
+			e.printStackTrace();
+			fail( e.getMessage() );
+		}
 	}
 	
 	@Test
@@ -128,7 +236,7 @@ public class ContaControllerTest {
 	public void filtraContaTest() {
 		try {						 			
 			mockMvc.perform( 
-					get("/api/kernel/contas/filtra?titular=*") )				
+					get("/api/kernel/contas?titular=*") )				
 				.andDo( print() )
 					.andExpect( status().isOk() );
 		} catch ( Exception e ) {

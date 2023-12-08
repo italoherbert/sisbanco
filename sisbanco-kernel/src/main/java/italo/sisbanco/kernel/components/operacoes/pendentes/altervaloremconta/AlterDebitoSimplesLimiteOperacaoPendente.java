@@ -35,6 +35,7 @@ public class AlterDebitoSimplesLimiteOperacaoPendente implements OperacaoPendent
 		
 		return OperacaoPendenteResponseBuilder.builder()
 				.conta( conta, contaMapper )
+				.valor( valor ) 
 				.saldoAnterior( saldo )
 				.alterValorEmContaTipo( AlteraValorEmContaTipo.DEBITO_SIMPLES_LIMITE )
 				.dataOperacao( new Date() ) 

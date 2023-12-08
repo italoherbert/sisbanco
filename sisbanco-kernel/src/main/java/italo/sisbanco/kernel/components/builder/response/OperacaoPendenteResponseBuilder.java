@@ -54,6 +54,11 @@ public class OperacaoPendenteResponseBuilder {
 		resp.setDataOperacao( dataOp );
 		return this;
 	}
+	
+	public OperacaoPendenteResponseBuilder valor( double valor ) {
+		resp.setValor( valor );
+		return this;
+	}
 		
 	public OperacaoPendenteResponseBuilder saldoAnterior( double valor ) {
 		resp.setSaldoAnterior( valor );

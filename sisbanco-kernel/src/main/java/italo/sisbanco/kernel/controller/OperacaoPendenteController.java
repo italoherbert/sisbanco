@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,7 +27,7 @@ public class OperacaoPendenteController {
 		
 	@ExecutaOperacaoPendenteCacheEndpoint
 	@PreAuthorize("hasAuthority('cacheOperacoesPendentesALL')")
-	@GetMapping("/{operacaoPendenteId}/exec")
+	@PostMapping("/{operacaoPendenteId}/exec")
 	public ResponseEntity<Object> executaTransacaoCache( 
 			@PathVariable String operacaoPendenteId ) throws ErrorException {
 		
@@ -44,7 +45,7 @@ public class OperacaoPendenteController {
 	
 	@ListaTransacoesEmCacheEndpoint
 	@PreAuthorize("hasAuthority('cacheOperacoesPendentesALL')")
-	@GetMapping("/contas/{contaId}/lista")
+	@GetMapping("/contas/{contaId}")
 	public ResponseEntity<Object> listaPorConta( @PathVariable Long contaId ) throws ErrorException {
 		List<OperacaoPendenteResponse> lista = operacaoPendenteCacheService.listaPorConta( contaId );
 		return ResponseEntity.ok( lista );

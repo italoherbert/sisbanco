@@ -30,7 +30,7 @@ public class ContaService {
 	
 	@Autowired
 	private ContaAlterManager contaAlterManager;
-
+	
 	@Autowired
 	private ContaRepository contaRepository;
 	
@@ -48,9 +48,9 @@ public class ContaService {
 			
 			if ( resp.getStatusCode().is2xxSuccessful() ) {
 				String userId = resp.getBody().getUserId();
-				
+								
 				Conta conta = contaMapper.novoBean();
-				contaMapper.carregaParaRegistro( conta, request, userId );
+				contaMapper.carregaParaRegistroInicial( conta, request, userId );				
 				contaRepository.save( conta );
 				
 				ContaResponse contaResp = contaMapper.novoContaResponse();
@@ -80,22 +80,22 @@ public class ContaService {
 				throw new ErrorException( Erros.TITULAR_JA_EXISTE );
 		}
 		
-		contaMapper.carregaParaAlteracao( conta, request ); 
+		contaMapper.carregaParaAlteracaoSimplificada( conta, request ); 
 		contaRepository.save( conta );	
 	}
 	
-	public void alteraSaldo( Long contaId, ValorRequest valor ) throws ErrorException {
-		contaAlterManager.alteraSaldo( contaId, valor.getValor() ); 		
+	public void alteraSaldo( Long contaId, ValorRequest request ) throws ErrorException {
+		contaAlterManager.alteraSaldo( contaId, request.getValor() );
 	}
 	
-	public void alteraCredito( Long contaId, ValorRequest valor ) throws ErrorException {
-		contaAlterManager.alteraCredito( contaId, valor.getValor() ); 		
+	public void alteraCredito( Long contaId, ValorRequest request ) throws ErrorException {
+		contaAlterManager.alteraCredito( contaId, request.getValor() );
 	}
 	
-	public void alteraDebitoSimplesLimite( Long contaId, ValorRequest valor ) throws ErrorException {
-		contaAlterManager.alteraDebitoSimplesLimite( contaId, valor.getValor() ); 		
+	public void alteraDebitoSimplesLimite( Long contaId, ValorRequest request ) throws ErrorException {
+		contaAlterManager.alteraDebitoSimplesLimite( contaId, request.getValor() );
 	}
-	
+		
 	public ContaResponse get( Long contaId ) throws ErrorException {
 		Optional<Conta> contaOp = contaRepository.findById( contaId );
 		if ( !contaOp.isPresent() )
@@ -142,11 +142,13 @@ public class ContaService {
 		
 		Conta conta = contaOp.get();
 		String userId = conta.getUserId();
-				
+		if ( userId == null )
+			throw new ErrorException( Erros.USER_ID_NULO );
+		
 		try {
 			keycloak.deletaUser( userId, authorizationHeader );
 			contaRepository.deleteById( contaId ); 
-		} catch ( FeignClientException e ) {	
+		} catch ( FeignClientException e ) {			
 			throw new ErrorException( e.status(), e.contentUTF8() );
 		}
 	}
