@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,7 +45,6 @@ public class TransacaoCacheRepositoryTest extends RedisTest {
 		
 		transacaoCacheRepository.save( tc = TransacaoCacheBuilder.builder()
 				.contaOrigemId( 1 )
-				.dataOperacao( new Date() )
 				.tipo( TransacaoTipo.DEBITO )
 				.valor( 100 )				
 				.get() ); 
@@ -66,7 +64,7 @@ public class TransacaoCacheRepositoryTest extends RedisTest {
 		assertNotNull( tc2.getId(), "ID nulo" );
 		assertNotNull( tc2.getOperacaoPendente().getId(), "ID de operação pendente nulo." );
 		assertEquals( tc2.getOrigContaId(), 1, "Contas de origem não correspondem." );
-		assertNotNull( tc2.getDataOperacao(), "Data de operação nula." );
+		assertNotNull( tc2.getDataCriacao(), "Data de criação nula." );
 		assertEquals( tc2.getTipo(), TransacaoTipo.DEBITO, "Tipos não correspondem." );
 		assertEquals( tc2.getValor(), 100, "Valores não correspondem." );
 		
@@ -85,7 +83,7 @@ public class TransacaoCacheRepositoryTest extends RedisTest {
 		assertNotNull( tc2.getId(), "ID nulo" );
 		assertNotNull( tc2.getOperacaoPendente().getId(), "ID de operação pendente nulo." );
 		assertEquals( tc2.getOrigContaId(), 1, "Contas de origem não correspondem." );
-		assertNotNull( tc2.getDataOperacao(), "Data de operação nula." );
+		assertNotNull( tc2.getDataCriacao(), "Data de criação nula." );
 		assertEquals( tc2.getTipo(), TransacaoTipo.CREDITO, "Tipos não correspondem." );
 		assertEquals( tc2.getValor(), 100, "Valores não correspondem." );
 	}
@@ -98,14 +96,12 @@ public class TransacaoCacheRepositoryTest extends RedisTest {
 		
 		TransacaoCache tcache1 = TransacaoCacheBuilder.builder()
 				.contaOrigemId( CONTA_ID1 )
-				.dataOperacao( new Date() )
 				.tipo( TransacaoTipo.TRANSFERENCIA )
 				.valor( 100 )				
 				.get();
 		
 		TransacaoCache tcache2 = TransacaoCacheBuilder.builder()
 				.contaOrigemId( CONTA_ID2 )
-				.dataOperacao( new Date() )
 				.tipo( TransacaoTipo.DEBITO )
 				.valor( 100 )				
 				.get();
@@ -113,7 +109,6 @@ public class TransacaoCacheRepositoryTest extends RedisTest {
 		TransacaoCache tcache3 = TransacaoCacheBuilder.builder()
 				.contaOrigemId( CONTA_ID1 )
 				.contaDestinoId( CONTA_ID3 ) 
-				.dataOperacao( new Date() )
 				.tipo( TransacaoTipo.TRANSFERENCIA )
 				.valor( 100 )				
 				.get();
@@ -180,7 +175,7 @@ public class TransacaoCacheRepositoryTest extends RedisTest {
 		assertEquals( tc1.getOrigContaId(), tc2.getOrigContaId(), "IDs de contas de origem diferentes." );
 		assertEquals( tc1.getDestContaId(), tc2.getDestContaId(), "IDs de contas de destino diferentes." );
 		assertEquals( tc1.getOperacaoPendente().getTipo(), tc2.getOperacaoPendente().getTipo(), "Tipos de operação diferentes." );
-		assertEquals( tc1.getDataOperacao(), tc2.getDataOperacao(), "Datas de operação diferentes." );
+		assertEquals( tc1.getDataCriacao(), tc2.getDataCriacao(), "Datas de criação diferentes." );
 		assertEquals( tc1.getTipo(), tc2.getTipo(), "Tipos diferentes." );
 		assertEquals( tc1.getValor(), tc2.getValor(), "Valores diferentes." );
 	}

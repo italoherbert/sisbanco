@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -75,7 +74,6 @@ public class OperacaoPendenteCacheServiceTest extends RedisPostgreSQLTest {
 				
 		TransacaoCache tc = TransacaoCacheBuilder.builder()
 				.contaOrigemId( CONTA_ID1 )
-				.dataOperacao( new Date() )
 				.tipo( TransacaoTipo.DEBITO )
 				.valor( 100 )				
 				.get();
@@ -112,7 +110,6 @@ public class OperacaoPendenteCacheServiceTest extends RedisPostgreSQLTest {
 				
 		TransacaoCache tc = TransacaoCacheBuilder.builder()
 				.contaOrigemId( CONTA_ID1 )
-				.dataOperacao( new Date() )
 				.tipo( TransacaoTipo.CREDITO )
 				.valor( 100 )				
 				.get();
@@ -132,7 +129,6 @@ public class OperacaoPendenteCacheServiceTest extends RedisPostgreSQLTest {
 
 		TransacaoCache tc = TransacaoCacheBuilder.builder()
 				.contaOrigemId( CONTA_ID1 )
-				.dataOperacao( new Date() )
 				.tipo( TransacaoTipo.CREDITO )
 				.valor( 100 )				
 				.get();
@@ -158,14 +154,12 @@ public class OperacaoPendenteCacheServiceTest extends RedisPostgreSQLTest {
 		
 		TransacaoCache tc = TransacaoCacheBuilder.builder()
 				.contaOrigemId( CONTA_ID1 )
-				.dataOperacao( new Date() )
 				.tipo( TransacaoTipo.CREDITO )
 				.valor( 100 )				
 				.get();
 		
 		AlteraValorEmContaCache alterValor = AlteraValorEmContaCacheBuilder.builder()
 				.contaId( CONTA_ID1 )
-				.dataOperacao( new Date() )
 				.tipo( AlteraValorEmContaTipo.CREDITO )
 				.valor( 200 )				
 				.get();

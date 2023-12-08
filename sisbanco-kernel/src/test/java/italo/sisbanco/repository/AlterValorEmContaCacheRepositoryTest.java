@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,21 +51,18 @@ public class AlterValorEmContaCacheRepositoryTest extends RedisTest {
 		
 		AlteraValorEmContaCache tcache1 = AlteraValorEmContaCacheBuilder.builder()
 				.contaId( CONTA_ID1 )
-				.dataOperacao( new Date() )
 				.tipo( AlteraValorEmContaTipo.CREDITO )
 				.valor( 100 )				
 				.get();
 		
 		AlteraValorEmContaCache tcache2 = AlteraValorEmContaCacheBuilder.builder()
 				.contaId( CONTA_ID2 )
-				.dataOperacao( new Date() )
 				.tipo( AlteraValorEmContaTipo.CREDITO )
 				.valor( 100 )				
 				.get();
 		
 		AlteraValorEmContaCache tcache3 = AlteraValorEmContaCacheBuilder.builder()
 				.contaId( CONTA_ID1 )
-				.dataOperacao( new Date() )
 				.tipo( AlteraValorEmContaTipo.DEBITO_SIMPLES_LIMITE )
 				.valor( 100 )				
 				.get();
@@ -130,7 +126,7 @@ public class AlterValorEmContaCacheRepositoryTest extends RedisTest {
 		assertNotNull( tc1.getOperacaoPendente(), "A operação pendente da transação não deveria ser nula." );								
 		assertEquals( tc1.getContaId(), tc2.getContaId(), "IDs de contas de origem diferentes." );
 		assertEquals( tc1.getOperacaoPendente().getTipo(), tc2.getOperacaoPendente().getTipo(), "Tipos de operação diferentes." );
-		assertEquals( tc1.getDataOperacao(), tc2.getDataOperacao(), "Datas de operação diferentes." );
+		assertEquals( tc1.getDataCriacao(), tc2.getDataCriacao(), "Datas de criação diferentes." );
 		assertEquals( tc1.getTipo(), tc2.getTipo(), "Tipos diferentes." );
 		assertEquals( tc1.getValor(), tc2.getValor(), "Valores diferentes." );
 	}

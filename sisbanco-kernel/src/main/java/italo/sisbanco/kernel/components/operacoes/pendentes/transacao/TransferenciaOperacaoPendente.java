@@ -1,6 +1,5 @@
 package italo.sisbanco.kernel.components.operacoes.pendentes.transacao;
 
-import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +61,7 @@ public class TransferenciaOperacaoPendente implements OperacaoPendente<Transacao
 				.conta( origem, contaMapper )
 				.valor( valor ) 
 				.saldoAnterior( saldoAnterior )
-				.dataOperacao( new Date() )
+				.dataCriacao( transacaoCache.getDataCriacao() )
 				.transacaoTipo( TransacaoTipo.TRANSFERENCIA )
 				.realizada( true )
 				.get();	

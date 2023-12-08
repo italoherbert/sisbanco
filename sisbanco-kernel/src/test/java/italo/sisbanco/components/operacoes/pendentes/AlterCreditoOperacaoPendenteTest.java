@@ -3,7 +3,6 @@ package italo.sisbanco.components.operacoes.pendentes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +49,6 @@ public class AlterCreditoOperacaoPendenteTest extends AbstractOperacaoPendenteTe
 	protected OperacaoPendenteResponse registraOperacaoEExecuta( Long contaId ) throws ErrorException {
 		AlteraValorEmContaCache alterValor = AlteraValorEmContaCacheBuilder.builder()
 				.contaId( contaId )
-				.dataOperacao( new Date() )
 				.valor( novoCreditoValor )
 				.tipo( AlteraValorEmContaTipo.CREDITO )				
 				.get();

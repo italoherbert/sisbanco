@@ -19,6 +19,7 @@ public class AlteraValorEmContaCacheBuilder {
 		
 		alteraValorEmConta = new AlteraValorEmContaCache();
 		alteraValorEmConta.setId( UUID.randomUUID().toString() ); 
+		alteraValorEmConta.setDataCriacao( new Date() ); 
 		alteraValorEmConta.setOperacaoPendente( oper ); 
 	}
 	
@@ -44,12 +45,7 @@ public class AlteraValorEmContaCacheBuilder {
 		alteraValorEmConta.setValor( valor );
 		return this;
 	}
-	
-	public AlteraValorEmContaCacheBuilder dataOperacao( Date dataOp ) {
-		alteraValorEmConta.setDataOperacao( dataOp );
-		return this;
-	}
-	
+		
 	public AlteraValorEmContaCacheBuilder tipo( AlteraValorEmContaTipo tipo ) {
 		alteraValorEmConta.setTipo( tipo );
 		return this;

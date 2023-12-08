@@ -1,0 +1,7 @@
+
+sisbanco-shared/target
+sisbanco-eureka/target
+sisbanco-gateway/target
+sisbanco-historico/target
+sisbanco-keycloak/target
+sisbanco-kernel/target

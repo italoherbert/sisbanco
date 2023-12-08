@@ -20,7 +20,7 @@ public class TransacaoCacheBuilder {
 		transacao = new TransacaoCache();
 		transacao.setId( UUID.randomUUID().toString() ); 
 		transacao.setOperacaoPendente( oper );
-		transacao.setDataOperacao( null ); 
+		transacao.setDataCriacao( new Date() ); 
 	}
 	
 	public static TransacaoCacheBuilder builder() {
@@ -50,12 +50,7 @@ public class TransacaoCacheBuilder {
 		transacao.setValor( valor );
 		return this;
 	}
-	
-	public TransacaoCacheBuilder dataOperacao( Date dataOp ) {
-		transacao.setDataOperacao( dataOp );
-		return this;
-	}
-	
+		
 	public TransacaoCacheBuilder tipo( TransacaoTipo tipo ) {
 		transacao.setTipo( tipo );
 		return this;

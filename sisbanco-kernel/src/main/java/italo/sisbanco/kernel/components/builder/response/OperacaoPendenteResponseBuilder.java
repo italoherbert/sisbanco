@@ -16,6 +16,7 @@ public class OperacaoPendenteResponseBuilder {
 	
 	public OperacaoPendenteResponseBuilder() {		
 		resp = new OperacaoPendenteResponse();
+		resp.setDataOperacao( new Date() );
 	}
 	
 	public static OperacaoPendenteResponseBuilder builder() {
@@ -50,8 +51,8 @@ public class OperacaoPendenteResponseBuilder {
 		return this;
 	}
 	
-	public OperacaoPendenteResponseBuilder dataOperacao( Date dataOp ) {
-		resp.setDataOperacao( dataOp );
+	public OperacaoPendenteResponseBuilder dataCriacao( Date dataCriacao ) {
+		resp.setDataCriacao( dataCriacao );
 		return this;
 	}
 	

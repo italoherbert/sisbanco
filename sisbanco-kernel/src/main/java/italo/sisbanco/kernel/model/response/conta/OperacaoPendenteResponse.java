@@ -18,6 +18,8 @@ public class OperacaoPendenteResponse {
 		
 	private ContaResponse conta;
 	
+	public Date dataCriacao;
+	
 	public Date dataOperacao;
 		
 	private OperacaoPendenteTipo operacaoTipo;

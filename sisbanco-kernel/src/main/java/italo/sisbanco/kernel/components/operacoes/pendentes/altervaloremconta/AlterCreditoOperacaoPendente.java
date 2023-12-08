@@ -1,7 +1,5 @@
 package italo.sisbanco.kernel.components.operacoes.pendentes.altervaloremconta;
 
-import java.util.Date;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -37,7 +35,7 @@ public class AlterCreditoOperacaoPendente implements OperacaoPendente<AlteraValo
 				.conta( conta, contaMapper )
 				.valor( valor ) 
 				.saldoAnterior( saldo )
-				.dataOperacao( new Date() )
+				.dataCriacao( alterValorCache.getDataCriacao() )
 				.alterValorEmContaTipo( AlteraValorEmContaTipo.CREDITO )
 				.realizada( true )
 				.get();	

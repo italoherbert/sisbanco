@@ -22,7 +22,7 @@ public class TransacaoCache implements Serializable {
 	
 	private double valor;
 	
-	private Date dataOperacao;
+	private Date dataCriacao;
 	
 	private TransacaoTipo tipo;
 	

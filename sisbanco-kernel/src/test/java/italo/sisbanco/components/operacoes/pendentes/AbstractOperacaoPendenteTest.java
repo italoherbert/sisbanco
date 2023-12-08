@@ -50,6 +50,7 @@ public abstract class AbstractOperacaoPendenteTest extends RedisTest {
 			
 			assertNotNull( resp.getConta(), "Conta nula." );
 			assertEquals( resp.getConta().getId(), conta.getId(), "IDs das contas não correspondem." );			
+			assertNotNull( resp.getDataCriacao(), "Data de criação não deveria ser nula." );
 			assertNotNull( resp.getDataOperacao(), "Data de operação não deveria ser nula." );
 			assertTrue( resp.isRealizada(), "A operação deveria ter sido realizada. " );
 			
