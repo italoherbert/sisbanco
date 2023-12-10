@@ -10,6 +10,7 @@ import italo.sisbanco.kernel.components.builder.response.OperacaoPendenteRespons
 import italo.sisbanco.kernel.components.manager.TransacaoManager;
 import italo.sisbanco.kernel.components.mapper.ContaMapper;
 import italo.sisbanco.kernel.components.operacoes.pendentes.OperacaoPendente;
+import italo.sisbanco.kernel.enums.OperacaoPendenteStatus;
 import italo.sisbanco.kernel.enums.TransacaoTipo;
 import italo.sisbanco.kernel.exception.ErrorException;
 import italo.sisbanco.kernel.model.Conta;
@@ -58,12 +59,13 @@ public class TransferenciaOperacaoPendente implements OperacaoPendente<Transacao
 		operTransacaoCacheRepository.deleteById( transacaoCacheId );
 									
 		return OperacaoPendenteResponseBuilder.builder()
+				.status( OperacaoPendenteStatus.REALIZADA )
+				.operacaoPendente( transacaoCache.getOperacaoPendente() ) 
 				.conta( origem, contaMapper )
 				.valor( valor ) 
 				.saldoAnterior( saldoAnterior )
 				.dataCriacao( transacaoCache.getDataCriacao() )
 				.transacaoTipo( TransacaoTipo.TRANSFERENCIA )
-				.realizada( true )
 				.get();	
 	}
 

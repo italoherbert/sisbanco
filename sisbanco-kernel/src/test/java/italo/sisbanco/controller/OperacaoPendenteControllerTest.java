@@ -2,6 +2,7 @@ package italo.sisbanco.controller;
 
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -72,7 +73,7 @@ public class OperacaoPendenteControllerTest {
 			fail( e.getMessage() );
 		}
 	}
-	
+			
 	@Test
 	@ContaBD
 	@WithMockUser(username="cliente", authorities = { "cacheOperacoesPendentesALL"})
@@ -95,6 +96,21 @@ public class OperacaoPendenteControllerTest {
 		try {
 			mockMvc.perform( 
 					get( "/api/kernel/operacoes/pendentes/contas/-1" ) )
+				.andDo( print() )
+				.andExpect( status().isOk() ); 
+		} catch ( Exception e ) {
+			e.printStackTrace();
+			fail( e.getMessage() );
+		}
+	}
+	
+	@Test
+	@ContaBD
+	@WithMockUser(username="cliente", authorities = { "cacheOperacoesPendentesALL"})
+	public void testRevoga() {		
+		try {
+			mockMvc.perform( 
+					delete( "/api/kernel/operacoes/pendentes/-1" ) )
 				.andDo( print() )
 				.andExpect( status().isOk() ); 
 		} catch ( Exception e ) {

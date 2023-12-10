@@ -3,6 +3,7 @@ package italo.sisbanco.kernel.model.response.conta;
 import java.util.Date;
 
 import italo.sisbanco.kernel.enums.AlteraValorEmContaTipo;
+import italo.sisbanco.kernel.enums.OperacaoPendenteStatus;
 import italo.sisbanco.kernel.enums.OperacaoPendenteTipo;
 import italo.sisbanco.kernel.enums.TransacaoTipo;
 import lombok.Data;
@@ -10,8 +11,10 @@ import lombok.Data;
 @Data
 public class OperacaoPendenteResponse {
 		
-	private boolean realizada;
+	private String operId;
 
+	private OperacaoPendenteStatus status;
+	
 	private double saldoAnterior;
 	
 	private double valor;

@@ -1,20 +1,18 @@
 package italo.sisbanco.ext.postgresql;
 
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-@ActiveProfiles("test") 
 @Testcontainers
 public class PostgreSQLTest {
 
 	private static PostgreSQLContainer<?> postgreSQLContainer;		
 	
 	static {
-		postgreSQLContainer = new PostgreSQLContainer<>( DockerImageName.parse( "postgres" ) )
+		postgreSQLContainer = new PostgreSQLContainer<>( DockerImageName.parse( "postgres;15-alpine" ) )
 				.withUsername( "postgres" )
 				.withPassword( "postgres" )
 				.withDatabaseName( "test" );

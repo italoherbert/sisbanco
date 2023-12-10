@@ -23,6 +23,7 @@ import italo.sisbanco.kernel.SisbancoKernelApplication;
 import italo.sisbanco.kernel.components.builder.AlteraValorEmContaCacheBuilder;
 import italo.sisbanco.kernel.components.builder.TransacaoCacheBuilder;
 import italo.sisbanco.kernel.enums.AlteraValorEmContaTipo;
+import italo.sisbanco.kernel.enums.OperacaoPendenteStatus;
 import italo.sisbanco.kernel.enums.TransacaoTipo;
 import italo.sisbanco.kernel.exception.ErrorException;
 import italo.sisbanco.kernel.model.Conta;
@@ -91,7 +92,7 @@ public class OperacaoPendenteCacheServiceTest extends RedisPostgreSQLTest {
 		
 		try {
 			OperacaoPendenteResponse resp = operacaoPendenteService.executa( operId );
-			assertTrue( resp.isRealizada(), "Operação deveria ter sido realizada." );						
+			assertEquals( resp.getStatus(), OperacaoPendenteStatus.REALIZADA, "Operação deveria ter sido realizada." );						
 		} catch (ErrorException e) {			
 			e.printStackTrace();
 			fail( "Erro= "+e.getErrorChave() );

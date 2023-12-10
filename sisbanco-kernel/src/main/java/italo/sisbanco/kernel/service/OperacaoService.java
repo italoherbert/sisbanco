@@ -13,6 +13,7 @@ import italo.sisbanco.kernel.components.builder.response.OperacaoPendenteRespons
 import italo.sisbanco.kernel.components.manager.TransacaoManager;
 import italo.sisbanco.kernel.components.mapper.ContaMapper;
 import italo.sisbanco.kernel.enums.AlteraValorEmContaTipo;
+import italo.sisbanco.kernel.enums.OperacaoPendenteStatus;
 import italo.sisbanco.kernel.enums.OperacaoPendenteTipo;
 import italo.sisbanco.kernel.enums.TransacaoTipo;
 import italo.sisbanco.kernel.exception.ErrorException;
@@ -70,11 +71,12 @@ public class OperacaoService {
 		alteraValorEmContaCacheRepository.save( alterVCache );
 		
 		return OperacaoPendenteResponseBuilder.builder()
+				.status( OperacaoPendenteStatus.AGUARDANDO_EXECUCAO )
+				.operacaoPendente( alterVCache.getOperacaoPendente() ) 
 				.conta( conta, contaMapper )
 				.saldoAnterior( saldo )
 				.alterValorEmContaTipo( tipo )
 				.dataCriacao( alterVCache.getDataCriacao() )
-				.realizada( false )				
 				.get();	
 	}
 	
@@ -94,11 +96,13 @@ public class OperacaoService {
 		contaMapper.carregaResponse( contaResp, conta );
 		
 		return OperacaoPendenteResponseBuilder.builder()
+				.status( OperacaoPendenteStatus.REALIZADA )
+				.operacaoPendente( null ) 
 				.conta( conta, contaMapper )
+				.valor( valor )
 				.saldoAnterior( saldoAnterior )
 				.transacaoTipo( TransacaoTipo.CREDITO )
 				.dataCriacao( new Date() ) 
-				.realizada( true )				
 				.get();		
 	}
 	
@@ -111,8 +115,10 @@ public class OperacaoService {
 		double saldo = conta.getSaldo();
 		
 		double valor = request.getValor();							
-		boolean realizada = false;
-		
+		OperacaoPendenteCache operCache = null;
+
+		OperacaoPendenteStatus status;
+
 		Date dataCriacao = null;
 		
 		if ( valor > conta.getDebitoSimplesLimite() ) {										
@@ -124,20 +130,23 @@ public class OperacaoService {
 			
 			transacaoCacheRepository.save( tcache );
 			
+			operCache = tcache.getOperacaoPendente();
 			dataCriacao = tcache.getDataCriacao();
-			realizada = false;
+			status = OperacaoPendenteStatus.AGUARDANDO_EXECUCAO;
 		} else {
 			transacaoManagerService.debita( conta, valor );
 			
 			dataCriacao = new Date();
-			realizada = true;
+			status = OperacaoPendenteStatus.REALIZADA;
 		}
 				
 		return OperacaoPendenteResponseBuilder.builder()
+				.status( status )
+				.operacaoPendente( operCache )
 				.conta( conta, contaMapper )
+				.valor( valor )
 				.saldoAnterior( saldo )
 				.transacaoTipo( TransacaoTipo.DEBITO )
-				.realizada( realizada )
 				.dataCriacao( dataCriacao )
 				.get();
 	}
@@ -158,8 +167,9 @@ public class OperacaoService {
 		
 		double valor = request.getValor();
 		
-		boolean realizada = false;
+		OperacaoPendenteStatus status;
 		Date dataCriacao = null;
+		OperacaoPendenteCache operCache = null;
 				
 		if ( valor > origem.getDebitoSimplesLimite() ) {
 			OperacaoPendenteCache oper = new OperacaoPendenteCache();
@@ -174,21 +184,24 @@ public class OperacaoService {
 			
 			transacaoCacheRepository.save( tcache );
 			
-			realizada = false;
+			status = OperacaoPendenteStatus.AGUARDANDO_EXECUCAO;
 			dataCriacao = tcache.getDataCriacao();
+			operCache = tcache.getOperacaoPendente();
 		} else {
 			transacaoManagerService.transfere( origem, dest, valor );
 			
 			dataCriacao = new Date();
-			realizada = true;
+			status = OperacaoPendenteStatus.REALIZADA;
 		}	
 		
 		return OperacaoPendenteResponseBuilder.builder()
+				.status( status )
+				.operacaoPendente( operCache ) 
 				.conta( origem, contaMapper )
-				.transacaoTipo( TransacaoTipo.TRANSFERENCIA )
+				.valor( valor )
+ 				.transacaoTipo( TransacaoTipo.TRANSFERENCIA )
 				.dataCriacao( dataCriacao )
-				.saldoAnterior( origSaldoAnterior ) 
-				.realizada( realizada )					
+				.saldoAnterior( origSaldoAnterior ) 				
 				.get();
 	}
 	

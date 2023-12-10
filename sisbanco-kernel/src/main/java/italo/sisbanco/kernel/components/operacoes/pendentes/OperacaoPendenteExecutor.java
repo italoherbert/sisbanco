@@ -38,7 +38,7 @@ public class OperacaoPendenteExecutor {
 	
 	@Autowired
 	private AlterDebitoSimplesLimiteOperacaoPendente alterDebitoSimplesLimiteOperacaoPendente;
-		
+			
 	public OperacaoPendenteResponse executa( String operacaoPendenteId ) throws ErrorException {
 		Optional<TransacaoCache> transacaoCacheOp = transacaoCacheRepository.findByOperacaoPendenteId( operacaoPendenteId );
 		
@@ -69,6 +69,6 @@ public class OperacaoPendenteExecutor {
 				throw new ErrorException( Erros.OPERACAO_PENDENTE_NAO_ENCONTRADA );
 			}
 		}						
-	}
+	}		
 	
 }

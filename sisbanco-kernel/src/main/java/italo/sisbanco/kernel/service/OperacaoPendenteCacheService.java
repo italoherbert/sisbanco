@@ -8,9 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import italo.sisbanco.kernel.Erros;
-import italo.sisbanco.kernel.components.mapper.OperacaoPendenteMapper;
+import italo.sisbanco.kernel.components.builder.response.OperacaoPendenteResponseBuilder;
+import italo.sisbanco.kernel.components.mapper.ContaMapper;
 import italo.sisbanco.kernel.components.operacoes.pendentes.OperacaoPendenteExecutor;
 import italo.sisbanco.kernel.enums.AlteraValorEmContaTipo;
+import italo.sisbanco.kernel.enums.OperacaoPendenteStatus;
 import italo.sisbanco.kernel.enums.TransacaoTipo;
 import italo.sisbanco.kernel.exception.ErrorException;
 import italo.sisbanco.kernel.model.Conta;
@@ -37,15 +39,15 @@ public class OperacaoPendenteCacheService {
 	private OperacaoPendenteExecutor operacaoPendenteExecutor;
 	
 	@Autowired
-	private OperacaoPendenteMapper operacaoPendenteMapper;
+	private ContaMapper contaMapper;
 	
 	public OperacaoPendenteResponse executa( String operacaoPendenteId ) throws ErrorException {
 		OperacaoPendenteResponse resp = operacaoPendenteExecutor.executa( operacaoPendenteId );
 		if ( resp == null )
-			throw new ErrorException( Erros.OPER_ALTER_VALOR_EM_CONTA_NAO_ENCONTRADA_EM_CACHE );
+			throw new ErrorException( Erros.OPERACAO_PENDENTE_NAO_ENCONTRADA );
 		return resp;				
 	}
-		
+			
 	public OperacaoPendenteResponse get( String operacaoPendenteId ) throws ErrorException {
 		Optional<TransacaoCache> transacaoCacheOp = transacaoCacheRepository.findByOperacaoPendenteId( operacaoPendenteId );
 						
@@ -62,7 +64,14 @@ public class OperacaoPendenteCacheService {
 			
 			Conta conta = contaOp.get();
 			
-			return operacaoPendenteMapper.transacaoResponse( conta, tipo, valor );
+			return OperacaoPendenteResponseBuilder.builder()
+					.status( OperacaoPendenteStatus.AGUARDANDO_EXECUCAO )
+					.operacaoPendente( transacaoCache.getOperacaoPendente() )
+					.conta( conta, contaMapper )
+					.valor( valor ) 
+					.saldoAnterior( conta.getSaldo() )
+					.transacaoTipo( tipo )
+					.get();										
 		} else {
 			Optional<AlteraValorEmContaCache> alterVCacheOp = alteraValorEmContaCacheRepository.findByOperacaoPendenteId( operacaoPendenteId );
 			
@@ -78,8 +87,15 @@ public class OperacaoPendenteCacheService {
 					throw new ErrorException( Erros.CONTA_NAO_ENCONTRADA );
 				
 				Conta conta = contaOp.get();
-								
-				return operacaoPendenteMapper.alterValorEmContaResponse( conta, tipo, valor );
+
+				return OperacaoPendenteResponseBuilder.builder()
+						.status( OperacaoPendenteStatus.AGUARDANDO_EXECUCAO )
+						.operacaoPendente( alterVCache.getOperacaoPendente() ) 
+						.conta( conta, contaMapper )
+						.valor( valor ) 
+						.saldoAnterior( conta.getSaldo() )
+						.alterValorEmContaTipo( tipo )
+						.get();	
 			} else {
 				throw new ErrorException( Erros.OPERACAO_PENDENTE_NAO_ENCONTRADA );
 			}
@@ -101,16 +117,48 @@ public class OperacaoPendenteCacheService {
 		for( TransacaoCache tc : transacoes ) {
 			TransacaoTipo tipo = tc.getTipo();	
 			double valor = tc.getValor();
-			lista.add( operacaoPendenteMapper.transacaoResponse( conta, tipo, valor ) );
+			
+			lista.add( OperacaoPendenteResponseBuilder.builder()
+				.status( OperacaoPendenteStatus.AGUARDANDO_EXECUCAO )					
+				.operacaoPendente( tc.getOperacaoPendente() ) 
+				.conta( conta, contaMapper )
+				.valor( valor ) 
+				.saldoAnterior( conta.getSaldo() )
+				.transacaoTipo( tipo )
+				.get() );
 		}
 		
 		for( AlteraValorEmContaCache alterV : alters ) {
 			AlteraValorEmContaTipo tipo = alterV.getTipo();		
 			double valor = alterV.getValor();
-			lista.add( operacaoPendenteMapper.alterValorEmContaResponse( conta, tipo, valor ) );
+			
+			lista.add( OperacaoPendenteResponseBuilder.builder()
+					.status( OperacaoPendenteStatus.AGUARDANDO_EXECUCAO )
+					.operacaoPendente( alterV.getOperacaoPendente() ) 
+					.conta( conta, contaMapper )
+					.valor( valor ) 
+					.saldoAnterior( conta.getSaldo() )
+					.alterValorEmContaTipo( tipo )
+					.get() );
 		}
 			
 		return lista;
 	}	
+	
+	public void deleta( String operacaoPendenteId ) throws ErrorException {
+		Optional<TransacaoCache> transacaoCacheOp = transacaoCacheRepository.findByOperacaoPendenteId( operacaoPendenteId );
+		if ( transacaoCacheOp.isPresent() ) {
+			TransacaoCache transacaoCache = transacaoCacheOp.get();												
+			transacaoCacheRepository.deleteById( transacaoCache.getId() );						
+		} else {
+			Optional<AlteraValorEmContaCache> alterVCacheOp = alteraValorEmContaCacheRepository.findByOperacaoPendenteId( operacaoPendenteId );
+			if ( alterVCacheOp.isPresent() ) {
+				AlteraValorEmContaCache alterVCache = alterVCacheOp.get();												
+				alteraValorEmContaCacheRepository.deleteById( alterVCache.getId() );				
+			} else {
+				throw new ErrorException( Erros.OPERACAO_PENDENTE_NAO_ENCONTRADA );
+			}
+		}				
+	}
 	
 }

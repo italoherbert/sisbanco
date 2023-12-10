@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import italo.sisbanco.ext.postgresql.ContaBD;
 import italo.sisbanco.ext.redis.RedisTest;
+import italo.sisbanco.kernel.enums.OperacaoPendenteStatus;
 import italo.sisbanco.kernel.exception.ErrorException;
 import italo.sisbanco.kernel.model.Conta;
 import italo.sisbanco.kernel.model.response.conta.OperacaoPendenteResponse;
@@ -52,7 +53,7 @@ public abstract class AbstractOperacaoPendenteTest extends RedisTest {
 			assertEquals( resp.getConta().getId(), conta.getId(), "IDs das contas não correspondem." );			
 			assertNotNull( resp.getDataCriacao(), "Data de criação não deveria ser nula." );
 			assertNotNull( resp.getDataOperacao(), "Data de operação não deveria ser nula." );
-			assertTrue( resp.isRealizada(), "A operação deveria ter sido realizada. " );
+			assertEquals( resp.getStatus(), OperacaoPendenteStatus.REALIZADA, "A operação deveria ter sido realizada. " );
 			
 			this.assertOpResponse( resp, conta );
 		} catch ( ErrorException e ) {

@@ -5,13 +5,15 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import italo.sisbanco.kernel.apidoc.banco.ExecutaOperacaoPendenteCacheEndpoint;
+import italo.sisbanco.kernel.apidoc.transacao.cache.DeletaOperacaoPendenteCacheEndpoint;
+import italo.sisbanco.kernel.apidoc.transacao.cache.ExecutaOperacaoPendenteCacheEndpoint;
 import italo.sisbanco.kernel.apidoc.transacao.cache.GetTransacaoEmCachePorIDEndpoint;
 import italo.sisbanco.kernel.apidoc.transacao.cache.ListaTransacoesEmCacheEndpoint;
 import italo.sisbanco.kernel.exception.ErrorException;
@@ -28,13 +30,13 @@ public class OperacaoPendenteController {
 	@ExecutaOperacaoPendenteCacheEndpoint
 	@PreAuthorize("hasAuthority('cacheOperacoesPendentesALL')")
 	@PostMapping("/{operacaoPendenteId}/exec")
-	public ResponseEntity<Object> executaTransacaoCache( 
+	public ResponseEntity<Object> executa( 
 			@PathVariable String operacaoPendenteId ) throws ErrorException {
 		
 		OperacaoPendenteResponse resp = operacaoPendenteCacheService.executa( operacaoPendenteId );
 		return ResponseEntity.ok( resp );
 	}
-	
+		
 	@GetTransacaoEmCachePorIDEndpoint
 	@PreAuthorize("hasAuthority('cacheOperacoesPendentesALL')")
 	@GetMapping("/{operacaoPendenteId}")
@@ -49,6 +51,14 @@ public class OperacaoPendenteController {
 	public ResponseEntity<Object> listaPorConta( @PathVariable Long contaId ) throws ErrorException {
 		List<OperacaoPendenteResponse> lista = operacaoPendenteCacheService.listaPorConta( contaId );
 		return ResponseEntity.ok( lista );
-	}			
-		
+	}
+	
+	@DeletaOperacaoPendenteCacheEndpoint
+	@PreAuthorize("hasAuthority('cacheOperacoesPendentesALL')")
+	@DeleteMapping("/{operacaoPendenteId}")
+	public ResponseEntity<Object> deleta( @PathVariable String operacaoPendenteId ) throws ErrorException {
+		operacaoPendenteCacheService.deleta( operacaoPendenteId );
+		return ResponseEntity.ok().build();
+	}
+	
 }

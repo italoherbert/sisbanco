@@ -3,5 +3,5 @@ sisbanco-shared/target
 sisbanco-eureka/target
 sisbanco-gateway/target
 sisbanco-historico/target
-sisbanco-keycloak/target
+sisbanco-auth/target
 sisbanco-kernel/target

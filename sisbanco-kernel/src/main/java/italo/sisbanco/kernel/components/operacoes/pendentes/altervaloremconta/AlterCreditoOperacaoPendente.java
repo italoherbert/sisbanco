@@ -8,6 +8,7 @@ import italo.sisbanco.kernel.components.manager.ContaAlterManager;
 import italo.sisbanco.kernel.components.mapper.ContaMapper;
 import italo.sisbanco.kernel.components.operacoes.pendentes.OperacaoPendente;
 import italo.sisbanco.kernel.enums.AlteraValorEmContaTipo;
+import italo.sisbanco.kernel.enums.OperacaoPendenteStatus;
 import italo.sisbanco.kernel.exception.ErrorException;
 import italo.sisbanco.kernel.model.Conta;
 import italo.sisbanco.kernel.model.cache.AlteraValorEmContaCache;
@@ -32,12 +33,13 @@ public class AlterCreditoOperacaoPendente implements OperacaoPendente<AlteraValo
 		double saldo = conta.getSaldo();
 		
 		return OperacaoPendenteResponseBuilder.builder()
+				.status( OperacaoPendenteStatus.REALIZADA )
+				.operacaoPendente( alterValorCache.getOperacaoPendente() ) 
 				.conta( conta, contaMapper )
 				.valor( valor ) 
 				.saldoAnterior( saldo )
 				.dataCriacao( alterValorCache.getDataCriacao() )
 				.alterValorEmContaTipo( AlteraValorEmContaTipo.CREDITO )
-				.realizada( true )
 				.get();	
 	}
 	

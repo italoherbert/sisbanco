@@ -1,5 +1,8 @@
 package italo.sisbanco.kernel.config;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
@@ -46,7 +49,9 @@ public class RabbitMQConfiguration {
 	
 	@Bean("transacoesQueue")
 	Queue transacoesQueue() {
-		return new Queue( transacoesQueueValue, true );
+		Map<String, Object> args = new HashMap<>();
+	    args.put("x-queue-type", "quorum");
+		return new Queue( transacoesQueueValue, true, false, false, args );
 	}
 	
 	@Bean("transacoesExchange")

@@ -69,10 +69,14 @@ public class ContaController {
 	}
 	
 	@GetContaPorIDEndpoint
-	@PreAuthorize("hasAuthority('contaREAD')")
+	@PreAuthorize("hasAnyAuthority('contaREAD', 'contaDonoREAD')")
 	@GetMapping("/{contaId}")
 	public ResponseEntity<Object> get(
 			@PathVariable Long contaId ) throws ErrorException {
+		
+		if ( !authorizator.hasAuthority( "contaREAD" ) )
+			authorizator.ownerAuthorize( contaId );
+		
 		ContaResponse resp = contaService.get( contaId );
 		return ResponseEntity.ok( resp );
 	}

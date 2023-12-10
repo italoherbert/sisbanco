@@ -8,11 +8,11 @@ import java.util.Date;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 
 import italo.sisbanco.historico.SisbancoHistoricoApplication;
-import italo.sisbanco.historico.config.MainConfiguration;
 import italo.sisbanco.historico.exception.ErrorException;
 import italo.sisbanco.historico.ext.mongodb.MongoDBTest;
 import italo.sisbanco.historico.ext.rabbitmq.RabbitTestConfiguration;
@@ -21,8 +21,8 @@ import italo.sisbanco.historico.message.error.handler.TransacaoRabbitListenerErr
 import italo.sisbanco.historico.model.Transacao;
 import italo.sisbanco.historico.model.message.TransacaoMessage;
 
-@SpringBootTest(classes=SisbancoHistoricoApplication.class)
-@Import({MainConfiguration.class, RabbitTestConfiguration.class})
+@SpringBootTest(classes=SisbancoHistoricoApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
+@Import(RabbitTestConfiguration.class)
 public class TransacaoServiceTest extends MongoDBTest {
 		
 	@Autowired
@@ -33,7 +33,7 @@ public class TransacaoServiceTest extends MongoDBTest {
 	
 	@MockBean
 	private TransacaoRabbitListenerErrorHandler transacaoRabbitListenerErrorHandler;	
-	
+				
 	@Test
 	public void test() {
 		try {

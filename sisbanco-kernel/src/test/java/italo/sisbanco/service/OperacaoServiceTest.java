@@ -2,7 +2,6 @@ package italo.sisbanco.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
@@ -21,6 +20,7 @@ import italo.sisbanco.ext.openfeign.FeignClientsTestConfiguration;
 import italo.sisbanco.ext.postgresql.ContaBD;
 import italo.sisbanco.ext.rabbitmq.RabbitMQTestConfiguration;
 import italo.sisbanco.kernel.SisbancoKernelApplication;
+import italo.sisbanco.kernel.enums.OperacaoPendenteStatus;
 import italo.sisbanco.kernel.enums.TransacaoTipo;
 import italo.sisbanco.kernel.exception.ErrorException;
 import italo.sisbanco.kernel.message.TransacaoMessageSender;
@@ -57,7 +57,7 @@ public class OperacaoServiceTest extends RedisPostgreSQLTest {
 			this.alteraDebitoSimplesLimite( "joao", 1000 ); 
 									
 			OperacaoPendenteResponse resp = this.executaCredito( "joao", 300 );
-			assertTrue( resp.isRealizada(), "CREDITO: Transação deveria ter sido realizada com sucessso." );						
+			assertEquals( resp.getStatus(), OperacaoPendenteStatus.REALIZADA, "CREDITO: Transação deveria ter sido realizada com sucessso." );						
 		} catch ( Exception e ) {
 			e.printStackTrace();
 		}
@@ -218,13 +218,15 @@ public class OperacaoServiceTest extends RedisPostgreSQLTest {
 		OperacaoPendenteResponse resp = operacaoService.credita( conta.getId(), credito );
 
 		ContaResponse conta2 = contaService.get( conta.getId() );
-		if ( resp.isRealizada() ) {
+		if ( resp.getStatus() == OperacaoPendenteStatus.REALIZADA ) {
 			assertNotNull( resp.getConta(), "CREDITO: Conta não deveria ser nula." );
+			assertEquals( resp.getValor(), valor, "CREDITO: Valor não corresponde ao esperado.");
 			assertEquals( resp.getSaldoAnterior(), saldo, "CREDITO: Saldo anterior incorreto." );
 			assertEquals( resp.getConta().getSaldo(), saldo + valor, "CREDITO: Saldo atual incorreto." );
 			assertEquals( conta2.getSaldo(), saldo + valor, "CREDITO: Saldo inconsistente." );
 		} else {
 			assertNotNull( resp.getConta(), "CREDITO: Conta não deveria ser nula." );
+			assertEquals( resp.getValor(), valor, "CREDITO: Valor não corresponde ao esperado.");
 			assertEquals( resp.getSaldoAnterior(), saldo, "CREDITO: Saldo anterior incorreto." );
 			assertEquals( resp.getConta().getSaldo(), saldo, "CREDITO: Saldo atual incorreto." );
 			assertEquals( conta2.getSaldo(), saldo, "CREDITO: Saldo inconsistente." );			
@@ -246,13 +248,15 @@ public class OperacaoServiceTest extends RedisPostgreSQLTest {
 		
 		ContaResponse conta2 = contaService.get( conta.getId() );
 		
-		if ( resp.isRealizada() ) {
+		if ( resp.getStatus() == OperacaoPendenteStatus.REALIZADA ) {
 			assertNotNull( resp.getConta(), "DEBITO: Conta não deveria ser nula." );
+			assertEquals( resp.getValor(), valor, "DEBITO: Valor não corresponde ao esperado.");
 			assertEquals( resp.getSaldoAnterior(), saldo, "DEBITO: Saldo anterior incorreto." );
 			assertEquals( resp.getConta().getSaldo(), saldo - valor, "DEBITO: Saldo atual incorreto." );
 			assertEquals( conta2.getSaldo(), saldo - valor, "DEBITO: Saldo inconsistente." );
 		} else {
 			assertNotNull( resp.getConta(), "DEBITO: Conta não deveria ser nula." );
+			assertEquals( resp.getValor(), valor, "DEBITO: Valor não corresponde ao esperado.");
 			assertEquals( resp.getSaldoAnterior(), saldo, "DEBITO: Saldo anterior incorreto." );
 			assertEquals( resp.getConta().getSaldo(), saldo, "DEBITO: Saldo atual incorreto." );
 			assertEquals( conta2.getSaldo(), saldo, "DEBITO: Saldo inconsistente." );			
@@ -281,14 +285,16 @@ public class OperacaoServiceTest extends RedisPostgreSQLTest {
 		double saldoOrig2 = contaOrig2.getSaldo();
 		double saldoDest2 = contaDest2.getSaldo();
 				
-		if ( resp.isRealizada() ) {
+		if ( resp.getStatus() == OperacaoPendenteStatus.REALIZADA ) {
 			assertNotNull( resp.getConta(), "TRANSFERENCIA: Conta não deveria ser nula." );
+			assertEquals( resp.getValor(), valor, "TRANSFERENCIA: Valor não corresponde ao esperado.");
 			assertEquals( resp.getSaldoAnterior(), saldoOrig, "TRANSFERENCIA: Saldo anterior incorreto." );
 			assertEquals( resp.getConta().getSaldo(), saldoOrig - valor, "TRANSFERENCIA: Saldo atual incorreto." );
 			assertEquals( saldoOrig2, saldoOrig-valor, "TRANSFERENCIA: Saldo da conta de origem inconsistente." );
 			assertEquals( saldoDest2, saldoDest+valor, "TRANSFERENCIA: Saldo da conta de destino inconsistente." );		
 		} else {
 			assertNotNull( resp.getConta(), "TRANSFERENCIA: Conta não deveria ser nula." );
+			assertEquals( resp.getValor(), valor, "TRANSFERENCIA: Valor não corresponde ao esperado.");
 			assertEquals( resp.getSaldoAnterior(), saldoOrig, "TRANSFERENCIA: Saldo anterior incorreto." );
 			assertEquals( resp.getConta().getSaldo(), saldoOrig, "TRANSFERENCIA: Saldo atual incorreto." );
 			assertEquals( saldoOrig2, saldoOrig, "TRANSFERENCIA: Saldo da conta de origem inconsistente." );

@@ -2,7 +2,7 @@
 version: '3.8'
 services:
   keycloak-db:
-    image: postgres:15
+    image: postgres:15-alpine
     container_name: keycloak-db
     restart: always
     environment:
@@ -15,7 +15,7 @@ services:
       - keycloak_data:/var/lib/postgresql/data
     
   sisbanco-kernel-db:
-    image: postgres:15
+    image: postgres:15-alpine
     container_name: sisbanco-kernel-db
     restart: always    
     environment:
@@ -28,7 +28,7 @@ services:
       - sisbanco_kernel_data:/var/lib/postgresql/data
 
   sisbanco-historico-db:
-    image: mongo
+    image: mongo:7
     container_name: sisbanco-historico-db
     restart: always
     environment:
@@ -42,7 +42,7 @@ services:
       - sisbanco_historico_data:/data/db
 
   sisbanco-cache-db:
-    image: redis
+    image: redis:5.0.3-alpine
     container_name: sisbanco-cache-db
     restart: always    
     command: redis-server --save 60 1000 --loglevel debug --requirePass 123
@@ -69,7 +69,11 @@ services:
       - rabbitmq_conf:/etc/rabbitmq
 
   keycloak:
-    image: quay.io/keycloak/keycloak:23.0.1
+    #image: quay.io/keycloak/keycloak:23.0.1
+    build: 
+      context: ./build/
+      dockerfile: keycloak-Dockerfile
+
     container_name: keycloak
     restart: always
     environment:
@@ -78,8 +82,8 @@ services:
       - KC_DB=postgres
       - KC_DB_URL=jdbc:postgresql://keycloak-db:5432/keycloak?user=postgres&password=postgres&ssl=false
     ports:
-      - 8081:8080
-    command: [start-dev]
+      - 8443:8443
+    command: ["start", "--https-port=8443", "--hostname=localhost", "--https-key-store-file=/opt/keycloak/conf/keycloak.keystore", "--https-key-store-password=123456"]
     depends_on:
       - keycloak-db
 
@@ -92,13 +96,13 @@ services:
     ports:
       - 8761:8761
 
-  sisbanco-keycloak:
-    build: ./sisbanco-keycloak/
-    container_name: sisbanco-keycloak
+  sisbanco-auth:
+    build: ./sisbanco-auth/
+    container_name: sisbanco-auth
     restart: always
     environment:
       EUREKA_URL: http://sisbanco-eureka:8761/eureka
-      KEYCLOAK_SERVER_URL: http://keycloak:8080
+      KEYCLOAK_SERVER_URL: https://keycloak:8443
       KEYCLOAK_ADMIN_REALM: master
       KEYCLOAK_ADMIN_CLIENT_ID: admin-cli
       KEYCLOAK_ADMIN_USERNAME: admin
@@ -106,6 +110,8 @@ services:
       KEYCLOAK_APP_REALM: sisbanco
       KEYCLOAK_APP_CLIENT_ID: sisbanco-app
       KEYCLOAK_APP_REALM_PUBLIC_KEY: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAm9Zcq/6Pq7BLuLsn6b7X0HYl/paFeC6qHr65y3FOoc7bYucPa2RcWVKazjVuRWOLZ9N6ppw9CNcLCgIyZ1ctDOzIRLGj2WbypxJ2lsEImVj6dQMSCRLhbuHrRVHSCguc7NqXThME/U+VwIL10duLoqmvUFhESZwDlXZr+CyGzOPGsSGzlmvjdV4GQlQfLrQKUiQy+gKascdpbTOVsojb+7iE6bLFc66KSo2jCmkYt9zSpSFIxGd62mAOE5Q0CPU1wmS//mI5v4Ep8biPNtfFnK5L9nV2bkicl9r0XMWgp6cQ4uErTU5j/atCEtRNR9qicNSxz/xn0bMYbuhl76RF8QIDAQAB    
+      TRUSTSTORE_FILE: /opt/sisbanco/conf/keycloak-trust.keystore
+      TRUSTSTORE_PASSWORD: 654321
     depends_on:
       - keycloak
       - sisbanco-eureka    
@@ -116,7 +122,7 @@ services:
     restart: always
     environment:
       EUREKA_URL: http://sisbanco-eureka:8761/eureka 
-      SISBANCO_KEYCLOAK_URL: http://sisbanco-gateway:8080/api/keycloak
+      SISBANCO_KEYCLOAK_URL: http://sisbanco-gateway:8080/api/auth
       DB_URL: jdbc:postgresql://sisbanco-kernel-db:5432/sisbanco-kernel
       DB_USERNAME: postgres
       DB_PASSWORD: postgres
@@ -130,11 +136,12 @@ services:
       RABBITMQ_TRANSACOES_QUEUE: transacoes-queue
       RABBITMQ_TRANSACOES_EXCHANGE: transacoes-exchange
       RABBITMQ_TRANSACOES_ROUTING_KEY: transacoes-routing-key
+      RABBITMQ_VIRTUAL_HOST: /
       GLOBAL_ERRO_LOG_FILE: /var/log/sisbanco/kernel-error.log    
     depends_on:
       - keycloak
       - rabbitmq
-      - sisbanco-keycloak
+      - sisbanco-auth
       - sisbanco-kernel-db
       - sisbanco-cache-db
       
@@ -144,7 +151,7 @@ services:
     restart: always
     environment:
       EUREKA_URL: http://sisbanco-eureka:8761/eureka
-      KEYCLOAK_URL: http://sisbanco-gateway:8080/api/keycloak
+      KEYCLOAK_URL: http://sisbanco-gateway:8080/api/auth
       DB_HOST: sisbanco-historico-db
       DB_PORT: 27017
       DB_DATABASE: sisbanco-historico
@@ -158,7 +165,7 @@ services:
       GLOBAL_ERRO_LOG_FILE: /var/log/sisbanco/historico-error.log            
     depends_on:
       - sisbanco-eureka
-      - sisbanco-keycloak
+      - sisbanco-auth
       - sisbanco-historico-db
       - rabbitmq
 
@@ -173,7 +180,7 @@ services:
       - 8080:8080       
     depends_on:
       - sisbanco-eureka
-      - sisbanco-keycloak
+      - sisbanco-auth
       - sisbanco-historico
       - sisbanco-kernel
 

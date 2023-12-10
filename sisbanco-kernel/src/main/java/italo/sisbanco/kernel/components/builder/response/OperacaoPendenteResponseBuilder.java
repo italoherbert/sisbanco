@@ -4,9 +4,11 @@ import java.util.Date;
 
 import italo.sisbanco.kernel.components.mapper.ContaMapper;
 import italo.sisbanco.kernel.enums.AlteraValorEmContaTipo;
+import italo.sisbanco.kernel.enums.OperacaoPendenteStatus;
 import italo.sisbanco.kernel.enums.OperacaoPendenteTipo;
 import italo.sisbanco.kernel.enums.TransacaoTipo;
 import italo.sisbanco.kernel.model.Conta;
+import italo.sisbanco.kernel.model.cache.OperacaoPendenteCache;
 import italo.sisbanco.kernel.model.response.conta.ContaResponse;
 import italo.sisbanco.kernel.model.response.conta.OperacaoPendenteResponse;
 
@@ -27,6 +29,17 @@ public class OperacaoPendenteResponseBuilder {
 		return resp;
 	}
 		
+	public OperacaoPendenteResponseBuilder status( OperacaoPendenteStatus status ) {
+		resp.setStatus( status );
+		return this;
+	}
+	
+	public OperacaoPendenteResponseBuilder operacaoPendente( OperacaoPendenteCache oper ) {
+		if ( oper != null )
+			resp.setOperId( oper.getId() );
+		return this;
+	}
+	
 	public OperacaoPendenteResponseBuilder conta( Conta conta, ContaMapper contaMapper ) {
 		ContaResponse contaResp = contaMapper.novoContaResponse();
 		contaMapper.carregaResponse( contaResp, conta );		
@@ -45,12 +58,7 @@ public class OperacaoPendenteResponseBuilder {
 		resp.setAlteraValorEmContaTipo( tipo ); 
 		return this;
 	}
-	
-	public OperacaoPendenteResponseBuilder realizada( boolean realizada ) {
-		resp.setRealizada( realizada );
-		return this;
-	}
-	
+		
 	public OperacaoPendenteResponseBuilder dataCriacao( Date dataCriacao ) {
 		resp.setDataCriacao( dataCriacao );
 		return this;
