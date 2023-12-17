@@ -10,8 +10,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
 import italo.sisbanco.ext.log.MainConfiguration;
-import italo.sisbanco.ext.openfeign.FeignClientsTestConfiguration;
-import italo.sisbanco.ext.rabbitmq.RabbitMQTestConfiguration;
+import italo.sisbanco.ext.openfeign.MockedFeignClientsTestConfiguration;
+import italo.sisbanco.ext.rabbitmq.MockedRabbitMQTestConfiguration;
 import italo.sisbanco.kernel.SisbancoKernelApplication;
 import italo.sisbanco.kernel.components.builder.TransacaoCacheBuilder;
 import italo.sisbanco.kernel.components.operacoes.pendentes.transacao.DebitoOperacaoPendente;
@@ -26,8 +26,8 @@ import italo.sisbanco.kernel.repository.OperTransacaoCacheRepository;
 @SpringBootTest(classes = SisbancoKernelApplication.class)
 @Import({
 	MainConfiguration.class, 
-	RabbitMQTestConfiguration.class, 
-	FeignClientsTestConfiguration.class
+	MockedRabbitMQTestConfiguration.class, 
+	MockedFeignClientsTestConfiguration.class
 })
 public class DebitoOperacaoPendenteTest extends AbstractOperacaoPendenteTest {	
 	

@@ -16,14 +16,14 @@ import org.springframework.context.annotation.Import;
 
 import italo.sisbanco.ext.RedisPostgreSQLTest;
 import italo.sisbanco.ext.log.MainConfiguration;
-import italo.sisbanco.ext.openfeign.FeignClientsTestConfiguration;
+import italo.sisbanco.ext.openfeign.MockedFeignClientsTestConfiguration;
 import italo.sisbanco.ext.postgresql.ContaBD;
-import italo.sisbanco.ext.rabbitmq.RabbitMQTestConfiguration;
+import italo.sisbanco.ext.rabbitmq.MockedRabbitMQTestConfiguration;
 import italo.sisbanco.kernel.SisbancoKernelApplication;
 import italo.sisbanco.kernel.enums.OperacaoPendenteStatus;
 import italo.sisbanco.kernel.enums.TransacaoTipo;
 import italo.sisbanco.kernel.exception.ErrorException;
-import italo.sisbanco.kernel.message.TransacaoMessageSender;
+import italo.sisbanco.kernel.messageria.TransacaoMessageSender;
 import italo.sisbanco.kernel.model.Conta;
 import italo.sisbanco.kernel.model.request.conta.ValorRequest;
 import italo.sisbanco.kernel.model.response.conta.ContaResponse;
@@ -34,8 +34,8 @@ import italo.sisbanco.kernel.service.OperacaoService;
 @SpringBootTest(classes=SisbancoKernelApplication.class)
 @Import({
 	MainConfiguration.class, 
-	RabbitMQTestConfiguration.class, 
-	FeignClientsTestConfiguration.class
+	MockedRabbitMQTestConfiguration.class, 
+	MockedFeignClientsTestConfiguration.class
 })
 public class OperacaoServiceTest extends RedisPostgreSQLTest {
 		

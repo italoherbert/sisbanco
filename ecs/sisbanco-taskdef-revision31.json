@@ -1,0 +1,136 @@
+{
+    "taskDefinitionArn": "arn:aws:ecs:us-east-1:059962711913:task-definition/sisbanco-taskdef:31",
+    "containerDefinitions": [
+        {
+            "name": "keycloak-db",
+            "image": "postgres:15",
+            "cpu": 0,
+            "portMappings": [
+                {
+                    "name": "keycloak-5432-tcp",
+                    "containerPort": 5432,
+                    "hostPort": 5432,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "environment": [
+                {
+                    "name": "POSTGRES_USER",
+                    "value": "postgres"
+                },
+                {
+                    "name": "POSTGRES_PASSWORD",
+                    "value": "postgres"
+                },
+                {
+                    "name": "POSTGRES_DB",
+                    "value": "keycloak"
+                }
+            ],            
+            "mountPoints": [
+                {
+                    "sourceVolume": "keycloak-db-data",
+                    "containerPath": "/var/lib/postgresql/data",
+                    "readOnly": false
+                }
+            ],
+            "volumesFrom": []
+        },
+        {
+            "name": "sisbanco-keycloak",
+            "image": "italoherbert/sisbanco-keycloak:latest",
+            "cpu": 1024,
+            "portMappings": [
+                {
+                    "name": "sisbanco-keycloak-8443-tcp",
+                    "containerPort": 8443,
+                    "hostPort": 8443,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "essential": true,
+            "command": [
+                "start",
+                "--https-port=8443",
+                "--hostname=ec2-44-202-185-215.compute-1.amazonaws.com",
+                "--https-key-store-file=/opt/keycloak/conf/keycloak.keystore",
+                "--https-key-store-password=123456"
+            ],
+            "environment": [
+                {
+                    "name": "KEYCLOAK_ADMIN",
+                    "value": "admin"
+                },
+                {
+                    "name": "KEYCLOAK_ADMIN_PASSWORD",
+                    "value": "admin"
+                },
+                {
+                    "name": "KC_DB",
+                    "value": "postgres"
+                },
+                {
+                    "name": "KC_DB_URL",
+                    "value": "jdbc:postgresql://localhost:5432/keycloak?user=postgres&password=postgres&ssl=false"
+                }
+            ],            
+            "mountPoints": [],
+            "volumesFrom": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-create-group": "true",
+                    "awslogs-group": "/ecs/sisbanco-taskdef",
+                    "awslogs-region": "us-east-1",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            }
+        }
+    ],
+    "family": "sisbanco-taskdef",
+    "executionRoleArn": "arn:aws:iam::059962711913:role/ecsTaskExecutionRole",
+    "networkMode": "bridge",
+    "revision": 31,    
+    "status": "ACTIVE",
+    "requiresAttributes": [
+        {
+            "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+        },
+        {
+            "name": "ecs.capability.execution-role-awslogs"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+        },
+        {
+            "name": "ecs.capability.env-files.s3"
+        },
+        {
+            "name": "ecs.capability.docker-plugin.local"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.25"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
+        }
+    ],
+    "placementConstraints": [],
+    "compatibilities": [
+        "EC2"
+    ],
+    "requiresCompatibilities": [
+        "EC2"
+    ],
+    "cpu": "1024",
+    "memory": "1024",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    },
+    "registeredAt": "2023-12-13T19:29:27.725Z",
+    "registeredBy": "arn:aws:iam::059962711913:root",
+    "tags": []
+}

@@ -18,12 +18,12 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import italo.sisbanco.historico.SisbancoHistoricoApplication;
-import italo.sisbanco.historico.ext.rabbitmq.RabbitTestConfiguration;
-import italo.sisbanco.historico.message.TransacaoMesseger;
+import italo.sisbanco.historico.ext.rabbitmq.MockedRabbitTestConfiguration;
+import italo.sisbanco.historico.messageria.TransacaoMesseger;
 import italo.sisbanco.historico.service.TransacaoService;
 
 @SpringBootTest(classes=SisbancoHistoricoApplication.class)
-@Import(RabbitTestConfiguration.class)
+@Import(MockedRabbitTestConfiguration.class)
 public class TransacaoControllerTest {
 			
 	@Autowired

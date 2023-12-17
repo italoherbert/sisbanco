@@ -15,14 +15,14 @@ import org.springframework.context.annotation.Import;
 import italo.sisbanco.historico.SisbancoHistoricoApplication;
 import italo.sisbanco.historico.exception.ErrorException;
 import italo.sisbanco.historico.ext.mongodb.MongoDBTest;
-import italo.sisbanco.historico.ext.rabbitmq.RabbitTestConfiguration;
-import italo.sisbanco.historico.message.TransacaoMesseger;
-import italo.sisbanco.historico.message.error.handler.TransacaoRabbitListenerErrorHandler;
+import italo.sisbanco.historico.ext.rabbitmq.MockedRabbitTestConfiguration;
+import italo.sisbanco.historico.messageria.TransacaoMesseger;
+import italo.sisbanco.historico.messageria.error.handler.TransacaoRabbitListenerErrorHandler;
 import italo.sisbanco.historico.model.Transacao;
 import italo.sisbanco.historico.model.message.TransacaoMessage;
 
 @SpringBootTest(classes=SisbancoHistoricoApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
-@Import(RabbitTestConfiguration.class)
+@Import(MockedRabbitTestConfiguration.class)
 public class TransacaoServiceTest extends MongoDBTest {
 		
 	@Autowired

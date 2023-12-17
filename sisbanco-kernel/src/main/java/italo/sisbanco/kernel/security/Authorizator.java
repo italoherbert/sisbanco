@@ -22,11 +22,11 @@ public class Authorizator {
 		
 	public boolean hasAuthority( String... authorities ) {
 		Collection<? extends GrantedAuthority> authorities2 = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
-		Iterator<? extends GrantedAuthority> it = authorities2.iterator(); 
-		while( it.hasNext() ) {
-			GrantedAuthority ga = it.next();
+		Iterator<? extends GrantedAuthority> it2 = authorities2.iterator(); 
+		while( it2.hasNext() ) {
+			GrantedAuthority ga = it2.next();
 			for( String a : authorities )
-				if ( a.equals( ga.getAuthority() ) )			
+				if ( a.equalsIgnoreCase( ga.getAuthority() ) )			
 					return true;
 		}
 		return false;

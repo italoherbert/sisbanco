@@ -1,0 +1,24 @@
+{
+    "executionRoleArn": "arn:aws:iam::059962711913:role/ecsInstancesRole",
+    "containerDefinitions": [
+        {
+            "name": "sisbanco-keycloak-container",
+            "image": "httpd:2.4",
+            "essential": true,
+            "portMappings": [
+                {
+                    "hostPort": 80,
+                    "protocol": "tcp",
+                    "containerPort": 80
+                }
+            ]
+        }
+    ],
+    "requiresCompatibilities": [
+        "EC2"
+    ],
+    "cpu": "1024",
+    "family": "sisbanco-keycloak-taskdef",
+    "memory": "3072",
+    "networkMode": "awsvpc"
+}

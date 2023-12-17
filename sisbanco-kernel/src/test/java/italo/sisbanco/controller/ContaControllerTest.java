@@ -25,9 +25,9 @@ import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import italo.sisbanco.ext.log.MainConfiguration;
-import italo.sisbanco.ext.openfeign.FeignClientsTestConfiguration;
+import italo.sisbanco.ext.openfeign.MockedFeignClientsTestConfiguration;
 import italo.sisbanco.ext.postgresql.ContaBD;
-import italo.sisbanco.ext.rabbitmq.RabbitMQTestConfiguration;
+import italo.sisbanco.ext.rabbitmq.MockedRabbitMQTestConfiguration;
 import italo.sisbanco.kernel.SisbancoKernelApplication;
 import italo.sisbanco.kernel.exception.ErrorException;
 import italo.sisbanco.kernel.integration.model.UserSaveRequest;
@@ -39,14 +39,14 @@ import italo.sisbanco.kernel.service.ContaService;
 @SpringBootTest(classes=SisbancoKernelApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 @Import({
 	MainConfiguration.class, 
-	RabbitMQTestConfiguration.class, 
-	FeignClientsTestConfiguration.class
+	MockedRabbitMQTestConfiguration.class, 
+	MockedFeignClientsTestConfiguration.class
 })
 public class ContaControllerTest {
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
 	
-	@Autowired
+	@Autowired		
 	private WebApplicationContext context;
 	
 	private MockMvc mockMvc;
@@ -70,11 +70,11 @@ public class ContaControllerTest {
 	
 	@Test
 	@ContaBD
-	@WithMockUser(username = "jose", authorities = { "contaDonoWRITE" })
+	@WithMockUser(username = "joao", authorities = { "contaDonoWRITE" })
 	public void testComPermissaoSeUsuarioDono() {
 		try {
+			long JOAO_CONTA_ID = 1;
 			long JOSE_CONTA_ID = 2;
-			long OUTRA_CONTA_ID = 1;
 			
 			UserSaveRequest user = new UserSaveRequest();
 			user.setUsername( "pereira" );
@@ -84,18 +84,18 @@ public class ContaControllerTest {
 			req.setUser( user ); 
 						
 			mockMvc.perform( 
-					put( "/api/kernel/contas/"+OUTRA_CONTA_ID )
+					put( "/api/kernel/contas/"+JOAO_CONTA_ID )
 						.contentType( MediaType.APPLICATION_JSON )
 						.content( objectMapper.writeValueAsBytes( req ) ) )
 				.andDo( print() )
-					.andExpect( status().is( 403 ) ); 
+					.andExpect( status().isOk() ); 
 			
 			mockMvc.perform( 
 					put( "/api/kernel/contas/"+JOSE_CONTA_ID )
 						.contentType( MediaType.APPLICATION_JSON )
 						.content( objectMapper.writeValueAsBytes( req ) ) )
 				.andDo( print() )
-					.andExpect( status().isOk() );
+					.andExpect( status().is( 403 ) );
 			
 		} catch ( ErrorException e ) {
 			e.printStackTrace();
@@ -111,8 +111,8 @@ public class ContaControllerTest {
 	@WithMockUser( username = "cliente", authorities = { "contaWRITE" })
 	private void testComPermissaoSeUsuarioFuncionario() {
 		try {
+			long JOAO_CONTA_ID = 1;
 			long JOSE_CONTA_ID = 2;
-			long OUTRA_CONTA_ID = 1;
 			
 			UserSaveRequest user = new UserSaveRequest();
 			user.setUsername( "pereira" );
@@ -120,9 +120,9 @@ public class ContaControllerTest {
 			ContaSaveRequest req = new ContaSaveRequest();
 			req.setTitular( "pereira" );
 			req.setUser( user ); 
-						
+			
 			mockMvc.perform( 
-					put( "/api/kernel/contas/"+OUTRA_CONTA_ID )
+					put( "/api/kernel/contas/"+JOAO_CONTA_ID )
 						.contentType( MediaType.APPLICATION_JSON )
 						.content( objectMapper.writeValueAsBytes( req ) ) )
 				.andDo( print() )
@@ -149,7 +149,7 @@ public class ContaControllerTest {
 	@WithMockUser( username = "cliente", authorities = { "contaREAD" })
 	private void testSemPermissaoDeEscrita() {
 		try {
-			long OUTRA_CONTA_ID = 1;
+			long OUTRA_CONTA_ID = -1l;
 			
 			UserSaveRequest user = new UserSaveRequest();
 			user.setUsername( "pereira" );
@@ -197,14 +197,15 @@ public class ContaControllerTest {
 	
 	@Test
 	@ContaBD
-	@WithMockUser( username="cliente", authorities = {"contaWRITE"} )
+	@WithMockUser( username="joao", authorities = {"contaWRITE"} )
 	public void alteraContaTest() {
+		Long uid = 1L;
 		try {															
 			ContaSaveRequest conta = new ContaSaveRequest();
 			conta.setTitular( "italo" );
 												
 			mockMvc.perform( 
-				put("/api/kernel/contas/1")
+				put("/api/kernel/contas/"+uid )
 					.contentType( MediaType.APPLICATION_JSON )
 					.content( objectMapper.writeValueAsBytes( conta ) ) )
 				.andDo( print() )
@@ -217,11 +218,12 @@ public class ContaControllerTest {
 	
 	@Test
 	@ContaBD
-	@WithMockUser( username="cliente", authorities = {"contaREAD"} )
+	@WithMockUser( username="joao", authorities = {"contaREAD"} )
 	public void getContaTest() {
+		Long uid = 1L;
 		try {																														
 			mockMvc.perform( 
-				get("/api/kernel/contas/1") )
+				get("/api/kernel/contas/"+uid) )
 					.andDo( print() )
 					.andExpect( status().isOk() );
 		} catch ( Exception e ) {
@@ -249,9 +251,10 @@ public class ContaControllerTest {
 	@ContaBD
 	@WithMockUser( username="cliente", authorities = {"contaDELETE"} )
 	public void deletaContaTest() {
+		Long uid = -1L;
 		try {								
 			mockMvc.perform( 
-				delete("/api/kernel/contas/1") )								
+				delete("/api/kernel/contas/"+uid ) )								
 					.andDo( print() )
 					.andExpect( status().isOk() );			 
 		} catch ( Exception e ) {

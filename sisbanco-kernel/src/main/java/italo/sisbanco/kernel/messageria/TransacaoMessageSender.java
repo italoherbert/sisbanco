@@ -1,4 +1,4 @@
-package italo.sisbanco.kernel.message;
+package italo.sisbanco.kernel.messageria;
 
 import java.util.Date;
 

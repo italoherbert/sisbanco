@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import italo.sisbanco.kernel.integration.KeycloakMicroserviceIntegration;
 
 @TestConfiguration
-public class FeignClientsTestConfiguration {
+public class MockedFeignClientsTestConfiguration {
 
 	@Bean
 	KeycloakMicroserviceIntegration keycloakMicroserviceIntegration() {

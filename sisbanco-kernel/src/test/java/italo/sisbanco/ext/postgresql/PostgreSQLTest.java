@@ -12,7 +12,7 @@ public class PostgreSQLTest {
 	private static PostgreSQLContainer<?> postgreSQLContainer;		
 	
 	static {
-		postgreSQLContainer = new PostgreSQLContainer<>( DockerImageName.parse( "postgres;15-alpine" ) )
+		postgreSQLContainer = new PostgreSQLContainer<>( DockerImageName.parse( "postgres:15-alpine" ) )
 				.withUsername( "postgres" )
 				.withPassword( "postgres" )
 				.withDatabaseName( "test" );

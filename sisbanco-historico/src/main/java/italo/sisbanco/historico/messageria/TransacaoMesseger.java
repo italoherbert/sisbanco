@@ -1,4 +1,4 @@
-package italo.sisbanco.historico.message;
+package italo.sisbanco.historico.messageria;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ public class TransacaoMesseger {
 	private TransacaoService transacaoService;
 				
 	@RabbitListener(
-			queues = {"${config.rabbitmq.queue}"}, 
+			queues = {"${config.rabbitmq.transacoes.queue}"}, 
 			errorHandler = "transacaoRabbitListenerErrorHandler")
 	public void recebeTransacao( @Valid @Payload TransacaoMessage message ) throws ErrorException {
 		transacaoService.registraTransacao( message );		

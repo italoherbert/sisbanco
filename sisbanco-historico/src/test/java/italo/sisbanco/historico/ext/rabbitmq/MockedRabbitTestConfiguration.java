@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 
 @TestConfiguration
-public class RabbitTestConfiguration {
+public class MockedRabbitTestConfiguration {
     		
 	@Bean
     @Primary

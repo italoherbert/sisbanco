@@ -1,0 +1,40 @@
+{
+    "taskDefinition": {
+        "taskDefinitionArn": "arn:aws:ecs:us-east-1:059962711913:task-definition/sisbanco:5",
+        "containerDefinitions": [
+            {
+                "name": "sisbanco-keycloak",
+                "image": "italoherbert/sisbanco-keycloak:latest",
+                "cpu": 128,
+                "memoryReservation": 128,
+                "portMappings": [
+                    {
+                        "containerPort": 8081,
+                        "hostPort": 8080,
+                        "protocol": "tcp"
+                    }
+                ],
+                "essential": true,
+                "environment": [],
+                "mountPoints": [],
+                "volumesFrom": []
+            }
+        ],
+        "family": "sisbanco",
+        "revision": 5,
+        "volumes": [],
+        "status": "ACTIVE",
+        "requiresAttributes": [
+            {
+                "name": "com.amazonaws.ecs.capability.docker-remote-api.1.21"
+            }
+        ],
+        "placementConstraints": [],
+        "compatibilities": [
+            "EXTERNAL",
+            "EC2"
+        ],
+        "registeredAt": "2023-12-10T21:00:18.874000-03:00",
+        "registeredBy": "arn:aws:iam::059962711913:user/italo"
+    }
+}

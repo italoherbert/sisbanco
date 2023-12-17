@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import italo.sisbanco.historico.log.GlobalLogger;
-import italo.sisbanco.historico.message.error.handler.TransacaoRabbitListenerErrorHandler;
+import italo.sisbanco.historico.messageria.error.handler.TransacaoRabbitListenerErrorHandler;
 
 @Configuration
 @Profile("!test")

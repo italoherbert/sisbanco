@@ -21,9 +21,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import italo.sisbanco.ext.log.MainConfiguration;
-import italo.sisbanco.ext.openfeign.FeignClientsTestConfiguration;
+import italo.sisbanco.ext.openfeign.MockedFeignClientsTestConfiguration;
 import italo.sisbanco.ext.postgresql.ContaBD;
-import italo.sisbanco.ext.rabbitmq.RabbitMQTestConfiguration;
+import italo.sisbanco.ext.rabbitmq.MockedRabbitMQTestConfiguration;
 import italo.sisbanco.kernel.SisbancoKernelApplication;
 import italo.sisbanco.kernel.repository.OperAlteraValorEmContaCacheRepository;
 import italo.sisbanco.kernel.repository.OperTransacaoCacheRepository;
@@ -32,8 +32,8 @@ import italo.sisbanco.kernel.service.OperacaoPendenteCacheService;
 @SpringBootTest(classes=SisbancoKernelApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 @Import({
 	MainConfiguration.class, 
-	RabbitMQTestConfiguration.class, 
-	FeignClientsTestConfiguration.class
+	MockedRabbitMQTestConfiguration.class, 
+	MockedFeignClientsTestConfiguration.class
 })
 public class OperacaoPendenteControllerTest {
 	

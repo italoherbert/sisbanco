@@ -1,4 +1,4 @@
-package italo.sisbanco.historico.message.error.handler;
+package italo.sisbanco.historico.messageria.error.handler;
 
 import org.springframework.amqp.rabbit.listener.api.RabbitListenerErrorHandler;
 import org.springframework.amqp.rabbit.support.ListenerExecutionFailedException;
