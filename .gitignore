@@ -1,4 +1,6 @@
 
+terraform/.terraform
+
 sisbanco-shared/target
 sisbanco-eureka/target
 sisbanco-gateway/target
