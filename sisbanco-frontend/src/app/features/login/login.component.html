@@ -1,0 +1,72 @@
+
+<mat-card class="container login-panel">
+    <mat-card-header>
+        <h4><b>LOGIN</b></h4>
+    </mat-card-header>
+    <mat-card-content>
+        <form [formGroup]="loginForm">            
+            <mat-form-field class="login-field p-0 m-0">
+                <mat-label>Nome de usuário</mat-label>
+                <input matInput formControlName="username" 
+                    type="text"                         
+                    placeholder="Nome de usuário" />
+
+                @if (loginForm.value.username) {
+                    <button matSuffix mat-icon-button aria-label="Limpar" (click)="limpaUsername()">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                }
+
+                <mat-hint>
+                    @if ( hasControlError( 'username', 'required' ) === true ) {
+                        O nome de usuário é um campo de preenchimento obrigatório.
+                    }
+                    @if ( hasControlError( 'username', 'minlength' ) === true ) {
+                        Informe ao menos 3 caracteres.
+                    }                    
+                </mat-hint>                
+            </mat-form-field>            
+            
+            <br /> 
+            @if ( hasFieldError( 'username' ) === true ) {
+                <br />
+                <br />
+            } 
+            
+            <mat-form-field class="login-field">
+                <mat-label>Senha</mat-label>
+                <input matInput formControlName="password" 
+                    type="password"                         
+                    placeholder="Senha" />
+
+                @if (loginForm.value.password) {
+                    <button matSuffix mat-icon-button aria-label="Limpar" (click)="limpaPassword()">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                }
+
+                @if ( hasFieldError( 'password' ) ) {
+                    <mat-hint>
+                        @if ( hasControlError( 'password', 'required' ) === true ) {
+                            A senha é um campo de preenchimento obrigatório.
+                        }
+                        @if ( hasControlError( 'password', 'pattern' ) === true ) {
+                            Informe ao menos 6 caracteres numéricos.
+                        }
+                    </mat-hint>
+                }
+            </mat-form-field>                        
+
+            <br />
+            @if ( hasFieldError( 'password' ) === true ) {
+                <br />
+                <br />
+            }
+
+            <button mat-raised-button color="primary" (click)="login()" class="w-100">
+                Entrar
+            </button>
+        </form>
+    </mat-card-content>
+</mat-card>
+   
