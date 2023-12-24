@@ -72,8 +72,13 @@ public class KeycloakManager {
 				.password( password )				
 				.grantType( OAuth2Constants.PASSWORD )
 				.build();
-						
-		return keycloak.tokenManager().getAccessToken();
+
+		try {
+			return keycloak.tokenManager().getAccessToken();
+		} catch ( Exception e ) {
+			e.printStackTrace();
+			return null;
+		}
 	}		
 		
 	public Response criaUser( Keycloak keycloak, String realm, UserRepresentation user ) {

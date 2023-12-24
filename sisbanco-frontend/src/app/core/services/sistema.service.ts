@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Token } from '../model/login/token';
 
 @Injectable({
   providedIn: 'root'
@@ -6,4 +7,9 @@ import { Injectable } from '@angular/core';
 export class SistemaService {
 
   constructor() { }
+
+  errorMessage( error : any ) : string {
+    return error.mensagem;
+  }
+
 }

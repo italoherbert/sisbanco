@@ -39,17 +39,6 @@ public class SecurityConfig {
             .addFilterBefore( authorizationFilter, UsernamePasswordAuthenticationFilter.class );			
         
 		return http.build();
-	}
-
-	/*
-	public WebMvcConfigurer corsConfigurer() {
-		return new WebMvcConfigurer() {
-			@Override
-			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/greeting-javaconfig").allowedOrigins("http://localhost:8080");
-			}
-		};
-	}	
-	*/	 
+	}	 
 	
 }

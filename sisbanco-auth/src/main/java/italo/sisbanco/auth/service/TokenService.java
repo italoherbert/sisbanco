@@ -46,7 +46,14 @@ public class TokenService {
 		try {
 			AccessTokenResponse resp = keycloakManager.token( request.getUsername(), request.getPassword() );
 
+			Token token = new Token();
+			token.setAccessToken( resp.getToken() ); 
+			TokenInfo tf = this.tokenInfo( token );
+			
 			LoginResponse loginResp = new LoginResponse();
+			loginResp.setUsername( tf.getUsername() );
+			loginResp.setRoles( tf.getRoles() );
+			
 			loginResp.setAccessToken( resp.getToken() ); 
 			loginResp.setRefreshToken( resp.getRefreshToken() );
 			return loginResp;

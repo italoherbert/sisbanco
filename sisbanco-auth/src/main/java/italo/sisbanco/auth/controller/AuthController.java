@@ -35,7 +35,7 @@ public class AuthController {
 	private UserService userService;
 	
 	@TokenEndpoint
-	@PostMapping("/token")	
+	@PostMapping("/login")	
 	public ResponseEntity<Object> login( @Valid @RequestBody Login request ) throws ErrorException {
 		LoginResponse resp = keycloakService.login( request );
 		return ResponseEntity.ok( resp );

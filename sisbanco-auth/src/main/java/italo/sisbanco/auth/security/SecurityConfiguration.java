@@ -13,10 +13,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-public class SecurityConfig {
+public class SecurityConfiguration {
 
 	private final String[] PUBLIC = {
-		"/api/auth/token",
+		"/api/auth/login",
 		"/api/auth/token-info",
 		
 		"/api/auth/swagger-ui/**",
@@ -32,16 +32,17 @@ public class SecurityConfig {
 	
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf( csrf -> csrf.disable() )
+        http        	
+        	.csrf( csrf -> csrf.disable() )
             .authorizeHttpRequests(authHttpReqs ->
                 authHttpReqs
                     .requestMatchers(PUBLIC).permitAll()
                     .anyRequest().authenticated()
             )
             .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .addFilterBefore( authorizationFilter, UsernamePasswordAuthenticationFilter.class );			
+            .addFilterBefore( authorizationFilter, UsernamePasswordAuthenticationFilter.class );
         
 		return http.build();
 	}
-	
+		
 }

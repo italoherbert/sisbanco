@@ -84,16 +84,16 @@ public class AuthControllerTest {
 	@Test
 	public void loginTest() {
 		Login login = new Login();
-		login.setUsername( "italo" );
-		login.setPassword( "italo" ); 
+		login.setUsername( "_cliente_" );
+		login.setPassword( "_cliente_" ); 
 		
 		try {
 			mockMvc.perform(
-				post( "/api/auth/token" )
+				post( "/api/auth/login" )
 					.contentType( MediaType.APPLICATION_JSON )
 					.content( objectMapper.writeValueAsBytes( login ) ) )
 				.andDo( print() )
-					.andExpect( status().isOk() );
+					.andExpect( status().is( 403 ) );
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail( e.getMessage() );

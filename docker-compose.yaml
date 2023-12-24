@@ -123,7 +123,7 @@ services:
     restart: always
     environment:
       EUREKA_URL: http://sisbanco-eureka:8761/eureka 
-      SISBANCO_KEYCLOAK_URL: http://sisbanco-gateway:8080/api/auth
+      SISBANCO_AUTH_URL: http://sisbanco-gateway:8080/api/auth
       DB_URL: jdbc:postgresql://sisbanco-kernel-db:5432/sisbanco-kernel
       DB_USERNAME: postgres
       DB_PASSWORD: postgres
@@ -152,7 +152,7 @@ services:
     restart: always
     environment:
       EUREKA_URL: http://sisbanco-eureka:8761/eureka
-      KEYCLOAK_URL: http://sisbanco-gateway:8080/api/auth
+      SISBANCO_AUTH_URL: http://sisbanco-gateway:8080/api/auth
       DB_HOST: sisbanco-historico-db
       DB_PORT: 27017
       DB_DATABASE: sisbanco-historico

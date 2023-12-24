@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: sisbanco-gateway
+  cloud: 
+    discovery:
+      enabled: true
+    gateway:      
+      discovery:
+        locator:
+          enabled: true
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: '*'
+            allowedHeaders: '*'
+            allowedMethods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - PATCH
+            - OPTIONS          
+      routes:
+      - id: auth
+        uri: lb://sisbanco-auth
+        predicates:
+        - Path=/api/auth/**
+      - id: kernel
+        uri: lb://sisbanco-kernel
+        predicates:
+        - Path=/api/kernel/**  
+      - id: historico
+        uri: lb://sisbanco-historico
+        predicates:
+        - Path=/api/historico/**
+      
+management:
+  endpoint:
+    gateway:
+      enabled: true   
+  endponts:
+    web:
+      exposure:
+        include: '*'
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka}
+                            
+                            
+server:
+  port: ${SERVER_PORT:8080}
+
