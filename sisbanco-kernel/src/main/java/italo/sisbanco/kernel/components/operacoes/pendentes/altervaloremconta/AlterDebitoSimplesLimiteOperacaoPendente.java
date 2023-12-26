@@ -28,7 +28,7 @@ public class AlterDebitoSimplesLimiteOperacaoPendente implements OperacaoPendent
 		long contaId = alterValorCache.getContaId();
 		double valor = alterValorCache.getValor();
 		
-		Conta conta = contaAlterManager.alteraDebitoSimplesLimite( contaId, valor ); 					
+		Conta conta = contaAlterManager.alteraLimiteOperacao( contaId, valor ); 					
 		
 		double saldo = conta.getSaldo();
 		

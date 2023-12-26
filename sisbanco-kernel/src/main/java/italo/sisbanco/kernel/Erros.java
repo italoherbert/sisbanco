@@ -25,6 +25,7 @@ public interface Erros {
 	public final static String OPERACAO_PENDENTE_NAO_ENCONTRADA = "oper.pendente.nao.encontrada";
 	
 	public final static String CREDITO_NEGATIVO = "credito.negativo";
-	public final static String DEBITO_SIMPLES_LIMITE_NEGATIVO = "debito.simples.limite.negativo";
+	public final static String LIMITE_OPERACAO_NEGATIVO = "debito.limite.operacao.negativo";
+	public final static String LIMITE_DIARIO_NEGATIVO = "debito.limite.diario.negativo";
 			
 }

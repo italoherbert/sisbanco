@@ -15,6 +15,8 @@ public class ContaResponse {
 	
 	private double credito;
 	
-	private double debitoSimplesLimite;
+	private double limiteOperacao;
+	
+	private double limiteDiario;
 	
 }
