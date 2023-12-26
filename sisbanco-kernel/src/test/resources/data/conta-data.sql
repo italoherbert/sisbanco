@@ -5,11 +5,12 @@ create table conta (
     user_id varchar( 256 ),
     saldo double precision,
     credito double precision,
-    debito_simples_limite double precision,
+    limite_operacao double precision,
+    limite_diario double precision,
     primary key( id )
 );
 
-insert into conta ( id, titular, username, user_id, saldo, credito, debito_simples_limite ) values ( 1, 'joao', 'joao', '122', 0, 0, 0 );
-insert into conta ( id, titular, username, user_id, saldo, credito, debito_simples_limite ) values ( 2, 'jose', 'jose', '123', 0, 0, 0 );
-insert into conta ( id, titular, username, user_id, saldo, credito, debito_simples_limite ) values ( 3, 'maria', 'maria', '124',0, 0, 0 );
-insert into conta ( id, titular, username, user_id, saldo, credito, debito_simples_limite ) values ( 4, 'carlos', 'carlos', '125', 0, 0, 0 );
+insert into conta ( id, titular, username, user_id, saldo, credito, limite_operacao, limite_diario ) values ( 1, 'joao', 'joao', '122', 0, 0, 0, 0 );
+insert into conta ( id, titular, username, user_id, saldo, credito, limite_operacao, limite_diario ) values ( 2, 'jose', 'jose', '123', 0, 0, 0, 0 );
+insert into conta ( id, titular, username, user_id, saldo, credito, limite_operacao, limite_diario ) values ( 3, 'maria', 'maria', '124',0, 0, 0, 0 );
+insert into conta ( id, titular, username, user_id, saldo, credito, limite_operacao, limite_diario ) values ( 4, 'carlos', 'carlos', '125', 0, 0, 0, 0 );

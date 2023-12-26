@@ -51,7 +51,7 @@ public class OperacaoService {
 	}
 	
 	public OperacaoPendenteResponse alteraDebitoSimplesLimite( Long contaId, ValorRequest request) throws ErrorException {
-		return this.alteraValorEmConta( contaId, request.getValor(), AlteraValorEmContaTipo.DEBITO_SIMPLES_LIMITE );
+		return this.alteraValorEmConta( contaId, request.getValor(), AlteraValorEmContaTipo.LIMITE_OPERACAO );
 	}
 	
 	public OperacaoPendenteResponse alteraValorEmConta( Long contaId, double valor, AlteraValorEmContaTipo tipo ) throws ErrorException {

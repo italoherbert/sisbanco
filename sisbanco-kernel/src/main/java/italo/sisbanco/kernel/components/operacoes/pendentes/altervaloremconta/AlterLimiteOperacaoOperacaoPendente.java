@@ -15,7 +15,7 @@ import italo.sisbanco.kernel.model.cache.AlteraValorEmContaCache;
 import italo.sisbanco.kernel.model.response.conta.OperacaoPendenteResponse;
 
 @Component
-public class AlterDebitoSimplesLimiteOperacaoPendente implements OperacaoPendente<AlteraValorEmContaCache> {
+public class AlterLimiteOperacaoOperacaoPendente implements OperacaoPendente<AlteraValorEmContaCache> {
 
 	@Autowired
 	private ContaAlterManager contaAlterManager;
@@ -38,7 +38,7 @@ public class AlterDebitoSimplesLimiteOperacaoPendente implements OperacaoPendent
 				.conta( conta, contaMapper )
 				.valor( valor ) 
 				.saldoAnterior( saldo )
-				.alterValorEmContaTipo( AlteraValorEmContaTipo.DEBITO_SIMPLES_LIMITE )
+				.alterValorEmContaTipo( AlteraValorEmContaTipo.LIMITE_OPERACAO )
 				.dataCriacao( alterValorCache.getDataCriacao() )
 				.get();			
 	}

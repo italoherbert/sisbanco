@@ -63,7 +63,7 @@ public class AlterValorEmContaCacheRepositoryTest extends RedisTest {
 		
 		AlteraValorEmContaCache tcache3 = AlteraValorEmContaCacheBuilder.builder()
 				.contaId( CONTA_ID1 )
-				.tipo( AlteraValorEmContaTipo.DEBITO_SIMPLES_LIMITE )
+				.tipo( AlteraValorEmContaTipo.LIMITE_OPERACAO )
 				.valor( 100 )				
 				.get();
 		
