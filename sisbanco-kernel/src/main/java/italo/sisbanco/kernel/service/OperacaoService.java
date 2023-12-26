@@ -121,7 +121,7 @@ public class OperacaoService {
 
 		Date dataCriacao = null;
 		
-		if ( valor > conta.getDebitoSimplesLimite() ) {										
+		if ( valor > conta.getLimiteOperacao() ) {										
 			TransacaoCache tcache = TransacaoCacheBuilder.builder()
 					.contaOrigemId( conta.getId() )
 					.valor( valor )
@@ -171,7 +171,7 @@ public class OperacaoService {
 		Date dataCriacao = null;
 		OperacaoPendenteCache operCache = null;
 				
-		if ( valor > origem.getDebitoSimplesLimite() ) {
+		if ( valor > origem.getLimiteOperacao() ) {
 			OperacaoPendenteCache oper = new OperacaoPendenteCache();
 			oper.setTipo( OperacaoPendenteTipo.TRANSACAO ); 
 			
