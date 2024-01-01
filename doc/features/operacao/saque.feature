@@ -8,7 +8,6 @@ Scenario: Saque realizado com sucesso
     When o titular solicita o saque
         And o valor a ser sacado é menor ou igual ao saldo mais o crédito
         And o valor a ser sacado não excede o limite de operação
-        And o valor a ser sacado não excede o limite diário
     When o saque é realizado com sucesso
         And dados referentes a operação de débito são armazenados como log da operação        
 
@@ -33,9 +32,3 @@ Scenario: Valor excede o limite de operação e já há registrada uma operaçã
         And o valor a ser sacado excede o limite de operação
         And existe uma operação de movimentação pendente sobre a conta do titular
     Then uma mensagem é mostrada informando que o saque não pode ser realizado e o motivo
-
-Scenario: Valor a ser sacado excede o limite diário
-    Given que o usuário titular da conta está logado
-    When o titular solicita o saque
-        And o valor a ser sacado excede o limite diário
-    Then uma mensagem é mostrada informando que o saque excedeu o limite diário

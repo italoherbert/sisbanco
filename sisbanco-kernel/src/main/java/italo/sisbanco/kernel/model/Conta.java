@@ -27,7 +27,5 @@ public class Conta {
 	private double credito;
 	
 	private double limiteOperacao;
-	
-	private double limiteDiario;
-	
+		
 }

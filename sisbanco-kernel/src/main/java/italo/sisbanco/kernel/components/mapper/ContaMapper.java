@@ -17,7 +17,6 @@ public class ContaMapper {
 		c.setSaldo( 0 );
 		c.setCredito( 0 ); 
 		c.setLimiteOperacao( Constantes.LIMITE_OPERACAO_INICIAL );
-		c.setLimiteDiario( Constantes.LIMITE_DIARIO_INICIAL ); 
 	}
 	
 	public void carregaParaAlteracaoSimplificada( Conta c, ContaSaveRequest req ) {
@@ -31,7 +30,6 @@ public class ContaMapper {
 		resp.setSaldo( c.getSaldo() );
 		resp.setCredito( c.getCredito() );
 		resp.setLimiteOperacao( c.getLimiteOperacao() );
-		resp.setLimiteDiario( c.getLimiteDiario() ); 
 	}
 	
 	public Conta novoBean() {

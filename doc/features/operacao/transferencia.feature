@@ -8,7 +8,6 @@ Scenario: Transferencia realizada com sucesso
     When o titular solicitar a transferência
         And o valor a ser transferido for menor ou igual ao saldo mais o crédito
         And o valor a ser transferido não excede o limite de operação
-        And o valor a ser transferido não excede o limite diário
     Then o valor é debitado da conta do titular
         And o valor é creditado na conta de destino
         And dados referentes a operação de transferência são armazenados como log da operação        
@@ -33,9 +32,3 @@ Scenario: Valor excede o limite de operação e já há registrada uma operaçã
         And o valor a ser transferido é excede o limite de operação
         And existe uma operação de movimentação pendente sobre a conta do titular
     Then uma mensagem é mostrada informando que a transferẽncia não pode ser realizada e o motivo
-
-Scenario: Valor a ser transferido excede o limite diário
-    Given que o usuário titular da conta está logado
-    When o titular solicita a transferência
-        And o valor a ser transferido excede o limite diário
-    Then uma mensagem é mostrada informando que a transferência excedeu o limite diário

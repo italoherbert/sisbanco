@@ -57,20 +57,5 @@ public class ContaAlterManager {
 		
 		return conta;
 	}
-	
-	public Conta alteraLimiteDiario( Long contaId, double valor ) throws ErrorException {
-		if ( valor < 0 )
-			throw new ErrorException( Erros.LIMITE_OPERACAO_NEGATIVO );
 		
-		Optional<Conta> contaOp = contaRepository.findById( contaId );
-		if ( !contaOp.isPresent() )
-			throw new ErrorException( Erros.CONTA_NAO_ENCONTRADA );
-		
-		Conta conta = contaOp.get();
-		conta.setLimiteDiario( valor );
-		contaRepository.save( conta );		
-		
-		return conta;
-	}
-	
 }
