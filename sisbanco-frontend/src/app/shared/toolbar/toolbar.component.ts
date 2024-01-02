@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 
 import { MatToolbarModule } from '@angular/material/toolbar';

@@ -1,2 +1,23 @@
 
-<router-outlet></router-outlet>
+<mat-drawer-container autosize>
+    <mat-drawer #drawer mode="side" class="drawer">
+        <h3>DASHBOARD</h3>
+        <a class="link link-primary" [routerLink]="[ '/clientes' ]">Clientes</a>
+    </mat-drawer>
+
+    <mat-toolbar color="primary">
+        <mat-toolbar-row class="d-flex align-items-center justify-content-between">
+            <button mat-icon-button color="white" (click)="drawer.toggle()">
+                <mat-icon>menu</mat-icon>
+            </button>
+    
+            <span>Sis Banco</span>
+    
+            <button mat-icon-button color="light" (click)="logout()">
+                <mat-icon>logout</mat-icon>
+            </button>
+        </mat-toolbar-row>
+    </mat-toolbar>
+
+    <router-outlet></router-outlet>    
+</mat-drawer-container>
