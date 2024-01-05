@@ -61,10 +61,8 @@ public class ContaController {
 			@PathVariable Long contaId, 
 			@Valid @RequestBody ContaSaveRequest request ) throws ErrorException {
 		
-		if ( !authorizator.hasAuthority( "contaWRITE" ) ) {
-			System.out.println( "XXXXXXXXXXXXXXX" );
-			authorizator.ownerAuthorize( contaId );
-		}
+		if ( !authorizator.hasAuthority( "contaWRITE" ) )
+			authorizator.ownerAuthorize( contaId );		
 		
 		contaService.altera( contaId, request );
 		return ResponseEntity.ok().build();
