@@ -42,7 +42,7 @@ public class TransacaoService {
 		String username = request.getUsername();
 		Date dataIni = request.getDataInicio();
 		Date dataFim = request.getDataFim();
-		
+				
 		List<Transacao> transacoes = transacaoRepository.filtra( username, dataIni, dataFim );
 		return transacoes;
 	}

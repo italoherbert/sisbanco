@@ -16,7 +16,7 @@ public class MockedRabbitMQTestConfiguration {
 	@Bean
 	TransacaoMessageSender transacaoMessageSender() {
 		return mock( TransacaoMessageSender.class );
-	}
+	}		
 	
 	@Bean
 	Queue transacoesQueue() {

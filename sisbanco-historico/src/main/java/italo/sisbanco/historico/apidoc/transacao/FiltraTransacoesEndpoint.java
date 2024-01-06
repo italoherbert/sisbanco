@@ -6,6 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -24,7 +25,8 @@ import italo.sisbanco.historico.model.response.ErroResponse;
 		description = "Retorna a lista de transações registradas conforme os campos do filtro.",
 			content = {@Content(					
 				mediaType = "application/json", 
-				schema = @Schema(implementation = Transacao[].class))}),
+				array = @ArraySchema(
+						schema = @Schema(implementation =  Transacao.class)))}),
 	@ApiResponse(
 		responseCode = "403",
 		description = OpenAPIConfiguration.ERRO_403_MSG,

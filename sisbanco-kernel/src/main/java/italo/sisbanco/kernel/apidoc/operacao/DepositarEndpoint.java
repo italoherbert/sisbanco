@@ -1,4 +1,4 @@
-package italo.sisbanco.kernel.apidoc.transacao.cache;
+package italo.sisbanco.kernel.apidoc.operacao;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -16,12 +16,12 @@ import italo.sisbanco.kernel.model.response.ErroResponse;
 import italo.sisbanco.kernel.model.response.conta.OperacaoPendenteResponse;
 
 @Operation(
-	summary = "Responsável pela remoção (ou cancelamento) de uma operação pendente armazenada em cache.",
+	summary = "Responsável por efetuar o depósito em conta pelo titular.",
 	security = @SecurityRequirement(name = OpenAPIConfiguration.SECURITY_APP_NAME))	
 @ApiResponses(value= {
 	@ApiResponse( 		
 		responseCode = "200",
-		description = "Operação deletada.",
+		description = "Depósito realizado com sucesso.",
 		content = {@Content(					
 			mediaType = "application/json", 
 			schema = @Schema(implementation = OperacaoPendenteResponse.class))}),
@@ -40,6 +40,6 @@ import italo.sisbanco.kernel.model.response.conta.OperacaoPendenteResponse;
 })
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface DeletaOperacaoPendenteCacheEndpoint {
-
+public @interface DepositarEndpoint {
+		
 }
