@@ -51,7 +51,7 @@ public class OperacaoService {
 	}
 	
 	public OperacaoPendenteResponse alteraDebitoSimplesLimite( Long contaId, ValorRequest request) throws ErrorException {
-		return this.alteraValorEmConta( contaId, request.getValor(), AlteraValorEmContaTipo.DEBITO_SIMPLES_LIMITE );
+		return this.alteraValorEmConta( contaId, request.getValor(), AlteraValorEmContaTipo.LIMITE_OPERACAO );
 	}
 	
 	public OperacaoPendenteResponse alteraValorEmConta( Long contaId, double valor, AlteraValorEmContaTipo tipo ) throws ErrorException {
@@ -121,7 +121,7 @@ public class OperacaoService {
 
 		Date dataCriacao = null;
 		
-		if ( valor > conta.getDebitoSimplesLimite() ) {										
+		if ( valor > conta.getLimiteOperacao() ) {										
 			TransacaoCache tcache = TransacaoCacheBuilder.builder()
 					.contaOrigemId( conta.getId() )
 					.valor( valor )
@@ -171,7 +171,7 @@ public class OperacaoService {
 		Date dataCriacao = null;
 		OperacaoPendenteCache operCache = null;
 				
-		if ( valor > origem.getDebitoSimplesLimite() ) {
+		if ( valor > origem.getLimiteOperacao() ) {
 			OperacaoPendenteCache oper = new OperacaoPendenteCache();
 			oper.setTipo( OperacaoPendenteTipo.TRANSACAO ); 
 			

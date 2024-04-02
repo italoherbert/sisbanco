@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import italo.sisbanco.kernel.apidoc.transacao.cache.DeletaOperacaoPendenteCacheEndpoint;
-import italo.sisbanco.kernel.apidoc.transacao.cache.ExecutaOperacaoPendenteCacheEndpoint;
-import italo.sisbanco.kernel.apidoc.transacao.cache.GetTransacaoEmCachePorIDEndpoint;
-import italo.sisbanco.kernel.apidoc.transacao.cache.ListaTransacoesEmCacheEndpoint;
+import italo.sisbanco.kernel.apidoc.operacao.pendente.DeletaOperacaoPendenteCacheEndpoint;
+import italo.sisbanco.kernel.apidoc.operacao.pendente.ExecutaOperacaoPendenteCacheEndpoint;
+import italo.sisbanco.kernel.apidoc.operacao.pendente.GetTransacaoEmCachePorIDEndpoint;
+import italo.sisbanco.kernel.apidoc.operacao.pendente.ListaTransacoesEmCacheEndpoint;
 import italo.sisbanco.kernel.exception.ErrorException;
 import italo.sisbanco.kernel.model.response.conta.OperacaoPendenteResponse;
 import italo.sisbanco.kernel.service.OperacaoPendenteCacheService;

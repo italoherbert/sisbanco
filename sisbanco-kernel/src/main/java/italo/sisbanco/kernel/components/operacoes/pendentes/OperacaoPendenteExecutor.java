@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 import italo.sisbanco.kernel.Erros;
 import italo.sisbanco.kernel.components.operacoes.pendentes.altervaloremconta.AlterCreditoOperacaoPendente;
-import italo.sisbanco.kernel.components.operacoes.pendentes.altervaloremconta.AlterDebitoSimplesLimiteOperacaoPendente;
+import italo.sisbanco.kernel.components.operacoes.pendentes.altervaloremconta.AlterLimiteOperacaoOperacaoPendente;
 import italo.sisbanco.kernel.components.operacoes.pendentes.transacao.DebitoOperacaoPendente;
 import italo.sisbanco.kernel.components.operacoes.pendentes.transacao.TransferenciaOperacaoPendente;
 import italo.sisbanco.kernel.exception.ErrorException;
@@ -37,7 +37,7 @@ public class OperacaoPendenteExecutor {
 	private AlterCreditoOperacaoPendente alterCreditoOperacaoPendente;
 	
 	@Autowired
-	private AlterDebitoSimplesLimiteOperacaoPendente alterDebitoSimplesLimiteOperacaoPendente;
+	private AlterLimiteOperacaoOperacaoPendente alterDebitoSimplesLimiteOperacaoPendente;
 			
 	public OperacaoPendenteResponse executa( String operacaoPendenteId ) throws ErrorException {
 		Optional<TransacaoCache> transacaoCacheOp = transacaoCacheRepository.findByOperacaoPendenteId( operacaoPendenteId );
@@ -60,7 +60,7 @@ public class OperacaoPendenteExecutor {
 				switch( alterVCache.getTipo() ) {
 					case CREDITO:
 						return alterCreditoOperacaoPendente.executa( alterVCache );
-					case DEBITO_SIMPLES_LIMITE:
+					case LIMITE_OPERACAO:
 						return alterDebitoSimplesLimiteOperacaoPendente.executa( alterVCache );						
 					default:
 						throw new ErrorException( Erros.OPER_ALTER_VALOR_EM_CONTA_TIPO_INVALIDO );

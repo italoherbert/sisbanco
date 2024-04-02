@@ -6,6 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -24,7 +25,8 @@ import italo.sisbanco.kernel.model.response.conta.ContaResponse;
 		description = "Retorno de lista de dados completos das contas conforme os campos do filtro.",
 			content = {@Content(					
 				mediaType = "application/json", 
-				schema = @Schema(implementation = ContaResponse[].class))}),
+				array = @ArraySchema(
+						schema = @Schema(implementation =  ContaResponse.class)))}),
 	@ApiResponse(
 		responseCode = "403",
 		description = OpenAPIConfiguration.ERRO_403_MSG,

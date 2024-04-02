@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import italo.sisbanco.kernel.apidoc.banco.DepositarEndpoint;
-import italo.sisbanco.kernel.apidoc.banco.SacarEndpoint;
-import italo.sisbanco.kernel.apidoc.banco.TransferirEndpoint;
+import italo.sisbanco.kernel.apidoc.operacao.DepositarEndpoint;
+import italo.sisbanco.kernel.apidoc.operacao.SacarEndpoint;
+import italo.sisbanco.kernel.apidoc.operacao.TransferirEndpoint;
 import italo.sisbanco.kernel.exception.ErrorException;
 import italo.sisbanco.kernel.model.request.conta.ValorRequest;
 import italo.sisbanco.kernel.model.response.conta.OperacaoPendenteResponse;

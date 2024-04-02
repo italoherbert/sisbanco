@@ -39,12 +39,12 @@ public class DebitoOperacaoPendenteTest extends AbstractOperacaoPendenteTest {
 	
 	private final double debitoValor = 100;
 	private final double saldo = 500;
-	private final double debitoLimite = 1000;
+	private final double limiteOperacao = 1000;
 	
 	@Override
 	protected void configuraContaRegistro( Conta conta ) {
 		conta.setSaldo( saldo );
-		conta.setDebitoSimplesLimite( debitoLimite );
+		conta.setLimiteOperacao( limiteOperacao );
 	}
 
 	@Override

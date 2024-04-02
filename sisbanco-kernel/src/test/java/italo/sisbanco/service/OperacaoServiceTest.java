@@ -198,8 +198,8 @@ public class OperacaoServiceTest extends RedisPostgreSQLTest {
 			ContaResponse joaoConta = this.getContaByUsername( "joao" );
 			ContaResponse mariaConta = this.getContaByUsername( "maria" );
 													
-			assertEquals( joaoConta.getDebitoSimplesLimite(), 300, "Débito simples limite inválido para titular joão." );
-			assertEquals( mariaConta.getDebitoSimplesLimite(), 800, "Débito simples limite inválido para titular maria." );
+			assertEquals( joaoConta.getLimiteOperacao(), 300, "Débito limite de operação inválido para titular joão." );
+			assertEquals( mariaConta.getLimiteOperacao(), 800, "Débito limite de operação inválido para titular maria." );
 		} catch ( ErrorException e ) {
 			e.printStackTrace();
 			fail( e.getErrorChave() );

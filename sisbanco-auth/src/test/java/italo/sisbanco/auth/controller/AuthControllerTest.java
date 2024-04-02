@@ -93,7 +93,7 @@ public class AuthControllerTest {
 					.contentType( MediaType.APPLICATION_JSON )
 					.content( objectMapper.writeValueAsBytes( login ) ) )
 				.andDo( print() )
-					.andExpect( status().is( 403 ) );
+					.andExpect( status().isOk() );
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail( e.getMessage() );

@@ -1,4 +1,4 @@
-package italo.sisbanco.kernel.apidoc.banco;
+package italo.sisbanco.kernel.apidoc.operacao;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -16,15 +16,17 @@ import italo.sisbanco.kernel.model.response.ErroResponse;
 import italo.sisbanco.kernel.model.response.conta.OperacaoPendenteResponse;
 
 @Operation(
-	summary = "Responsável por efetuar o depósito em conta pelo titular.",
-	security = @SecurityRequirement(name = OpenAPIConfiguration.SECURITY_APP_NAME))	
-@ApiResponses(value= {
-	@ApiResponse( 		
-		responseCode = "200",
-		description = "Depósito realizado com sucesso.",
-		content = {@Content(					
-			mediaType = "application/json", 
-			schema = @Schema(implementation = OperacaoPendenteResponse.class))}),
+		summary = "Responsável por efetuar a transferência em conta pelo titular. "
+				+ "Caso o limite de débito seja extrapolado, a operação de transferência é "
+				+ "armazenada em cache para futura execução por um funcionário credenciado.",
+		security = @SecurityRequirement(name = OpenAPIConfiguration.SECURITY_APP_NAME))	
+	@ApiResponses(value= {
+		@ApiResponse( 		
+			responseCode = "200",
+			description = "Transferẽncia realizada com sucesso ou armazenado em cache.",
+			content = {@Content(					
+				mediaType = "application/json", 
+				schema = @Schema(implementation = OperacaoPendenteResponse.class))}),
 	@ApiResponse(
 		responseCode = "403",
 		description = OpenAPIConfiguration.ERRO_403_MSG,
@@ -40,6 +42,6 @@ import italo.sisbanco.kernel.model.response.conta.OperacaoPendenteResponse;
 })
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface DepositarEndpoint {
+public @interface TransferirEndpoint {
 		
 }

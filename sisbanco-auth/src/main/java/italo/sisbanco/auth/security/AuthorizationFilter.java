@@ -50,6 +50,8 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 			String username = tokenInfo.getUsername();
 			List<String> roles = tokenInfo.getRoles();
 			
+			System.out.println( "USERNAME=  "+username );
+			
 			List<SimpleGrantedAuthority> authorities = 
 					roles.stream().map( r -> new SimpleGrantedAuthority( r ) ).toList();
 									
@@ -58,6 +60,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 			
 			SecurityContextHolder.getContext().setAuthentication( userPassToken );		
 		} catch ( ErrorException e ) {
+			e.printStackTrace();
 			String message = messageSource.getMessage( e.getErrorChave(), e.getErrorParams(), Locale.getDefault() );
 			httpUtil.sendErrorResponse( response, 
 					HttpServletResponse.SC_UNAUTHORIZED,

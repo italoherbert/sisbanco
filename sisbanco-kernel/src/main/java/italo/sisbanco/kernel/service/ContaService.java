@@ -93,7 +93,7 @@ public class ContaService {
 	}
 	
 	public void alteraDebitoSimplesLimite( Long contaId, ValorRequest request ) throws ErrorException {
-		contaAlterManager.alteraDebitoSimplesLimite( contaId, request.getValor() );
+		contaAlterManager.alteraLimiteOperacao( contaId, request.getValor() );
 	}
 		
 	public ContaResponse get( Long contaId ) throws ErrorException {
